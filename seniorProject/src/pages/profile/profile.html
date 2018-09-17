@@ -1,7 +1,7 @@
 <ion-header>
     <ion-navbar text-center>
         <ion-buttons start>
-            <button ion-button icon-only>
+            <button ion-button icon-only (click)="goToSettings()">
               <ion-icon name="cog"></ion-icon>
             </button>
           </ion-buttons>
@@ -31,14 +31,14 @@
             
           <h2>Honors College Formal</h2>
           <p>Sept. 20</p>
-          <button ion-button clear item-end icon-only><ion-icon name="trash"></ion-icon></button>
+          <button ion-button clear item-end icon-only (click)="confirmDeletePost()"><ion-icon name="trash"></ion-icon></button>
         </ion-item>
       
         <img src="assets/imgs/sampleeventpic.jpg">
       
         <ion-row>
           <ion-col>
-            <button ion-button color="primary" clear small icon-start>
+            <button ion-button color="primary" clear small icon-start (click)="checkRequests()">
               <ion-icon name="heart"></ion-icon>
              Check Requests
             </button>

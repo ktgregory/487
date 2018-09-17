@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar text-center>
       <ion-buttons start>
-          <button ion-button icon-only>
+          <button ion-button icon-only (click)="goToEventForm()">
             <ion-icon name="add"></ion-icon>
           </button>
         </ion-buttons>
@@ -56,7 +56,7 @@
         
           <ion-row>
             <ion-col>
-              <button ion-button color="primary" clear small icon-start>
+              <button ion-button color="primary" clear small icon-start (click)="doConfirm()">
                 <ion-icon name="heart"></ion-icon>
                Send Request
               </button>

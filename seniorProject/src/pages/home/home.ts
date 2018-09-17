@@ -1,14 +1,20 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
-
+import {EventFormPage} from '../eventform/eventform';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
-  constructor(public alerCtrl: AlertController) { }
+  constructor(public navCtrl: NavController, public alerCtrl: AlertController) { }
+
+  goToEventForm()
+  {
+    this.navCtrl.push(EventFormPage);
+  }
+
 
   doConfirm() {
     let confirm = this.alerCtrl.create({

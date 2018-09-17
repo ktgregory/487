@@ -1,0 +1,29 @@
+
+<ion-content padding>
+    <ion-list>
+
+        <ion-item>
+          <ion-label>Event Title</ion-label>
+          <ion-input type="text" value=""></ion-input>
+        </ion-item>
+  
+        <ion-item>
+          <ion-label>Date</ion-label>
+          <ion-input type="text" value=""></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Time</ion-label>
+          <ion-input type="text" value=""></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Description</ion-label>
+          <ion-input type="text" value=""></ion-input>
+        </ion-item>
+  
+      </ion-list>
+  
+      <div padding>
+        <button ion-button color="primary" block (click)="confirmSubmission()">Submit Event</button>
+      <button ion-button color="primary" clear block (click)="cancelForm()">Cancel</button>
+</div>
+</ion-content>
