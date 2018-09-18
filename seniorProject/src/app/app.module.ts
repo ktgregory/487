@@ -9,10 +9,28 @@ import { HomePage } from '../pages/home/home';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { TabsPage } from '../pages/tabs/tabs';
 import {LoginPage} from '../pages/login/login';
+import {SignUpPage} from '../pages/signup/signup';
+
+import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
 import {EventFormPage} from '../pages/eventform/eventform';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+
+
+import { AngularFireModule } from 'angularfire2';
+import { AuthProvider } from '../providers/auth/auth';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAbSZBtYt9-Vpn41Y8FtwZ-cop7U_xm3cU",
+  authDomain: "senior-project-5e8d8.firebaseapp.com",
+  databaseURL: "https://senior-project-5e8d8.firebaseio.com",
+  projectId: "senior-project-5e8d8",
+  storageBucket: "senior-project-5e8d8.appspot.com",
+  messagingSenderId: "201357500908"
+};
+
 
 @NgModule({
   declarations: [
@@ -22,13 +40,17 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     NotificationsPage,
     HomePage,
     LoginPage,
+    SignUpPage,
     SettingsPage,
     EventFormPage,
+    ResetPasswordPage,
     TabsPage
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireAuthModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -38,14 +60,17 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     NotificationsPage,
     HomePage,
     LoginPage,
+    SignUpPage,
     SettingsPage,
     EventFormPage,
+    ResetPasswordPage,
     TabsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    AuthProvider
   ]
 })
 export class AppModule {}
