@@ -34,13 +34,15 @@ $app-direction: ltr;
 // The "primary" color is the only required color in the map.
 
 $colors: (
-  primary:    #488aff,
-  secondary:  #32db64,
-  danger:     #f53d3d,
-  light:      #f4f4f4,
-  dark:       #222
+  dark: rgba(4, 42, 43, 1),
+  danger: rgba(94, 177, 191, 1),
+  light: rgba(205, 237, 246, 1),
+  primary:#654f6f,
+  secondary:#648fa8,
+  white:white
 );
 
+/* Coolors Exported Palette - coolors.co/042a2b-5eb1bf-cdedf6-ef7b45-d84727 */
 
 // App iOS Variables
 // --------------------------------------------------

@@ -1,12 +1,11 @@
-<ion-header>
-  <ion-navbar color="primary">
-    <ion-title>
-      Login
-    </ion-title>
-  </ion-navbar>
-</ion-header>
 
+<ion-header>
+    <ion-navbar text-center>
+      <ion-title>DateDash</ion-title>
+    </ion-navbar>
+  </ion-header>
 <ion-content padding>
+    
   <form [formGroup]="loginForm" (submit)="loginUser()" novalidate>
 
     <ion-item>
@@ -38,11 +37,11 @@
   </form>
 
   <button ion-button block clear (click)="goToResetPassword()">
-    I forgot my password 🙁
+    Forgot password?
   </button>
 
   <button ion-button block clear (click)="createAccount()">
-    Create a new account
+    Create a new account!
   </button>
 
 </ion-content>

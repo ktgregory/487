@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, LoadingController } from 'ionic-angular';
 import {SettingsPage} from '../settings/settings';
-import { AlertController } from 'ionic-angular';
+import { AlertController, Loading } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
 @Component({
@@ -10,7 +10,7 @@ import { LoginPage } from '../login/login';
 })
 export class ProfilePage {
 
-  constructor(public navCtrl: NavController, public alerCtrl: AlertController, 
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController) {}
   
   goToSettings() {
@@ -23,7 +23,7 @@ export class ProfilePage {
   //if trash can button is clicked, 
   //the user is asked to confirm before the post is deleted
   confirmDeletePost() {
-    let confirm = this.alerCtrl.create({
+    let confirm = this.alertCtrl.create({
       title: 'Delete event post?',
       message: 'Do you want to delete your post about this event?',
       buttons: [
@@ -45,7 +45,7 @@ export class ProfilePage {
 }
 
 checkRequests() {
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Requests about this event:',
     message: 'None so far!',
     buttons: [
@@ -64,7 +64,7 @@ logout()
     this.navCtrl.push(LoginPage);
     window.location.reload();
   }, (error) => {
-    this.loading.dismiss().then( () => {
+   // this.loading.dismiss().then( () => {
       var errorMessage: string = error.message;
         let alert = this.alertCtrl.create({
           message: errorMessage,
@@ -77,12 +77,12 @@ logout()
         });
       alert.present();
     });
-  });
+  //});
 
-  this.loading = this.loadingCtrl.create({
+  /*this.loading = this.loadingCtrl.create({
     dismissOnPageChange: true,
   });
-  this.loading.present();
+  this.loading.present();*/
 }
 
 }
