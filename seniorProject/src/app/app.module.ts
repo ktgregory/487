@@ -8,8 +8,9 @@ import { ProfilePage } from '../pages/profile/profile';
 import { HomePage } from '../pages/home/home';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { TabsPage } from '../pages/tabs/tabs';
-import {LoginPage} from '../pages/login/login';
-import {SignUpPage} from '../pages/signup/signup';
+import { LoginPage } from '../pages/login/login';
+import { SignUpPage } from '../pages/signup/signup';
+import { AdminPage } from '../pages/admin/admin';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
@@ -44,6 +45,7 @@ const firebaseConfig = {
     SettingsPage,
     EventFormPage,
     ResetPasswordPage,
+    AdminPage,
     TabsPage
   ],
   imports: [
@@ -64,6 +66,7 @@ const firebaseConfig = {
     SettingsPage,
     EventFormPage,
     ResetPasswordPage,
+    AdminPage,
     TabsPage
   ],
   providers: [
