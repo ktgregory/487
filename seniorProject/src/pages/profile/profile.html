@@ -1,9 +1,11 @@
 <ion-header>
     <ion-navbar text-center>
-        <ion-buttons start>
-            <button ion-button icon-only (click)="goToSettings()">
-              <ion-icon name="cog"></ion-icon>
+        <ion-buttons left>
+            <button ion-button icon-only (click)="goToAccountSettings()">
+              <ion-icon name="settings"></ion-icon>
             </button>
+            </ion-buttons>
+            <ion-buttons right>
             <button ion-button icon-only (click)="logout()">
               <ion-icon name="log-out"></ion-icon>
             </button>
@@ -20,11 +22,12 @@
         <ion-avatar item-start>
           <img src="assets/imgs/sampleprofilephoto.png">
         </ion-avatar>
-        <h2>Katie Gregory</h2>
-        <p>University of Mississippi</p>
+        <button ion-button item-end icon-only clear (click)="goToSettings()"><ion-icon name="construct"></ion-icon></button>
+        <h2>{{firstname}} {{lastname}}</h2>
+        <p>{{school}}</p>
       </ion-item>
       <ion-card-content text-left>
-        <p>I'm a senior CS major at Ole Miss!</p>
+        <p>{{bio}}</p>
       </ion-card-content>
     </ion-card>
 

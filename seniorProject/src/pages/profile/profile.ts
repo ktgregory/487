@@ -4,12 +4,18 @@ import {SettingsPage} from '../settings/settings';
 import { AlertController, Loading } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
+import { AccountsettingsPage } from '../accountsettings/accountsettings';
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html'
 })
 export class ProfilePage {
-
+  firstname = "Katie";
+  lastname = "Gregory";
+  bio = "I'm a senior CS major at Ole Miss";
+  email = "kcgregor@go.olemiss.edu";
+  birthday = "Dec. 1, 1996";
+  school = "University of Mississippi";
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController) {}
   
@@ -19,7 +25,12 @@ export class ProfilePage {
       this.navCtrl.push(SettingsPage);
     
   }
+  goToAccountSettings() {
+    //push another page onto the history stack
+    //causing the nav controller to animate the new page in
+    this.navCtrl.push(AccountsettingsPage);
   
+}
   //if trash can button is clicked, 
   //the user is asked to confirm before the post is deleted
   confirmDeletePost() {
