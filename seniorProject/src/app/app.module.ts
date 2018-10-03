@@ -11,7 +11,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { AdminPage } from '../pages/admin/admin';
-
+import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
 
 import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
@@ -52,6 +52,7 @@ const firebaseConfig = {
     AdminPage,
     UploadPage,
     AccountsettingsPage,
+    AboutPage,
     TabsPage
   ],
   imports: [
@@ -74,6 +75,7 @@ const firebaseConfig = {
     ResetPasswordPage,
     AdminPage,
     UploadPage,
+    AboutPage,
     AccountsettingsPage,
     TabsPage
   ],

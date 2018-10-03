@@ -10,6 +10,10 @@ import { EmailValidator } from '../../validators/email';
 import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
+import {AngularFirestore} from 'angularfire2/firestore';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireDatabase } from 'angularfire2/database';
+
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -18,6 +22,7 @@ export class LoginPage {
 
   public loginForm:FormGroup;
   public loading:Loading;
+  permissions="";
 
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     public formBuilder: FormBuilder, public alertCtrl: AlertController,
