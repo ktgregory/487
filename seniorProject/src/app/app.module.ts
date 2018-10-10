@@ -11,9 +11,9 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { AdminPage } from '../pages/admin/admin';
+
 import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
-
 import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
@@ -22,19 +22,15 @@ import {EventFormPage} from '../pages/eventform/eventform';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-
+import { HttpClientModule } from '@angular/common/http'; 
+import { HttpModule } from '@angular/http';
 import { AngularFireModule } from 'angularfire2';
 import { AuthProvider } from '../providers/auth/auth';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAbSZBtYt9-Vpn41Y8FtwZ-cop7U_xm3cU",
-  authDomain: "senior-project-5e8d8.firebaseapp.com",
-  databaseURL: "https://senior-project-5e8d8.firebaseio.com",
-  projectId: "senior-project-5e8d8",
-  storageBucket: "senior-project-5e8d8.appspot.com",
-  messagingSenderId: "201357500908"
-};
+import { AngularFireDatabaseModule} from 'angularfire2/database';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { environment } from '../environment/environment';
+import { UserinfoProvider } from '../providers/userinfo/userinfo';
 
 
 @NgModule({
@@ -58,8 +54,12 @@ const firebaseConfig = {
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireAuthModule
+    AngularFireModule.initializeApp(environment.firebaseConfig, 'seniorProject'),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireDatabaseModule,
+    HttpModule,
+    HttpClientModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -83,7 +83,9 @@ const firebaseConfig = {
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthProvider
+    AuthProvider,
+   {provide: ErrorHandler, useClass: IonicErrorHandler},
+    UserinfoProvider, 
   ]
 })
 export class AppModule {}

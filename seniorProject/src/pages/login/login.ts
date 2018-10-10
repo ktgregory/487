@@ -10,10 +10,7 @@ import { EmailValidator } from '../../validators/email';
 import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
-import {AngularFirestore} from 'angularfire2/firestore';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase } from 'angularfire2/database';
-
+import { Observable} from 'rxjs/observable';
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -22,8 +19,8 @@ export class LoginPage {
 
   public loginForm:FormGroup;
   public loading:Loading;
-  permissions="";
 
+  email;
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     public formBuilder: FormBuilder, public alertCtrl: AlertController,
     public loadingCtrl: LoadingController) {
@@ -40,8 +37,9 @@ export class LoginPage {
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
       .then( authData => {
-        this.navCtrl.setRoot(TabsPage);
-      
+        this.navCtrl.setRoot(TabsPage,  {
+          data: this.loginForm.value.email // me attempting to pass the email address as a parameter
+      });
       }, error => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({

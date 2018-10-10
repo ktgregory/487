@@ -23,7 +23,7 @@
           <img src="assets/imgs/sampleprofilephoto.png">
         </ion-avatar>
         <button ion-button item-end icon-only clear (click)="goToSettings()"><ion-icon name="construct"></ion-icon></button>
-        <h2>{{firstname}} {{lastname}}</h2>
+        <h2>{{name}}</h2>
         <p>{{school}}</p>
       </ion-item>
       <ion-card-content text-left>
@@ -57,5 +57,9 @@
         </ion-row>
       
       </ion-card>
+      <ion-item *ngFor="let item of customList$ | async">
+          {{item.name}}
+       </ion-item>
+
 
 </ion-content>

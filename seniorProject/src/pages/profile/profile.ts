@@ -1,24 +1,40 @@
-import { Component } from '@angular/core';
-import { NavController, LoadingController } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { NavController, LoadingController, NavParams } from 'ionic-angular';
 import {SettingsPage} from '../settings/settings';
 import { AlertController, Loading } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
+import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { UserInfo } from '../../models/item.model';
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html'
 })
-export class ProfilePage {
-  firstname = "Katie";
-  lastname = "Gregory";
-  bio = "I'm a senior CS major at Ole Miss";
-  email = "kcgregor@go.olemiss.edu";
-  birthday = "Dec. 1, 1996";
-  school = "University of Mississippi";
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
-    public authData: AuthProvider, public loadingCtrl: LoadingController) {}
+export class ProfilePage implements OnInit {
   
+  name;
+  bio;
+  email;
+  school;
+  userinfo;
+  uid;
+  currentemail;
+  constructor(private userService:UserinfoProvider, public navCtrl: NavController, public alertCtrl: AlertController, 
+    public authData: AuthProvider, public loadingCtrl: LoadingController, public navParams: NavParams)  {
+      this.currentemail=navParams.get('data');
+    }
+  
+   
+  ngOnInit()
+  {
+    this.userService.getUserInfo().subscribe(userinfo=>{
+        this.userinfo = userinfo;
+    });
+    console.log(this.userinfo);
+  }
+
+
   goToSettings() {
       //push another page onto the history stack
       //causing the nav controller to animate the new page in
@@ -68,6 +84,7 @@ checkRequests() {
   confirm.present()
 }
 
+
 logout()
 {
   this.authData.logoutUser()
@@ -94,6 +111,9 @@ logout()
     dismissOnPageChange: true,
   });
   this.loading.present();*/
+
+
+
 }
 
 }

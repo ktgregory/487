@@ -1,21 +1,24 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import firebase from 'firebase/app';
-
+import { Observable } from 'rxjs/observable';
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http'; 
 /*
   Generated class for the AuthProvider provider.
 
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
 */
+
 @Injectable()
 export class AuthProvider {
 
-  constructor(public afAuth: AngularFireAuth ) {
+  constructor(public afAuth: AngularFireAuth) {
   }
 
+
   loginUser(newEmail: string, newPassword: string): Promise<any> {
+
     return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
   }
 
@@ -31,5 +34,5 @@ export class AuthProvider {
     return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
   }
 
-  
+ 
 }
