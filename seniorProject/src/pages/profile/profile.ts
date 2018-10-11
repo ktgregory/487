@@ -22,12 +22,13 @@ export class ProfilePage implements OnInit {
   userID;
   currentemail;
   userData;
+  posts=[];
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController, 
     private userService: UserinfoProvider, private afs: AngularFirestore
     )  {
-     
+        
     }
   
    
@@ -46,8 +47,17 @@ export class ProfilePage implements OnInit {
           this.bio = doc.data().bio;
         })
      });
-  
-    console.log(this.name + " " + this.email);
+     
+     let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",this.userID);    
+      await postQuery.get().then((querySnapshot) => { 
+         querySnapshot.forEach((doc) => {
+           // console.log(doc.data());
+            this.posts.push(doc.data());
+        })
+     });
+
+
+    console.log(this.posts);
 
   }
 
@@ -63,7 +73,7 @@ export class ProfilePage implements OnInit {
     //causing the nav controller to animate the new page in
     this.navCtrl.push(AccountsettingsPage);
   
-}
+  }
   //if trash can button is clicked, 
   //the user is asked to confirm before the post is deleted
   confirmDeletePost() {
@@ -86,29 +96,29 @@ export class ProfilePage implements OnInit {
       ]
     });
     confirm.present()
-}
+  }
 
-checkRequests() {
-  let confirm = this.alertCtrl.create({
-    title: 'Requests about this event:',
-    message: 'None so far!',
-    buttons: [
-      {
-        text: 'Okay.',
-      }
-    ]
-  });
-  confirm.present()
-}
+  checkRequests() {
+    let confirm = this.alertCtrl.create({
+      title: 'Requests about this event:',
+      message: 'None so far!',
+      buttons: [
+        {
+          text: 'Okay.',
+        }
+      ]
+    });
+    confirm.present()
+  }
 
 
-logout()
-{
-  this.authData.logoutUser();
+    logout()
+    {
+      this.authData.logoutUser();
 
-  this.navCtrl.push(LoginPage);
-   window.location.reload();
+      this.navCtrl.push(LoginPage);
+      window.location.reload();
 
-}
+    }
 
 }

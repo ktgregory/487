@@ -3,13 +3,39 @@ import { NavController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
+import { AuthProvider } from '../../providers/auth/auth';
+import { AngularFirestore} from 'angularfire2/firestore';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public alerCtrl: AlertController) { }
+  userID;
+  posts=[];
+  constructor(public navCtrl: NavController, public alerCtrl: AlertController,
+    private authData: AuthProvider, private afs: AngularFirestore) { }
+
+
+   
+   
+  async ngOnInit()
+    {
+    
+      this.userID = await this.authData.getUserID(); 
+      let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",this.userID);    
+      await postQuery.get().then((querySnapshot) => { 
+         querySnapshot.forEach((doc) => {
+            this.posts.push(doc.data());
+        })
+     });
+
+
+    console.log(this.posts);
+
+  }
+
+
 
   goToEventForm()
   {
