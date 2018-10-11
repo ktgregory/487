@@ -22,6 +22,7 @@ export class ProfilePage implements OnInit {
   userID;
   currentemail;
   userData;
+  imageURL;
   posts=[];
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
@@ -45,6 +46,7 @@ export class ProfilePage implements OnInit {
           this.email = doc.data().email;
           this.school = doc.data().school;
           this.bio = doc.data().bio;
+          this.imageURL = doc.data().profileimage;
         })
      });
      
@@ -56,16 +58,13 @@ export class ProfilePage implements OnInit {
         })
      });
 
-
-    console.log(this.posts);
-
   }
 
 
   goToSettings() {
       //push another page onto the history stack
       //causing the nav controller to animate the new page in
-      this.navCtrl.push(SettingsPage);
+      this.navCtrl.push(SettingsPage, this.posts);
     
   }
   goToAccountSettings() {

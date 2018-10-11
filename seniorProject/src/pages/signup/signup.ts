@@ -8,6 +8,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthProvider } from '../../providers/auth/auth';
 import { TabsPage } from '../tabs/tabs';
+import { NewuserPage } from '../newuser/newuser';
 import { EmailValidator } from '../../validators/email';
 
 @Component({
@@ -41,6 +42,7 @@ export class SignUpPage {
       this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
       .then(() => {
         this.nav.setRoot(TabsPage);
+        this.nav.push(NewuserPage);
       }, (error) => {
         this.loading.dismiss().then( () => {
           var errorMessage: string = error.message;

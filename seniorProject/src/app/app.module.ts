@@ -11,7 +11,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { AdminPage } from '../pages/admin/admin';
-
+import { NewuserPage } from '../pages/newuser/newuser';
 import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
 import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
@@ -31,6 +31,7 @@ import { AngularFireDatabaseModule} from 'angularfire2/database';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environment/environment';
 import { UserinfoProvider } from '../providers/userinfo/userinfo';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { UserinfoProvider } from '../providers/userinfo/userinfo';
     UploadPage,
     AccountsettingsPage,
     AboutPage,
+    NewuserPage,
     TabsPage
   ],
   imports: [
@@ -58,6 +60,7 @@ import { UserinfoProvider } from '../providers/userinfo/userinfo';
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireDatabaseModule,
+    AngularFireStorageModule,
     HttpModule,
     HttpClientModule
   ],
@@ -77,6 +80,7 @@ import { UserinfoProvider } from '../providers/userinfo/userinfo';
     UploadPage,
     AboutPage,
     AccountsettingsPage,
+    NewuserPage,
     TabsPage
   ],
   providers: [

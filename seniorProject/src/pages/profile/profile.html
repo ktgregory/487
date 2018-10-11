@@ -21,7 +21,7 @@
     
       <ion-item>
         <ion-avatar item-start>
-          <img src="assets/imgs/sampleprofilephoto.png">
+          <img src={{imageURL}}>
         </ion-avatar>
         <button ion-button item-end icon-only clear (click)="goToSettings()"><ion-icon name="construct"></ion-icon></button>
         <h2>{{name}}</h2>
@@ -45,7 +45,7 @@
           <button ion-button clear item-end icon-only (click)="confirmDeletePost()"><ion-icon name="trash"></ion-icon></button>
         </ion-item>
       
-        <img src="assets/imgs/sampleeventpic.jpg">
+        <img src={{post.image}}>
       
         <ion-row>
           <ion-col>

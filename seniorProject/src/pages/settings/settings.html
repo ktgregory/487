@@ -8,9 +8,9 @@
 
   <ion-list>   
       <ion-item>
-        <h3>Name</h3>  <button clear item-end ion-button icon-only (click)="editFirstName()">
+        <h3>Name</h3>  <button clear item-end ion-button icon-only (click)="editName()">
           <ion-icon name="create"></ion-icon> </button>
-        <p>{{firstname}} {{lastname}}</p>
+        <p>{{name}}</p>
   </ion-item>
   <ion-item>
     <h3>Bio</h3> <button clear item-end ion-button icon-only (click)="editBio()">
@@ -19,7 +19,5 @@
 </ion-item>
   </ion-list>
   <button ion-button outline (click) ="goToUploadPage()">Upload a new profile photo</button>
-
-  <button ion-button>Update information</button>
 
 </ion-content>

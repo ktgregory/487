@@ -23,7 +23,7 @@ export class HomePage {
     {
     
       this.userID = await this.authData.getUserID(); 
-      let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",this.userID);    
+      let postQuery = await this.afs.firestore.collection(`posts`);    
       await postQuery.get().then((querySnapshot) => { 
          querySnapshot.forEach((doc) => {
             this.posts.push(doc.data());
@@ -36,6 +36,14 @@ export class HomePage {
   }
 
 
+  async getFiles() {
+    let ref = await this.afs.firestore.collection(`images`);   
+    return ref.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        this.posts.push(doc.data());
+      })
+    });
+  }
 
   goToEventForm()
   {

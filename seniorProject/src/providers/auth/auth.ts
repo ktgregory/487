@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 //import { User } from '../../models/item.model';
 import { switchMap } from 'rxjs/operators';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { EmailValidator } from '../../validators/email';
 /*
   Generated class for the AuthProvider provider.
 
@@ -79,6 +80,12 @@ export class AuthProvider {
       // photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ'
     };
 
+  }
+
+  updateUserEmail(currentEmail: string, password: string, newEmail:string): Promise<any>
+  {
+    this.loginUser(currentEmail, password);
+    return this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
 
   getUserID()

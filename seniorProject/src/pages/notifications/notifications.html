@@ -1,24 +1,15 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Notifications
+      Requests
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item>
-      <ion-icon name="mail" item-start></ion-icon>
-      "Efeaf dfad eiefjf"
+    <ion-item *ngFor="let requests of receivedRequests">
+      <p>{{requests.senderName}} -- {{requests.eventName}} </p>
     </ion-item>
-    <ion-item>
-        <ion-icon name="mail" item-start></ion-icon>
-        "Efeaf dfad eiefjf"
-      </ion-item>
-      <ion-item>
-          <ion-icon name="mail" item-start></ion-icon>
-          "Efeaf dfad eiefjf"
-        </ion-item>
   </ion-list>
 </ion-content>
