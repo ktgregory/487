@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, 
   AngularFirestoreCollection, 
   AngularFirestoreDocument } from 'angularfire2/firestore';
-import { UserInfo } from '../../models/item.model';
+import { User } from '../../models/item.model';
 import { Observable } from 'rxjs/observable';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http'; 
@@ -11,47 +11,69 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import 'rxjs/add/observable/of';
 import { of } from 'rxjs';
 import { Subject } from 'rxjs/Subject';
+import { switchMap } from 'rxjs/operators';
+import { AuthProvider } from '../auth/auth';
+import { getTypeNameForDebugging } from '@angular/common/src/directives/ng_for_of';
 
-/*
-  Generated class for the UserinfoProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
-
-export class User
-{
-  body: string;
-}
 
 @Injectable()
 export class UserinfoProvider {
 
-  userId: string;
-  itemsCollection: AngularFirestoreCollection<UserInfo>;
-  userinfo: Observable<UserInfo>;
-  users;
-  test;
+  itemsCollection: AngularFirestoreCollection<User>;
+  userinfo: Observable<User[]>;
+  user: Observable<User | null>;
+  userID;
+  name;
+  
 
   constructor(private afs: AngularFirestore, private db: AngularFireDatabase, 
-    private afAuth: AngularFireAuth) {
-   
-    this.users = this.db.list('/path');
-    this.afAuth.authState.subscribe(user => {
-      if(user) this.userId = user.uid;
-    })
-    this.userinfo = this.afs.collection('users').doc('this.userId').valueChanges();
-    this.test = this.afs.collection('users').doc(`this.userId`);
-    console.log(this.test);
+    private afAuth: AngularFireAuth, private authProvider:AuthProvider) {
+      this.user = this.afAuth.authState.pipe(
+        switchMap(user => {
+          if (user) {
+            this.userID = user.uid;
+           // this.userinfo = this.afs.collection(`users`).valueChanges();
+            return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
+          } else {
+            return Observable.of(null);
+          }
+        })
+      );
+    // this.users = this.db.list('/path');
+    
+    //this.test = this.afs.collection('users').doc();
   }
 
-  getUserInfo(): Observable<UserInfo>
+async getUserInfo(): Promise<void>
   {
-    if(!this.userId) return;
-   // this.users = this.db.list(`users/${this.userId}`);
-  //  console.log(this.users.toString());
-    return this.userinfo;
+      this.userID = await this.authProvider.getUserID();
+      let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+      await userQuery.get().then((querySnapshot) => { 
+          
+         querySnapshot.forEach((doc) => {
+
+          this.name = doc.data().name;
+          //console.log(userinfo);
+         // return userinfo;
+
+        })
+     });
   }
 
+
+async getName(): Promise<void>
+{
+  await this.getUserInfo();
+  return await this.name;
+}
 
 }
+
+
+// GET ALL OF A COLLECTION !!!!!!!!
+// let userDoc = this.afs.firestore.collection(`users`);
+//       userDoc.get().then((querySnapshot) => { 
+//         querySnapshot.forEach((doc) => {
+//               console.log(doc.id, "=>", doc.data());  
+//         })
+//       });

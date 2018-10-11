@@ -6,7 +6,8 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
-import { UserInfo } from '../../models/item.model';
+import { User } from '../../models/item.model';
+import { AngularFirestore} from 'angularfire2/firestore';
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html'
@@ -18,20 +19,36 @@ export class ProfilePage implements OnInit {
   email;
   school;
   userinfo;
-  uid;
+  userID;
   currentemail;
-  constructor(private userService:UserinfoProvider, public navCtrl: NavController, public alertCtrl: AlertController, 
-    public authData: AuthProvider, public loadingCtrl: LoadingController, public navParams: NavParams)  {
-      this.currentemail=navParams.get('data');
+  userData;
+
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
+    public authData: AuthProvider, public loadingCtrl: LoadingController, 
+    private userService: UserinfoProvider, private afs: AngularFirestore
+    )  {
+     
     }
   
    
-  ngOnInit()
-  {
-    this.userService.getUserInfo().subscribe(userinfo=>{
-        this.userinfo = userinfo;
-    });
-    console.log(this.userinfo);
+  async ngOnInit()
+    {
+    
+      this.userID = await this.authData.getUserID();
+      let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+      await userQuery.get().then((querySnapshot) => { 
+          
+         querySnapshot.forEach((doc) => {
+
+          this.name = doc.data().name;
+          this.email = doc.data().email;
+          this.school = doc.data().school;
+          this.bio = doc.data().bio;
+        })
+     });
+  
+    console.log(this.name + " " + this.email);
+
   }
 
 
@@ -87,32 +104,10 @@ checkRequests() {
 
 logout()
 {
-  this.authData.logoutUser()
-  .then(() => {
-    this.navCtrl.push(LoginPage);
-    window.location.reload();
-  }, (error) => {
-   // this.loading.dismiss().then( () => {
-      var errorMessage: string = error.message;
-        let alert = this.alertCtrl.create({
-          message: errorMessage,
-          buttons: [
-            {
-              text: "Ok",
-              role: 'cancel'
-            }
-          ]
-        });
-      alert.present();
-    });
-  //});
+  this.authData.logoutUser();
 
-  /*this.loading = this.loadingCtrl.create({
-    dismissOnPageChange: true,
-  });
-  this.loading.present();*/
-
-
+  this.navCtrl.push(LoginPage);
+   window.location.reload();
 
 }
 
