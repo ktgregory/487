@@ -2,6 +2,13 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {TabsPage} from '../tabs/tabs';
 import { AlertController } from 'ionic-angular';
+import { FormBuilder, FormGroup} from '@angular/forms';
+import { SelectSearchableComponent } from 'ionic-select-searchable';
+import { AngularFirestore} from 'angularfire2/firestore';
+import { AuthProvider } from '../../providers/auth/auth';
+
+
+
 
 @Component({
   selector: 'page-eventform',
@@ -9,13 +16,52 @@ import { AlertController } from 'ionic-angular';
 })
 export class EventFormPage {
 
-  constructor(public navCtrl: NavController, public alerCtrl: AlertController) { }
+  events=[];
+  event;
+  userID;
+  username;
+  public eventForm: FormGroup;
+  constructor(public navCtrl: NavController, public alerCtrl: AlertController,
+      public formBuilder: FormBuilder, private authData: AuthProvider, 
+      private afs: AngularFirestore,) { 
+
+      this.eventForm = formBuilder.group({
+        event: [''],
+        date:[''],
+        time:[''],
+        description:['']
+      });
+
+
+    }
+
+    async ngOnInit()
+    {
+      this.userID = await this.authData.getUserID();
+      let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+      await userQuery.get().then((querySnapshot) => { 
+          
+         querySnapshot.forEach((doc) => {
+
+          this.username = doc.data().name;
+         });
+        });
+
+        let eventQuery = await this.afs.firestore.collection('events');    
+        await eventQuery.get().then((querySnapshot) => { 
+            
+           querySnapshot.forEach((doc) => {
+              this.events.push(doc.data());
+           });
+        });
+    }
 
     goToTabs() {
       //push another page onto the history stack
       //causing the nav controller to animate the new page in
       this.navCtrl.push(TabsPage);
     }
+
 
     confirmSubmission()
     {
@@ -26,7 +72,7 @@ export class EventFormPage {
           {
             text: 'Yes, submit!',
             handler: () => {
-              this.submitEvent();
+              this.submitEventForm();
             }
           },
           {
@@ -44,7 +90,6 @@ export class EventFormPage {
     {
     let confirm = this.alerCtrl.create({
       title: 'Submission succeeded!',
-      message: 'You will be notified when your post is approved.',
       buttons: [
         {
           text: 'Okay.'
@@ -53,6 +98,31 @@ export class EventFormPage {
     });
     confirm.present();
     this.goToTabs();
+    }
+
+    portChange(event: { //https://www.npmjs.com/package/ionic-select-searchable
+      component: SelectSearchableComponent,
+      value: any 
+      }) {
+      console.log('event:', event.value);
+    }
+  
+
+    async submitEventForm()
+    {
+      let timeString = this.eventForm.value.date + "T" + this.eventForm.value.time;
+      console.log(timeString);
+      let id = this.afs.createId();
+       this.afs.collection(`posts`).doc(id).set({
+        uid: this.userID,
+        event: this.eventForm.value.event.name,
+        description: this.eventForm.value.description,
+        date: new Date(timeString),
+        username: this.username
+        })
+        .then(any=>{
+            this.submitEvent();
+        });
     }
 
     cancelForm()

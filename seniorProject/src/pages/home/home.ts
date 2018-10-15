@@ -5,6 +5,23 @@ import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
+import { EventInfoProvider } from '../../providers/event-info/event-info';
+
+// class Post 
+// {
+//   public uid: string;
+//   public event: string;
+//   public date: any;
+//   public description: string;
+//   public postID: string;
+//   public image: string;
+//   public username: string;
+//   public profileimage: string;
+//   public dateString: string;
+//   public daysUntil: any;
+//   public timeUntil: string;
+//   public notExpired: Boolean;
+// }
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -14,27 +31,27 @@ export class HomePage {
   userID;
   posts=[];
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
-    private authData: AuthProvider, private afs: AngularFirestore) { }
+    private authData: AuthProvider, private afs: AngularFirestore,
+    private eventInfo: EventInfoProvider) { }
 
-
+  
    
    
   async ngOnInit()
-    {
+  {
     
-      this.userID = await this.authData.getUserID(); 
-      let postQuery = await this.afs.firestore.collection(`posts`);    
-      await postQuery.get().then((querySnapshot) => { 
-         querySnapshot.forEach((doc) => {
-            this.posts.push(doc.data());
-        })
-     });
-
-
-    console.log(this.posts);
+    this.userID = await this.authData.getUserID(); 
+    this.posts = await this.eventInfo.getEventTimeInfo();
+    this.posts.sort(this.compareDates);
+       //^^^ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+  
 
   }
 
+  compareDates(post1, post2)
+  {
+    return post1.daysUntil - post2.daysUntil;
+  }
 
   async getFiles() {
     let ref = await this.afs.firestore.collection(`images`);   

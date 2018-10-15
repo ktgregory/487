@@ -16,16 +16,16 @@
 
 <ion-content padding>
  
-
-    <ion-card *ngFor = "let post of posts">
-
+  <ng-container  *ngFor = "let post of posts">
+    <ion-card *ngIf="post.notExpired">
+       
         <ion-item>
           <ion-avatar item-start>
             <img src={{post.profileimage}}>
           </ion-avatar>
           <h2>{{post.username}}</h2>
           <p>{{post.event}}</p>
-          <p>{{post.date}}</p>
+          <p>{{post.dateString}}</p>
         </ion-item>
       
         <img src={{post.image}}>
@@ -39,11 +39,11 @@
           </ion-col>
           <ion-col align-self-center text-center>
             <ion-note>
-              in 2 wks
+             {{post.timeUntil}}
             </ion-note>
           </ion-col>
         </ion-row>
-      
+   
       </ion-card>
-
+    </ng-container>
 </ion-content>

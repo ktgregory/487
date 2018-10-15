@@ -73,13 +73,6 @@ export class AuthProvider {
       `users/${user.uid}`
     );
 
-
-    const data: User = {
-      uid: user.uid
-      // displayName: user.displayName || 'nameless user',
-      // photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ'
-    };
-
   }
 
   updateUserEmail(currentEmail: string, password: string, newEmail:string): Promise<any>
@@ -88,10 +81,13 @@ export class AuthProvider {
     return this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
 
+  getUserEmail()
+  {
+    return this.afAuth.auth.currentUser.email;
+  }
   getUserID()
   {
-    console.log(this.afAuth.auth.currentUser.uid);
-    return this.afAuth.auth.currentUser.uid
+    return this.afAuth.auth.currentUser.uid;
   }
 
 }

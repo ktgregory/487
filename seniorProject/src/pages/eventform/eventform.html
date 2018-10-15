@@ -1,29 +1,33 @@
 
 <ion-content padding>
-    <ion-list>
 
-        <ion-item>
-          <ion-label>Event Title</ion-label>
-          <ion-input type="text" value=""></ion-input>
-        </ion-item>
+      <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
   
         <ion-item>
-          <ion-label>Date</ion-label>
-          <ion-input type="text" value=""></ion-input>
+            <ion-label>Event</ion-label>
+                <select-searchable
+                item-content
+                [items]="events"
+                itemTextField="name"
+                [canSearch]="true"
+                formControlName="event">
+              </select-searchable>
+        
+          </ion-item>
+    
+        <ion-item>
+            <ion-label>Date</ion-label> <!-- add drop down -->
+            <ion-datetime formControlName="date" displayFormat="MMM DD YYYY" name="myDate"></ion-datetime>
         </ion-item>
         <ion-item>
-          <ion-label>Time</ion-label>
-          <ion-input type="text" value=""></ion-input>
+              <ion-label>Time</ion-label> <!-- add drop down -->
+              <ion-datetime formControlName="time" displayFormat="HH:mm" name="myDate"></ion-datetime>
         </ion-item>
         <ion-item>
           <ion-label>Description</ion-label>
-          <ion-input type="text" value=""></ion-input>
+          <ion-textarea formControlName="description" type="text" name="description"></ion-textarea>
         </ion-item>
-  
-      </ion-list>
-  
-      <div padding>
-        <button ion-button color="primary" block (click)="confirmSubmission()">Submit Event</button>
+        <button ion-button type="submit" color="primary" block >Submit Event</button>
+      </form>
       <button ion-button color="primary" clear block (click)="cancelForm()">Cancel</button>
-</div>
 </ion-content>

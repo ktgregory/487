@@ -5,9 +5,9 @@ import { AlertController, Loading } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
-import { UserinfoProvider } from '../../providers/userinfo/userinfo';
-import { User } from '../../models/item.model';
 import { AngularFirestore} from 'angularfire2/firestore';
+import { EventInfoProvider } from '../../providers/event-info/event-info';
+
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html'
@@ -24,10 +24,11 @@ export class ProfilePage implements OnInit {
   userData;
   imageURL;
   posts=[];
+  noPosts;
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController, 
-    private userService: UserinfoProvider, private afs: AngularFirestore
+    private eventInfo: EventInfoProvider, private afs: AngularFirestore
     )  {
         
     }
@@ -50,14 +51,24 @@ export class ProfilePage implements OnInit {
         })
      });
      
-     let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",this.userID);    
-      await postQuery.get().then((querySnapshot) => { 
-         querySnapshot.forEach((doc) => {
-           // console.log(doc.data());
-            this.posts.push(doc.data());
-        })
-     });
+    
+     this.posts = await this.eventInfo.getEventTimeInfoWithID(this.userID);
 
+     if (this.posts.length ==0)
+     {
+       this.noPosts = true;
+     }
+     else
+     {
+      this.posts.sort(this.compareDates);
+     }
+
+
+  }
+
+  compareDates(post1, post2)
+  {
+    return post2.daysUntil - post1.daysUntil;
   }
 
 

@@ -5,13 +5,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { Component } from '@angular/core';
 
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-export interface Data
-{
-  name:string,
-  school:string,
-  birthday:string,
-  bio:string
-}
+
 @IonicPage()
 @Component({
   selector: 'page-newuser',
@@ -22,6 +16,7 @@ export class NewuserPage {
 
   public newuserForm: FormGroup;
   userID; 
+  email;
  // myControl; - Add form control later to ensure that form inputs arent left blank and limit characters 
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
@@ -40,6 +35,7 @@ export class NewuserPage {
   async ngOnInit()
   {
       this.userID = await this.authData.getUserID();
+      this.email = await this.authData.getUserEmail();
   }
 
   ionViewDidLoad() {
@@ -53,12 +49,15 @@ export class NewuserPage {
       name: this.newuserForm.value.name,
       bio: this.newuserForm.value.bio,
       birthday: this.newuserForm.value.birthday,
-      school: this.newuserForm.value.school
+      school: this.newuserForm.value.school,
+      email: this.email
       })
       .then(any=>{
           this.navCtrl.pop();
       });
 
   }
+
+
 
 }

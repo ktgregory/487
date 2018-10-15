@@ -32,6 +32,9 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environment/environment';
 import { UserinfoProvider } from '../providers/userinfo/userinfo';
 import { AngularFireStorageModule } from 'angularfire2/storage';
+import { SelectSearchableModule } from 'ionic-select-searchable';
+import { EventInfoProvider } from '../providers/event-info/event-info';
+import { RequestProvider } from '../providers/request/request';
 
 
 @NgModule({
@@ -62,7 +65,8 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
     AngularFireDatabaseModule,
     AngularFireStorageModule,
     HttpModule,
-    HttpClientModule
+    HttpClientModule,
+    SelectSearchableModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -89,7 +93,9 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthProvider,
    {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UserinfoProvider, 
+    UserinfoProvider,
+    EventInfoProvider,
+    RequestProvider
   ]
 })
 export class AppModule {}
