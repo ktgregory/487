@@ -5,19 +5,23 @@
 <form (ngSubmit)="newUserForm()" [formGroup]="newuserForm">
   <ion-item>
     <ion-label>Name</ion-label>
-    <ion-input formControlName="name" type="text" name="name"></ion-input>
+    <ion-input required formControlName="name" type="text" name="name"></ion-input>
   </ion-item>
   <ion-item>
+      <ion-label>Phone Number</ion-label>
+      <ion-input required formControlName="phoneNumber" type="text" name="phoneNumber"></ion-input>
+    </ion-item>
+  <ion-item>
     <ion-label>School</ion-label>
-    <ion-textarea formControlName="school" type="text" name="school"></ion-textarea>
+    <ion-textarea required formControlName="school" type="text" name="school"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label>Birthday</ion-label>
-    <ion-textarea formControlName="birthday" type="text" name="birthday"></ion-textarea>
+    <ion-textarea required formControlName="birthday" type="text" name="birthday"></ion-textarea>
   </ion-item>
   <ion-item>
     <ion-label>Bio</ion-label>
-    <ion-textarea formControlName="bio" type="text" name="bio"></ion-textarea>
+    <ion-textarea required formControlName="bio" type="text" name="bio"></ion-textarea>
   </ion-item>
   <button ion-button type="submit" block>Finish Creating My Account</button>
 </form>

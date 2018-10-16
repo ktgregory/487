@@ -3,12 +3,8 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/observable';
 import { AngularFirestoreDocument } from 'angularfire2/firestore';
-import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
-//import { User } from '../../models/item.model';
 import { switchMap } from 'rxjs/operators';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { EmailValidator } from '../../validators/email';
 /*
   Generated class for the AuthProvider provider.
 
@@ -35,7 +31,6 @@ export class AuthProvider {
       this.user = this.afAuth.authState.pipe(
         switchMap(user => {
           if (user) {
-            
             this.userID = user.uid;
             return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
           } else {
@@ -72,7 +67,6 @@ export class AuthProvider {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${user.uid}`
     );
-
   }
 
   updateUserEmail(currentEmail: string, password: string, newEmail:string): Promise<any>

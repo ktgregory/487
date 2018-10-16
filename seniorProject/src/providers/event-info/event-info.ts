@@ -13,22 +13,21 @@ import { AngularFirestore } from 'angularfire2/firestore';
 @Injectable()
 export class EventInfoProvider {
   
-  posts=[];
-  posts2=[];
   constructor(private afs: AngularFirestore) {
     
   }
 
   async getEventTimeInfo()
   {
+    let posts=[];
     let postQuery = await this.afs.firestore.collection(`posts`);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
-          this.posts.push(doc.data());
+          posts.push(doc.data());
       })
    });
    
-   return this.eventTimeCalculations(this.posts);
+   return this.eventTimeCalculations(posts);
 
   }
   
@@ -40,16 +39,16 @@ export class EventInfoProvider {
     let day = timestamp.getUTCDay();
     let month = timestamp.getUTCMonth();
     let year = timestamp.getUTCFullYear();
-    console.log(timestamp);
+   
     element.dateString = ((month+1) + "/" + day + "/" + year);
     let timestamp2 = new Date();
     let oneDay = 24*60*60*1000;
     let daysUntil = Math.round(((timestamp.getTime() - timestamp2.getTime())/(oneDay)));
-    console.log(daysUntil); 
+    
     element.daysUntil = daysUntil;
     
     let weeks = Math.floor((daysUntil/7));
-    if(daysUntil==-0)
+    if(daysUntil<0)
     {
       element.notExpired = false;
       element.timeUntil = "expired";
@@ -77,16 +76,22 @@ export class EventInfoProvider {
 
   async getEventTimeInfoWithID(userID:string)
   {
+    let posts =[];
     let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",userID);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
-         // console.log(doc.data());
-          this.posts2.push(doc.data());
+    
+          posts.push(doc.data());
       })
     });
 
-   return this.eventTimeCalculations(this.posts2);
+   return this.eventTimeCalculations(posts);
 
+  }
+
+  async deletePost(postID:string)
+  {
+    await this.afs.firestore.collection("posts").doc(postID).delete();
   }
 
 }

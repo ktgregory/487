@@ -7,6 +7,7 @@ import { LoginPage } from '../login/login';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { TabsPage } from '../tabs/tabs';
 
 @Component({
   selector: 'page-profile',
@@ -86,15 +87,16 @@ export class ProfilePage implements OnInit {
   }
   //if trash can button is clicked, 
   //the user is asked to confirm before the post is deleted
-  confirmDeletePost() {
+  confirmDeletePost(postID:string) {
     let confirm = this.alertCtrl.create({
       title: 'Delete event post?',
-      message: 'Do you want to delete your post about this event?',
+      message: 'Do you want to delete your post about this event? This cannot be undone.',
       buttons: [
         {
           text: 'Yes.',
           handler: () => {
-            console.log('Agree clicked');
+            this.eventInfo.deletePost(postID);
+            this.navCtrl.setRoot(TabsPage);
           }
         },
         {
@@ -125,8 +127,6 @@ export class ProfilePage implements OnInit {
     logout()
     {
       this.authData.logoutUser();
-
-      this.navCtrl.push(LoginPage);
       window.location.reload();
 
     }

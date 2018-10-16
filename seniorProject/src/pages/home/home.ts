@@ -6,22 +6,8 @@ import { AboutPage } from '../about/about';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { RequestProvider } from '../../providers/request/request';
 
-// class Post 
-// {
-//   public uid: string;
-//   public event: string;
-//   public date: any;
-//   public description: string;
-//   public postID: string;
-//   public image: string;
-//   public username: string;
-//   public profileimage: string;
-//   public dateString: string;
-//   public daysUntil: any;
-//   public timeUntil: string;
-//   public notExpired: Boolean;
-// }
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -32,10 +18,9 @@ export class HomePage {
   posts=[];
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
-    private eventInfo: EventInfoProvider) { }
+    private eventInfo: EventInfoProvider, private reqService: RequestProvider) { }
 
-  
-   
+
    
   async ngOnInit()
   {
@@ -53,14 +38,14 @@ export class HomePage {
     return post1.daysUntil - post2.daysUntil;
   }
 
-  async getFiles() {
-    let ref = await this.afs.firestore.collection(`images`);   
-    return ref.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        this.posts.push(doc.data());
-      })
-    });
-  }
+  // async getFiles() {
+  //   // let ref = await this.afs.firestore.collection(`images`);   
+  //   // return ref.get().then((querySnapshot) => {
+  //   //   querySnapshot.forEach((doc) => {
+  //   //     this.posts.push(doc.data());
+  //   //   })
+  //   // });
+  // }
 
   goToEventForm()
   {
@@ -72,7 +57,7 @@ export class HomePage {
   }
 
 
-  doConfirm() {
+  doConfirm(postID:string) {
     let confirm = this.alerCtrl.create({
       title: 'Send request?',
       message: 'Do you want to send a request for more information about this event?',
@@ -80,19 +65,56 @@ export class HomePage {
         {
           text: 'Yes!',
           handler: () => {
-            console.log('Agree clicked');
+            
+            this.reqService.createNewRequest(this.userID, postID).then(any=>
+              {
+                this.confirmRequest();
+              }).catch(error=>
+                {
+                  this.presentErrorAlert(error);
+                }
+              );
           }
         },
         {
           text: 'Not now.',
           handler: () => {
-            console.log('Disagree clicked');
+           
           }
         }
       ]
     });
     confirm.present()
 }
+
+confirmRequest()
+{
+  let confirm = this.alerCtrl.create({
+      title: 'Success!',
+      message: 'Request has been sent.',
+      buttons: [
+        {
+          text: 'Okay.'
+        }
+      ]
+    });
+    confirm.present();
+  }
+
+  presentErrorAlert(errorMessage:string)
+  {
+    let error = this.alerCtrl.create({
+      title: 'Request not sent!',
+      message: errorMessage,
+      buttons: [
+        {
+          text: 'Duh.'
+        }
+      ]
+    });
+    error.present();
+
+  }
 
 }
 

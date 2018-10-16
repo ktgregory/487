@@ -27,7 +27,8 @@ export class NewuserPage {
         name: [''],
         school: [''],
         birthday:[''],
-        bio:['']
+        bio:[''],
+        phoneNumber:['']
       });
   }
 
@@ -50,7 +51,8 @@ export class NewuserPage {
       bio: this.newuserForm.value.bio,
       birthday: this.newuserForm.value.birthday,
       school: this.newuserForm.value.school,
-      email: this.email
+      email: this.email,
+      phoneNumber: this.newuserForm.value.phoneNumber
       })
       .then(any=>{
           this.navCtrl.pop();

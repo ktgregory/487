@@ -43,7 +43,7 @@
             
           <h2>{{post.event}}</h2>
           <p>{{post.dateString}}</p>
-          <button ion-button clear item-end icon-only (click)="confirmDeletePost()"><ion-icon name="trash"></ion-icon></button>
+          <button ion-button clear item-end icon-only (click)="confirmDeletePost(post.postID)"><ion-icon name="trash"></ion-icon></button>
         </ion-item>
       
         <img src={{post.image}}>

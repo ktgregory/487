@@ -118,7 +118,8 @@ export class EventFormPage {
         event: this.eventForm.value.event.name,
         description: this.eventForm.value.description,
         date: new Date(timeString),
-        username: this.username
+        username: this.username,
+        postID: id
         })
         .then(any=>{
             this.submitEvent();

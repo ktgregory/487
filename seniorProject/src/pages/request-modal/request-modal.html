@@ -1,0 +1,48 @@
+<ion-header>
+    <ion-navbar>
+      <ion-title>
+        Respond to Request?
+      </ion-title>
+      <ion-buttons start>
+        <button ion-button icon-only (click)="dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
+  
+  <ion-content padding>
+    
+    <div [hidden]="!myParam">
+      <h5>Parameters passed:</h5>
+  
+      <pre>selections: [{{myParam}}]</pre>
+  
+    </div>
+
+
+    <ion-card padding>
+      
+  
+        <img src={{profileimage}}>
+
+        <ion-item>
+            
+          <h2>{{name}} </h2><h2>{{eventName}}</h2> 
+          
+          <p>{{bio}}</p>
+
+        </ion-item>
+
+        <ion-row justify-content-center>
+            <button small ion-button (click)="acceptRequest()">Accept request! </button>
+          </ion-row>
+        <ion-row justify-content-center padding-bottom>
+          <button small ion-button outline (click)="clearRequest()"> Clear this request. </button>
+        </ion-row>
+    
+    </ion-card>
+   
+
+  
+  </ion-content>

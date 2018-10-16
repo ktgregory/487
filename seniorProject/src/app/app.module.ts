@@ -35,6 +35,7 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 import { SelectSearchableModule } from 'ionic-select-searchable';
 import { EventInfoProvider } from '../providers/event-info/event-info';
 import { RequestProvider } from '../providers/request/request';
+import { RequestModalPage } from '../pages/request-modal/request-modal';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { RequestProvider } from '../providers/request/request';
     AccountsettingsPage,
     AboutPage,
     NewuserPage,
-    TabsPage
+    TabsPage,
+    RequestModalPage
   ],
   imports: [
     BrowserModule,
@@ -85,14 +87,14 @@ import { RequestProvider } from '../providers/request/request';
     AboutPage,
     AccountsettingsPage,
     NewuserPage,
-    TabsPage
+    TabsPage,
+    RequestModalPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthProvider,
-   {provide: ErrorHandler, useClass: IonicErrorHandler},
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserinfoProvider,
     EventInfoProvider,
     RequestProvider

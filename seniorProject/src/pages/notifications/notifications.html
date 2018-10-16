@@ -7,9 +7,32 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let requests of receivedRequests">
-      <p>{{requests.senderName}} -- {{requests.eventName}} </p>
-    </ion-item>
-  </ion-list>
+ 
+  <div>
+      <ion-label>Received</ion-label>
+      <ion-card *ngIf="noReceived">
+          <p>No received requests!</p>   
+        </ion-card>
+    <ion-card *ngFor="let request of receivedRequests">
+      <ion-item><p>{{request.senderName}} ~ {{request.eventName}}</p>
+      <button ion-button item-end (click)="respondToRequest(request.requestID)"> respond </button> 
+      </ion-item>
+    </ion-card>
+  </div>
+  <div>
+    <ion-label>Sent</ion-label>
+      <ion-card *ngFor="let request of sentRequests">
+        <ion-item><p>{{request.receiverName}} ~ {{request.eventName}} </p>
+          
+          <button *ngIf='request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">pending</button>
+ 
+          <button  *ngIf='request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">accepted</button>
+
+        </ion-item>
+      </ion-card>
+      <ion-card *ngIf="noSent">
+          <p>No sent requests!</p>
+          
+        </ion-card>
+  </div>
 </ion-content>

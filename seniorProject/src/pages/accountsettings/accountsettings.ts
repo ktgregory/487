@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AlertController, IonicPage, NavController, NavParams, AlertCmp } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
+import { TabsPage } from '../tabs/tabs';
 /**
  * Generated class for the AccountsettingsPage page.
  *
@@ -94,6 +95,7 @@ export class AccountsettingsPage {
                     })
                  });
               });
+              this.navCtrl.setRoot(TabsPage);
           }
         }
       ]
@@ -131,6 +133,7 @@ export class AccountsettingsPage {
                   this.birthday = doc.data().birthday;
               })
             });
+            this.navCtrl.setRoot(TabsPage);
           }
         }
       ]
@@ -168,7 +171,9 @@ export class AccountsettingsPage {
                   this.school = doc.data().school;
               })
             });
+            this.navCtrl.setRoot(TabsPage);
           }
+          
         }
       ]
     });
