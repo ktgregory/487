@@ -11,6 +11,8 @@ import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
 import { Observable} from 'rxjs/observable';
+import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { AdminPage } from '../admin/admin';
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -23,7 +25,7 @@ export class LoginPage {
   email;
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     public formBuilder: FormBuilder, public alertCtrl: AlertController,
-    public loadingCtrl: LoadingController) {
+    public loadingCtrl: LoadingController, private userService: UserinfoProvider) {
 
       this.loginForm = formBuilder.group({
         email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
@@ -37,9 +39,9 @@ export class LoginPage {
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
       .then( authData => {
-        this.navCtrl.setRoot(TabsPage,  {
-          data: this.loginForm.value.email // me attempting to pass the email address as a parameter
-      });
+
+        this.navigateBasedOnUserType();
+
       }, error => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({
@@ -68,6 +70,22 @@ export class LoginPage {
 
   createAccount(){
     this.navCtrl.push(SignUpPage);
+  }
+
+  async navigateBasedOnUserType()
+  {
+    let id = await this.authData.getUserID();
+    let userInfo = await this.userService.getUserInfo(id);
+    let type = userInfo[0].type;
+    if(type=="admin")
+    {
+      this.navCtrl.setRoot(AdminPage);
+    }
+    else
+    {
+      this.navCtrl.setRoot(TabsPage);
+    }
+
   }
 
 }

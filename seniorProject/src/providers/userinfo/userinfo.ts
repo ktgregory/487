@@ -4,6 +4,7 @@ import { AngularFireDatabase, AngularFireAction} from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import 'rxjs/add/observable/of';
 import { AuthProvider } from '../auth/auth';
+import { Observable } from 'rxjs';
 
 
 @Injectable()
@@ -28,6 +29,19 @@ export class UserinfoProvider {
 
    return userInfo;
 
+  }
+  
+
+ async getUserType(userID:string)
+  {
+    let userInfo=[];
+    let ref = await this.afs.firestore.collection(`users`).where("uid","==",userID); 
+    await ref.get().then((querySnapshot) => { 
+      querySnapshot.forEach((doc) => {
+       userInfo.push(doc.data());
+     })
+   });
+   return userInfo[0].type;
 
   }
 

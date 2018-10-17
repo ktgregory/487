@@ -30,8 +30,7 @@ export class RequestProvider {
       })
     });
 
-    console.log(postInfo.uid);
-    console.log(userID);
+
     if(userID == postInfo.uid)
     {
       return Promise.reject('You can\'t send a request to yourself!');

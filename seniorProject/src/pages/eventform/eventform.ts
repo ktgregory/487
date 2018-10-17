@@ -110,7 +110,12 @@ export class EventFormPage {
 
     async submitEventForm()
     {
-      let timeString = this.eventForm.value.date + "T" + this.eventForm.value.time;
+      let timeString = this.eventForm.value.date;
+      let status ="approved";
+      if (this.eventForm.value.event.name.toString() == "Other")
+      {
+        status = "pending";
+      }
       console.log(timeString);
       let id = this.afs.createId();
        this.afs.collection(`posts`).doc(id).set({
@@ -119,10 +124,12 @@ export class EventFormPage {
         description: this.eventForm.value.description,
         date: new Date(timeString),
         username: this.username,
-        postID: id
+        postID: id,
+        status: status
         })
         .then(any=>{
             this.submitEvent();
+            this.ngOnInit();
         });
     }
 

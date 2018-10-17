@@ -4,7 +4,6 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { RequestProvider } from '../../providers/request/request';
 import { RequestModalPage } from '../../pages/request-modal/request-modal';
-import { TabsPage } from '../tabs/tabs';
 
 @Component({
   selector: 'page-notifications',
@@ -40,7 +39,7 @@ export class NotificationsPage {
       let myModal = this.modalCtrl.create(RequestModalPage, { 
         'myParam': requestID });
         myModal.onDidDismiss(() => {
-          this.navCtrl.setRoot(TabsPage);
+          this.ngOnInit();
         });
       myModal.present();
     
@@ -50,13 +49,10 @@ export class NotificationsPage {
   {
     let pendingMessage = this.alertCtrl.create({
     title: 'Request Status Info:',
-    message: 'This request is still pending. Once it\'s accepted, come back here for their contact info! Or you can clear the request now.',
+    message: 'This request is still pending. Once it\'s accepted, come back here for their contact info! Or, you can clear the request now.',
     buttons: [
       {
-        text: 'Ok!',
-        handler: () => {
-            
-        }
+        text: 'Ok!'
       },
       {
         text: 'Clear the request.',
@@ -80,7 +76,7 @@ export class NotificationsPage {
           text: 'Yes, clear it please.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
-            this.navCtrl.setRoot(TabsPage);
+           this.ngOnInit();
           }
         },
         {
@@ -109,6 +105,7 @@ export class NotificationsPage {
         text: 'Clear this request.',
         handler: () => {
           this.confirmClear(requestID);
+          this.ngOnInit();
         }
       },
       {

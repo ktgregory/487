@@ -69,7 +69,7 @@ export class ProfilePage implements OnInit {
 
   compareDates(post1, post2)
   {
-    return post2.daysUntil - post1.daysUntil;
+    return post1.daysUntil - post2.daysUntil;
   }
 
 
@@ -96,7 +96,7 @@ export class ProfilePage implements OnInit {
           text: 'Yes.',
           handler: () => {
             this.eventInfo.deletePost(postID);
-            this.navCtrl.setRoot(TabsPage);
+            this.navCtrl.setRoot(ProfilePage);
           }
         },
         {

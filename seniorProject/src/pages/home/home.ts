@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, App } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
@@ -7,7 +7,8 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { RequestProvider } from '../../providers/request/request';
-
+import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { AdminPage } from '../admin/admin';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -18,7 +19,10 @@ export class HomePage {
   posts=[];
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
-    private eventInfo: EventInfoProvider, private reqService: RequestProvider) { }
+    private eventInfo: EventInfoProvider, private reqService: RequestProvider,
+    private userService: UserinfoProvider, public app: App) {
+
+     }
 
 
    
@@ -26,10 +30,17 @@ export class HomePage {
   {
     
     this.userID = await this.authData.getUserID(); 
-    this.posts = await this.eventInfo.getEventTimeInfo();
+    this.posts = await this.eventInfo.getPostsForTimeline();
     this.posts.sort(this.compareDates);
        //^^^ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-  
+    
+    let type = await this.userService.getUserType(this.userID);
+    if(type=="admin")
+    {
+      this.app.getRootNav().setRoot(AdminPage);
+      //this.navCtrl.setRoot(AdminPage);
+     // this.navCtrl.setRoot(AdminPage);
+    }
 
   }
 

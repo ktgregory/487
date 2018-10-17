@@ -52,7 +52,8 @@ export class NewuserPage {
       birthday: this.newuserForm.value.birthday,
       school: this.newuserForm.value.school,
       email: this.email,
-      phoneNumber: this.newuserForm.value.phoneNumber
+      phoneNumber: this.newuserForm.value.phoneNumber,
+      type:"reg"
       })
       .then(any=>{
           this.navCtrl.pop();
