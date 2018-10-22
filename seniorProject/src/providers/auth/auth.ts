@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/observable';
 import { AngularFirestoreDocument } from 'angularfire2/firestore';
 import { switchMap } from 'rxjs/operators';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { observable } from 'rxjs';
 /*
   Generated class for the AuthProvider provider.
 
@@ -86,5 +85,20 @@ export class AuthProvider {
     return this.afAuth.auth.currentUser.uid;
   }
 
+  changePassword(newPassword:string)
+  {
+    return this.afAuth.auth.currentUser.updatePassword(newPassword);
+  }
+
 
 }
+
+
+/*
+SOURCES:
+
+https://www.youtube.com/watch?v=2ciHixbc4HE (How to Connect Firebase Users to their Data - 3 Methods)
+
+https://javebratt.com/ionic-firebase-tutorial-auth/ (Firebase Authentication for Ionic Apps)
+
+*/

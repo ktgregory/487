@@ -58,7 +58,6 @@ export class NewuserPage {
       .then(any=>{
           this.navCtrl.pop();
       });
-
   }
 
 

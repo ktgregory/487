@@ -9,10 +9,44 @@
 
 <ion-content padding>
   <form [formGroup]="signupForm" (submit)="signupUser()" novalidate>
-
+    <ion-item>
+      <ion-label stacked>Name</ion-label>
+      <ion-input required formControlName="name" type="text" name="name"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label stacked>Phone Number</ion-label>
+      <ion-grid>
+        <ion-row>
+          <ion-col auto>
+        <ion-input required formControlName="areaCode" type="text" name="areaCode"> 
+        </ion-input>
+      </ion-col>
+      <ion-col auto>
+          <ion-input required formControlName="phoneNumberPt1" type="text" name="phoneNumberPt1"> 
+        </ion-input>
+      </ion-col>
+      <ion-col auto>
+          <ion-input required formControlName="phoneNumberPt2" type="text" name="phoneNumberPt2"> 
+        </ion-input>
+      </ion-col>
+      </ion-row>
+    </ion-grid>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>School</ion-label>
+      <ion-textarea required formControlName="school" type="text" name="school"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Birthday</ion-label>
+      <ion-textarea required formControlName="birthday" type="text" name="birthday"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Bio</ion-label>
+      <ion-textarea required formControlName="bio" type="text" name="bio"></ion-textarea>
+    </ion-item>
     <ion-item>
       <ion-label stacked>Email</ion-label>
-      <ion-input formControlName="email" type="email" placeholder="Your email address"
+      <ion-input formControlName="email" type="email" 
         [class.invalid]="!signupForm.controls.email.valid && signupForm.controls.email.dirty"></ion-input>
     </ion-item>
     <ion-item class="error-message" *ngIf="!signupForm.controls.email.valid  && signupForm.controls.email.dirty">
@@ -21,7 +55,7 @@
 
     <ion-item>
       <ion-label stacked>Password</ion-label>
-      <ion-input formControlName="password" type="password"  placeholder="Your password"
+      <ion-input formControlName="password" type="password" 
         [class.invalid]="!signupForm.controls.password.valid && signupForm.controls.password.dirty"></ion-input>
     </ion-item>
     <ion-item class="error-message" *ngIf="!signupForm.controls.password.valid  && signupForm.controls.password.dirty">

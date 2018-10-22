@@ -110,6 +110,11 @@ export class EventFormPage {
 
     async submitEventForm()
     {
+      // add to the "events" collection, dates and get dates from there
+      // for existing pre-approved events, and display those dates on the list
+      // if an event is selected from that list, get date from there
+      // otherwise, get date from new form 
+
       let timeString = this.eventForm.value.date;
       let status ="approved";
       if (this.eventForm.value.event.name.toString() == "Other")

@@ -89,3 +89,11 @@ export class LoginPage {
   }
 
 }
+
+
+/*
+SOURCE: 
+
+https://javebratt.com/ionic-firebase-tutorial-auth/
+
+*/

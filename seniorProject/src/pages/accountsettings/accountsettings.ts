@@ -3,6 +3,7 @@ import { AlertController, IonicPage, NavController, NavParams, AlertCmp } from '
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { TabsPage } from '../tabs/tabs';
+import { ChangepasswordPage } from '../changepassword/changepassword';
 /**
  * Generated class for the AccountsettingsPage page.
  *
@@ -183,38 +184,7 @@ export class AccountsettingsPage {
 
   changePassword()
   {
-
-    // const prompt = this.alertCtrl.create({
-    //   message: "Enter your old passsword and your new password:",
-    //   inputs: [
-    //     {
-    //       name: 'birthday',
-    //       placeholder: 'Birthday'
-    //     }
-    //   ],
-    //   buttons: [
-    //     {
-    //       text: 'Cancel',
-    //       handler: data => {
-    //         console.log('Cancel clicked');
-    //       }
-    //     },
-    //     {
-    //       text: 'Update',
-    //       handler: data => {
-             
-    //         this.afs.doc(`users/${this.userID}`).update({birthday:data.birthday});
-    //         let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
-    //         userQuery.get().then((querySnapshot) => {           
-    //              querySnapshot.forEach((doc) => {
-    //               this.birthday = doc.data().birthday;
-    //           })
-    //         });
-    //       }
-    //     }
-    //   ]
-    // });
-   // prompt.present();
+    this.navCtrl.push(ChangepasswordPage);
   }
   
 }

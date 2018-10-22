@@ -15,6 +15,7 @@ import { NewuserPage } from '../pages/newuser/newuser';
 import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
 import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
+import { ChangepasswordPage } from '../pages/changepassword/changepassword';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
@@ -36,7 +37,7 @@ import { SelectSearchableModule } from 'ionic-select-searchable';
 import { EventInfoProvider } from '../providers/event-info/event-info';
 import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
-
+import { InputMaskModule } from 'ionic-input-mask';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { RequestModalPage } from '../pages/request-modal/request-modal';
     AboutPage,
     NewuserPage,
     TabsPage,
+    ChangepasswordPage,
     RequestModalPage
   ],
   imports: [
@@ -68,7 +70,8 @@ import { RequestModalPage } from '../pages/request-modal/request-modal';
     AngularFireStorageModule,
     HttpModule,
     HttpClientModule,
-    SelectSearchableModule
+    SelectSearchableModule,
+    InputMaskModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -88,6 +91,7 @@ import { RequestModalPage } from '../pages/request-modal/request-modal';
     AccountsettingsPage,
     NewuserPage,
     TabsPage,
+    ChangepasswordPage,
     RequestModalPage
   ],
   providers: [
