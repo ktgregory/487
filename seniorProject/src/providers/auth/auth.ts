@@ -90,6 +90,12 @@ export class AuthProvider {
     return this.afAuth.auth.currentUser.updatePassword(newPassword);
   }
 
+  changeEmail(newEmail:string)
+  {
+    return this.afAuth.auth.currentUser.updateEmail(newEmail);
+  }
+
+
 
 }
 

@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, LoadingController, NavParams } from 'ionic-angular';
-import {SettingsPage} from '../settings/settings';
-import { AlertController, Loading } from 'ionic-angular';
+import { NavController, LoadingController} from 'ionic-angular';
+import { SettingsPage } from '../settings/settings';
+import { AlertController } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
-import { LoginPage } from '../login/login';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
-import { TabsPage } from '../tabs/tabs';
 
 @Component({
   selector: 'page-profile',
@@ -71,6 +69,11 @@ export class ProfilePage implements OnInit {
   {
     return post1.daysUntil - post2.daysUntil;
   }
+  
+  ionViewWillEnter()
+  {
+    this.ngOnInit();
+  }
 
 
   goToSettings() {
@@ -110,10 +113,10 @@ export class ProfilePage implements OnInit {
     confirm.present()
   }
 
-  checkRequests() {
+  statusInfo() {
     let confirm = this.alertCtrl.create({
-      title: 'Requests about this event:',
-      message: 'None so far!',
+      title: 'Post Status:',
+      message: 'If a post is pending, you will be notified when it is approved or denied!',
       buttons: [
         {
           text: 'Okay.',
@@ -128,7 +131,6 @@ export class ProfilePage implements OnInit {
     {
       this.authData.logoutUser();
       window.location.reload();
-
     }
 
 }

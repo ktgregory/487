@@ -29,7 +29,7 @@
           {{event.dateString}}</p>
         </ion-row>
           <ion-row>
-          <button ion-button item-end (click)="approvePost(event.postID, event.event)"> Approve </button> 
+          <button ion-button item-end (click)="approvePost(event.postID, event.event, event.date)"> Approve </button> 
           <button ion-button item-end outline (click)="denyPost(event.postID)"> Deny </button> 
         </ion-row>
         </ion-item>

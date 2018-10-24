@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, App } from 'ionic-angular';
+import { NavController, App, ModalController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
@@ -20,7 +20,7 @@ export class HomePage {
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
     private eventInfo: EventInfoProvider, private reqService: RequestProvider,
-    private userService: UserinfoProvider, public app: App) {
+    private userService: UserinfoProvider, public app: App, public modalCtrl: ModalController) {
 
      }
 
@@ -28,7 +28,7 @@ export class HomePage {
    
   async ngOnInit()
   {
-    
+    this.posts=[];
     this.userID = await this.authData.getUserID(); 
     this.posts = await this.eventInfo.getPostsForTimeline();
     this.posts.sort(this.compareDates);
@@ -38,10 +38,14 @@ export class HomePage {
     if(type=="admin")
     {
       this.app.getRootNav().setRoot(AdminPage);
-      //this.navCtrl.setRoot(AdminPage);
-     // this.navCtrl.setRoot(AdminPage);
+      
     }
 
+  }
+
+  ionViewWillEnter()
+  {
+    this.ngOnInit();
   }
 
   compareDates(post1, post2)
@@ -60,8 +64,13 @@ export class HomePage {
 
   goToEventForm()
   {
-    this.navCtrl.push(EventFormPage);
+    let myModal = this.modalCtrl.create(EventFormPage);
+      myModal.onDidDismiss(() => {
+        this.ngOnInit();
+      });
+    myModal.present();
   }
+
   goToAboutPage()
   {
     this.navCtrl.push(AboutPage);
@@ -126,6 +135,8 @@ confirmRequest()
     error.present();
 
   }
+
+  
 
 }
 

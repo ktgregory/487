@@ -10,7 +10,6 @@ import { EmailValidator } from '../../validators/email';
 import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
-import { Observable} from 'rxjs/observable';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AdminPage } from '../admin/admin';
 @Component({
@@ -39,7 +38,7 @@ export class LoginPage {
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
       .then( authData => {
-
+        
         this.navigateBasedOnUserType();
 
       }, error => {
@@ -92,6 +91,7 @@ export class LoginPage {
 
 
 /*
+
 SOURCE: 
 
 https://javebratt.com/ionic-firebase-tutorial-auth/

@@ -40,12 +40,10 @@ export class AdminPage {
     
     }
 
-    async approvePost(postID:string, eventName:string)
+    async approvePost(postID:string, eventName:string, eventDate)
     { 
       
-    
-      let id = this.afs.createId();
-      this.eventService.approvePost(id, eventName).catch(error=>
+      this.eventService.approvePost(postID, eventName, eventDate).catch(error=>
         {
           this.presentErrorAlert(error, postID);
         }).then(any=>
@@ -53,7 +51,6 @@ export class AdminPage {
           this.ngOnInit();
         });
         
-
       //notify user 
 
     }
@@ -87,8 +84,7 @@ export class AdminPage {
     {
       this.afs.doc(`posts/${postID}`).delete();
       this.ngOnInit();
-      //notify user with message (ie this event is already on the list)
-
+      // notify user with message (ie this event is already on the list)
     }
 
     logout()

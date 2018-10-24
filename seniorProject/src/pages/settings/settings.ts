@@ -73,7 +73,7 @@ export class SettingsPage {
                   this.name = doc.data().name;
               })
             });
-            this.navCtrl.setRoot(TabsPage);
+            this.ngOnInit();
           }
         }
       ]
@@ -112,7 +112,7 @@ export class SettingsPage {
                   this.bio = doc.data().bio;
               })
             });
-            this.navCtrl.setRoot(TabsPage);
+            this.ngOnInit();
           }
         }
       ]

@@ -99,7 +99,6 @@ export class EventInfoProvider {
     let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",userID);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
-    
           posts.push(doc.data());
       })
     });
@@ -108,16 +107,29 @@ export class EventInfoProvider {
 
   }
 
+  async getPendingPosts(userID:string)
+  {
+    let posts =[];
+    let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",userID).where("status","==","pending");    
+    await postQuery.get().then((querySnapshot) => { 
+       querySnapshot.forEach((doc) => {
+          posts.push(doc.data());
+      })
+    });
+
+    return this.eventTimeCalculations(posts);
+  }
+
+
   async deletePost(postID:string)
   {
     await this.afs.firestore.collection("posts").doc(postID).delete();
   }
 
-  async approvePost(postID:string, eventName:string)
+  async approvePost(postID:string, eventName:string, date)
   {
     
-    
-    let eventInfo;
+    let eventInfo = null;
     let postQuery = await this.afs.firestore.collection(`events`).where("name","==",eventName);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
@@ -125,22 +137,40 @@ export class EventInfoProvider {
       })
     });
 
-    if(eventInfo.name == eventName)
+    if (eventInfo!=null)
     {
-      return Promise.reject('An event by this name already exists!');
-    }
+      if((eventInfo.name == eventName) && (eventInfo.date.seconds == date.seconds))
+      {
+        return Promise.reject('An event by this name on this date already exists!');
+      }
+    }    
     else
     {
-      this.afs.collection(`events`).doc(postID).set({
+      let id = this.afs.createId();
+      this.afs.collection(`events`).doc(id).set({
         name: eventName,
-        status: "approved"
+        status: "approved",
+        date: date
        });
        this.afs.doc(`posts/${postID}`).update({
         status:"approved"
         });
-
+      
     }
 
+  }
+
+  async checkIfUserHasPosted(uid:string, eventName:string)
+  {
+    let eventInfo = null;
+    let postQuery = await this.afs.firestore.collection(`posts`).where("event","==",eventName).where("uid","==",uid);    
+    await postQuery.get().then((querySnapshot) => { 
+       querySnapshot.forEach((doc) => {
+          eventInfo = doc.data();
+      })
+    });
+    if(eventInfo==null) return true;
+    else return Promise.reject("You have already posted about this event!");
   }
 
 }

@@ -8,21 +8,22 @@
                 <select-searchable
                 item-content
                 [items]="events"
-                itemTextField="name"
+                itemTextField="name2"
                 [canSearch]="true"
-                formControlName="event">
+                formControlName="event"
+                (onChange)="portChange($event)">
               </select-searchable>
-        
           </ion-item>
-    
-        <ion-item>
+          <ng-container *ngIf="showPart2">
+          <ion-item>
+            <ion-label>Event Name</ion-label>
+            <ion-textarea formControlName="name" type="text" name="name"></ion-textarea>
+          </ion-item>
+          <ion-item>
             <ion-label>Date</ion-label> <!-- add drop down -->
-            <ion-datetime formControlName="date" displayFormat="MMM DD YYYY" name="myDate"></ion-datetime>
-        </ion-item>
-        <ion-item>
-              <ion-label>Time</ion-label> <!-- add drop down -->
-              <ion-datetime formControlName="time" displayFormat="HH:mm" name="myDate"></ion-datetime>
-        </ion-item>
+            <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" [min]="minDate" max="2020" name="myDate"></ion-datetime>
+          </ion-item>
+        </ng-container>
         <ion-item>
           <ion-label>Description</ion-label>
           <ion-textarea formControlName="description" type="text" name="description"></ion-textarea>

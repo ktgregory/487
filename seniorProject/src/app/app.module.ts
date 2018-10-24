@@ -16,6 +16,7 @@ import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
 import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
 import { ChangepasswordPage } from '../pages/changepassword/changepassword';
+import { ChangeemailPage } from '../pages/changeemail/changeemail';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
@@ -58,6 +59,7 @@ import { InputMaskModule } from 'ionic-input-mask';
     NewuserPage,
     TabsPage,
     ChangepasswordPage,
+    ChangeemailPage,
     RequestModalPage
   ],
   imports: [
@@ -92,6 +94,7 @@ import { InputMaskModule } from 'ionic-input-mask';
     NewuserPage,
     TabsPage,
     ChangepasswordPage,
+    ChangeemailPage,
     RequestModalPage
   ],
   providers: [

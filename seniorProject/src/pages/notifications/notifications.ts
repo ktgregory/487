@@ -4,6 +4,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { RequestProvider } from '../../providers/request/request';
 import { RequestModalPage } from '../../pages/request-modal/request-modal';
+import { EventInfoProvider } from '../../providers/event-info/event-info';
 
 @Component({
   selector: 'page-notifications',
@@ -14,13 +15,15 @@ export class NotificationsPage {
   userID;
   receivedRequests=[];
   sentRequests=[];
+  pendingPosts=[];
   noSent = false;
   noReceived = false;
+  noPendingPosts = false;
 
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private afs: AngularFirestore, private reqService: RequestProvider,
     public alertCtrl: AlertController, public modalCtrl: ModalController,
-    public NgZone:NgZone) {
+    public NgZone:NgZone, private eventInfo: EventInfoProvider) {
 
   }
 
@@ -30,8 +33,10 @@ export class NotificationsPage {
       this.userID = await this.authData.getUserID(); 
       this.receivedRequests = await this.reqService.getReceivedRequests(this.userID);
       this.sentRequests = await this.reqService.getSentRequests(this.userID);
+      this.pendingPosts = await this.eventInfo.getPendingPosts(this.userID);
       if(this.sentRequests.length==0) this.noSent=true;
       if(this.receivedRequests.length==0) this.noReceived=true;
+      if(this.pendingPosts.length==0) this.noPendingPosts=true;
   }
 
   respondToRequest(requestID:string) { //open modal 

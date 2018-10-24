@@ -51,7 +51,8 @@ export class SignUpPage {
     } else {
       this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
       .then(() => {
-        let id = this.afs.createId();
+        //let id = this.afs.createId();
+        let id = this.authData.getUserID();
         this.afs.doc(`users/${id}`).set({
           uid: id,
           name: this.signupForm.value.name,

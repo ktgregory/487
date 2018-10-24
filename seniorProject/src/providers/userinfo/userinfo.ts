@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore} from 'angularfire2/firestore';
-import { AngularFireDatabase, AngularFireAction} from 'angularfire2/database';
+import { AngularFireDatabase} from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import 'rxjs/add/observable/of';
 import { AuthProvider } from '../auth/auth';
-import { Observable } from 'rxjs';
 
 
 @Injectable()
@@ -49,7 +48,7 @@ export class UserinfoProvider {
 }
 
 
-// GET ALL OF A COLLECTION !!!!!!!!
+// GET ALL OF A COLLECTION 
 // let userDoc = this.afs.firestore.collection(`users`);
 //       userDoc.get().then((querySnapshot) => { 
 //         querySnapshot.forEach((doc) => {

@@ -16,9 +16,14 @@
 <ion-content padding>
     <ion-list>   
         <ion-item>
-          <h3>Email</h3>  <button clear item-end ion-button icon-only (click)="changeEmailAddress()">
+          <h3>Email</h3>  <button clear item-end ion-button icon-only (click)="changeEmail()">
             <ion-icon name="create"></ion-icon> </button>
           <p>{{email}}</p>
+    </ion-item>
+    <ion-item>
+      <h3>Phone Number</h3> <button clear item-end ion-button icon-only (click)="changePhoneNumber()">
+          <ion-icon name="create"></ion-icon> </button>
+        <p>{{phonenumber}}</p>
     </ion-item>
     <ion-item>
       <h3>Birthday</h3> <button clear item-end ion-button icon-only (click)="changeBirthday()">

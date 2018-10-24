@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Requests
+      Notifications
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -31,6 +31,18 @@
         </ion-item>
       </ion-card>
       <ion-card *ngIf="noSent">
+          <p>No sent requests!</p>
+          
+        </ion-card>
+  </div>
+  <div>
+    <ion-label>Pending Posts</ion-label>
+      <ion-card *ngFor="let post of pendingPosts">
+        <ion-item><p>{{post.event}} ~ {{post.dateString}} </p>
+          
+        </ion-item>
+      </ion-card>
+      <ion-card *ngIf="noPendingPosts">
           <p>No sent requests!</p>
           
         </ion-card>
