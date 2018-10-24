@@ -31,9 +31,7 @@ export class SignUpPage {
       school: ['', Validators.required],
       birthday:['', Validators.required],
       bio:['', Validators.required],
-      phoneNumberPt1:['', Validators.required],
-      phoneNumberPt2:['', Validators.required],
-      areaCode:['', Validators.required]
+      phoneNumber:['', Validators.required]
     });
   }
 

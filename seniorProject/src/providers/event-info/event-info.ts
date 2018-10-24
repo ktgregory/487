@@ -126,6 +126,11 @@ export class EventInfoProvider {
     await this.afs.firestore.collection("posts").doc(postID).delete();
   }
 
+  async deleteEvent(eventID:string)
+  {
+    await this.afs.firestore.collection("events").doc(eventID).delete();
+  }
+
   async approvePost(postID:string, eventName:string, date)
   {
     
@@ -172,5 +177,18 @@ export class EventInfoProvider {
     if(eventInfo==null) return true;
     else return Promise.reject("You have already posted about this event!");
   }
+
+  async getAllEvents()
+  {
+    let events=[];
+    let postQuery = await this.afs.firestore.collection(`events`);
+    await postQuery.get().then((querySnapshot) => { 
+        querySnapshot.forEach((doc) => {
+          events.push(doc.data());
+      })
+    });
+    return events;
+  }
+  
 
 }

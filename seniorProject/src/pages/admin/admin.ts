@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, ModalController } from 'ionic-angular';
 import {TabsPage} from '../tabs/tabs';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AccountsettingsPage} from '../accountsettings/accountsettings';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { ModifyeventlistPage } from '../modifyeventlist/modifyeventlist';
+
 @Component({
   selector: 'page-admin',
   templateUrl: 'admin.html'
@@ -13,7 +15,7 @@ export class AdminPage {
 
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private eventService: EventInfoProvider, private afs: AngularFirestore,
-    public alertCtrl: AlertController) { }
+    public alertCtrl: AlertController, public modalCtrl: ModalController) { }
 
     noPending = false;
     pendingEvents = [];
@@ -87,11 +89,19 @@ export class AdminPage {
       // notify user with message (ie this event is already on the list)
     }
 
+    async modifyEvents()
+    {
+      let myModal = this.modalCtrl.create(ModifyeventlistPage);
+        myModal.onDidDismiss(() => {
+          this.ngOnInit();
+        });
+        myModal.present();
+    }
+
     logout()
     {
       this.authData.logoutUser();
       window.location.reload();
-
     }
   }
 

@@ -7,3 +7,10 @@ What I plan to do next is create a new form for when a user selects the “Other
 Once the event form/posting process is modified, the ability to upload photos is added, and push notifications are implemented, the requirements of the MVP will be met. 
 
 
+__________________________________________________________
+
+Oct. 24th:  
+
+Since last week, I have done the following things: added additional inputs to the post form page if the “Other” event option is selected to allow a user to input the name and date of the event; added a way for users to change their email and password through the account settings page; corrected an issue with the administrative user approval process to check if an event of the same date and name is already included in the event list; reworked the signup form for creating a new account; added a section to the notification center that shows a user’s posts that are pending admin approval; added a form for admin users to create new events for the event list; and added (on the user’s profile page) a field to each of the user’s posts that shows the status of the post (pending, denied, approved). 
+
+Then, I will implement push notifications and a way for users to upload photos for their posts or profile. Other than these features, the MVP requirements have been met. 

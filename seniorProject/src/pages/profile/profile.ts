@@ -99,7 +99,7 @@ export class ProfilePage implements OnInit {
           text: 'Yes.',
           handler: () => {
             this.eventInfo.deletePost(postID);
-            this.navCtrl.setRoot(ProfilePage);
+            this.ngOnInit();
           }
         },
         {

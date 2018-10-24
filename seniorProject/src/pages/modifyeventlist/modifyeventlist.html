@@ -1,0 +1,30 @@
+<ion-header>
+    <ion-navbar>
+        <ion-buttons start>
+            <button ion-button icon-only (click)="createNewEvent()">
+              <ion-icon name="create"></ion-icon>
+            </button>
+          </ion-buttons>
+      <ion-title>
+        Event List
+      </ion-title>
+      <ion-buttons end>
+        <button ion-button icon-only (click)="dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
+
+
+<ion-content padding>
+    <div>
+          <ion-card *ngFor="let event of events">
+            <ion-item *ngIf="event.name!='Other'"><p>{{event.name}} ~ {{event.date}} </p>
+      
+            <button ion-button clear item-end icon-only (click)="confirmDeleteEvent(event.eventID)"><ion-icon name="trash"></ion-icon></button>
+    
+            </ion-item>
+          </ion-card>
+      </div>
+</ion-content>

@@ -34,17 +34,23 @@ export class HomePage {
     this.posts.sort(this.compareDates);
        //^^^ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
     
+    // let type = await this.userService.getUserType(this.userID);
+    // if(type=="admin")
+    // {
+    //   this.app.getRootNav().setRoot(AdminPage);
+      
+    // }
+
+  }
+
+  async ionViewWillEnter()
+  {
     let type = await this.userService.getUserType(this.userID);
     if(type=="admin")
     {
       this.app.getRootNav().setRoot(AdminPage);
       
     }
-
-  }
-
-  ionViewWillEnter()
-  {
     this.ngOnInit();
   }
 
