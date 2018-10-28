@@ -39,6 +39,11 @@ export class NotificationsPage {
       if(this.pendingPosts.length==0) this.noPendingPosts=true;
   }
 
+  async ionViewWillEnter()
+  {
+    this.ngOnInit();
+  }
+
   respondToRequest(requestID:string) { //open modal 
   
       let myModal = this.modalCtrl.create(RequestModalPage, { 
