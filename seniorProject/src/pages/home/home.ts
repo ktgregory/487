@@ -9,12 +9,15 @@ import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { RequestProvider } from '../../providers/request/request';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AdminPage } from '../admin/admin';
+import { ViewChild } from '@angular/core';
+import { Slides } from 'ionic-angular';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
+  @ViewChild(Slides) slides: Slides;
   userID;
   posts=[];
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
@@ -24,7 +27,9 @@ export class HomePage {
 
      }
 
-
+    goToSlide() {
+      this.slides.slideTo(2, 500);
+    }
    
   async ngOnInit()
   {
