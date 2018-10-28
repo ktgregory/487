@@ -63,7 +63,9 @@ export class RequestProvider {
           requestID:id,
           contact:"",
           receiverName: postInfo.username, //wrong
-          senderStatus: "uncleared"
+          senderStatus: "uncleared",
+          date: new Date(postInfo.date),
+          expired:false
           });
       }
     }
@@ -93,7 +95,7 @@ async clearRequestReceiver(requestID:string)
 }
 
 
-  async getReceivedRequests(userID:string)
+async getReceivedRequests(userID:string)
   {
     let requests=[];
     let requestQuery = await this.afs.firestore.collection(`requests`).where("receiverID","==",userID)
@@ -102,8 +104,36 @@ async clearRequestReceiver(requestID:string)
        querySnapshot.forEach((doc) => {
           requests.push(doc.data());
       })
-   });
-   return requests;
+    });
+    requests.forEach(request=>
+    {
+      request = this.checkExpiredRequests(request);
+    });
+    return requests;
+  }
+
+ checkExpiredRequests(request)
+  {
+    if(request.length!=0)
+    {
+      let timestamp = new Date(0);
+      timestamp.setUTCSeconds(request.date.seconds);
+        let timestamp2 = new Date();
+        let oneDay = 24*60*60*1000;
+        let daysUntil = Math.round(((timestamp.getTime() - timestamp2.getTime())/(oneDay)));
+        if(daysUntil<0)
+        {
+          request.expired = true;
+        }
+        else
+        {
+          request.expired = false;
+        }
+
+    }
+    
+    return request;
+
   }
 
   async getSentRequests(userID:string)
@@ -116,7 +146,11 @@ async clearRequestReceiver(requestID:string)
           requests.push(doc.data());
       })
     });
-  
+    requests.forEach(request=>
+      {
+        request = this.checkExpiredRequests(request);
+      });
+      
     return requests;
 
     }
