@@ -15,16 +15,16 @@
     </ion-item>
     <ion-item>
         <ion-label stacked>Phone Number</ion-label>
-        <ion-input required formControlName="phoneNumber" type="tel" name="phoneNumber"> 
+        <ion-input required formControlName="phoneNumber" type="tel" name="phoneNumber" 
+        [class.invalid]="!signupForm.controls.phoneNumber.valid && signupForm.controls.phoneNumber.dirty"> 
         </ion-input>
+    </ion-item>
+    <ion-item class="error-message" *ngIf="!signupForm.controls.phoneNumber.valid && signupForm.controls.phoneNumber.dirty">
+      <p>Please enter a valid 10-digit phone number.</p>
     </ion-item>
     <ion-item>
       <ion-label stacked>School</ion-label>
       <ion-textarea required formControlName="school" type="text" name="school"></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Birthday</ion-label>
-      <ion-textarea required formControlName="birthday" type="text" name="birthday"></ion-textarea>
     </ion-item>
     <ion-item>
       <ion-label stacked>Bio</ion-label>

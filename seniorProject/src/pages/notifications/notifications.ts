@@ -30,6 +30,9 @@ export class NotificationsPage {
    
   async ngOnInit()
   {
+      this.noSent = false;
+      this.noReceived = false;
+      this.noPendingPosts = false;
       this.userID = await this.authData.getUserID(); 
       this.receivedRequests = await this.reqService.getReceivedRequests(this.userID);
       this.sentRequests = await this.reqService.getSentRequests(this.userID);
@@ -37,6 +40,7 @@ export class NotificationsPage {
       if(this.sentRequests.length==0) this.noSent=true;
       if(this.receivedRequests.length==0) this.noReceived=true;
       if(this.pendingPosts.length==0) this.noPendingPosts=true;
+      await this.reqService.deleteClearedRequests();
   }
 
   async ionViewWillEnter()
@@ -146,9 +150,29 @@ export class NotificationsPage {
       }
     ]
   });
+  
 
   pendingMessage.present()
 
   }
 
+
+  async requestHasExpiredReceiver(requestID)
+  {
+    let pendingMessage = this.alertCtrl.create({
+    title: 'Request has expired!',
+    message: "This event is no longer available.",
+    buttons: [
+      {
+        text: 'Clear this request.',
+        handler: () => {
+          this.reqService.clearRequestReceiver(requestID);
+          this.ngOnInit();
+        }
+      }
+    ]
+  });
+
+  pendingMessage.present()
+  }
 }

@@ -16,7 +16,7 @@
     <ion-card *ngFor="let request of receivedRequests">
       <ion-item><p>{{request.senderName}} ~ {{request.eventName}}</p>
       <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID)"> respond </button> 
-      <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)"> expired </button> 
+      <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpiredReceiver(request.requestID)"> expired </button> 
       </ion-item>
     </ion-card>
   </div>
@@ -46,10 +46,6 @@
       </ion-card>
       <ion-card *ngIf="noPendingPosts">
           <p>No pending posts!</p>
-<<<<<<< HEAD
-          
-=======
->>>>>>> edit
         </ion-card>
   </div>
 </ion-content>

@@ -44,14 +44,4 @@ export class UserinfoProvider {
 
   }
 
-
 }
-
-
-// GET ALL OF A COLLECTION 
-// let userDoc = this.afs.firestore.collection(`users`);
-//       userDoc.get().then((querySnapshot) => { 
-//         querySnapshot.forEach((doc) => {
-//               console.log(doc.id, "=>", doc.data());  
-//         })
-//       });

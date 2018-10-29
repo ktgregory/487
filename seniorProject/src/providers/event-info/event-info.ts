@@ -1,14 +1,5 @@
-
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
-/*
-  Generated class for the EventInfoProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
-
-
 
 @Injectable()
 export class EventInfoProvider {
@@ -187,6 +178,15 @@ export class EventInfoProvider {
           events.push(doc.data());
       })
     });
+    events.forEach(event=>
+      {
+        let timestamp = new Date(0);
+        timestamp.setUTCSeconds(event.date.seconds);
+        let day = timestamp.getUTCDate();
+        let month = timestamp.getUTCMonth();
+        let year = timestamp.getUTCFullYear();
+        event.dateString = ((month+1) + "/" + day + "/" + year);
+      });
     return events;
   }
   

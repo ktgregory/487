@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
@@ -51,7 +50,13 @@ export class RequestProvider {
         return Promise.reject('You have already sent a request about this event!');
       }
       else
-      {
+          {
+        
+        let timestamp = new Date(0);
+        timestamp.setUTCSeconds(postInfo.date.seconds);
+        let day = timestamp.getUTCDate();
+        let month = timestamp.getUTCMonth();
+        let year = timestamp.getUTCFullYear();
         let id = this.afs.createId();
         this.afs.collection(`requests`).doc(id).set({
           senderID: userID,
@@ -64,8 +69,7 @@ export class RequestProvider {
           contact:"",
           receiverName: postInfo.username, //wrong
           senderStatus: "uncleared",
-          date: new Date(postInfo.date),
-          expired:false
+          date: new Date(year, month, day, 0,0,0, 0)
           });
       }
     }
@@ -94,6 +98,18 @@ async clearRequestReceiver(requestID:string)
     });
 }
 
+async deleteClearedRequests()
+{
+
+  let requests=[];
+  let requestQuery = await this.afs.firestore.collection(`requests`);   
+    await requestQuery.get().then((querySnapshot) => { 
+       querySnapshot.forEach((doc) => {
+          requests.push(doc.data());
+      })
+    });
+    await this.checkClearedRequests(requests);
+}
 
 async getReceivedRequests(userID:string)
   {
@@ -105,17 +121,37 @@ async getReceivedRequests(userID:string)
           requests.push(doc.data());
       })
     });
-    requests.forEach(request=>
+    requests.forEach(async request=>
     {
-      request = this.checkExpiredRequests(request);
+      request = await this.checkExpiredRequests(request);
     });
+
     return requests;
+  }
+
+  async checkClearedRequests(requests)
+  {
+    requests.forEach(async request=>
+    {
+      console.log(request);
+      if((request.senderStatus=="cleared") && (request.status=="cleared"))
+      {
+       await this.afs.collection('requests').doc(request.requestID).delete(); 
+      }
+
+    });
+    let requests2 = requests.filter(function(value, index, arr)
+    {
+        return (!((value.senderStatus=="cleared")&&(value.status=="cleared")));
+    });
+    return requests2;
   }
 
  checkExpiredRequests(request)
   {
     if(request.length!=0)
     {
+      request.expired = false;
       let timestamp = new Date(0);
       timestamp.setUTCSeconds(request.date.seconds);
         let timestamp2 = new Date();
@@ -146,12 +182,12 @@ async getReceivedRequests(userID:string)
           requests.push(doc.data());
       })
     });
-    requests.forEach(request=>
+    requests.forEach(async request=>
       {
-        request = this.checkExpiredRequests(request);
+        request =  await this.checkExpiredRequests(request);
       });
       
-    return requests;
+      return requests;
 
     }
 
@@ -167,5 +203,8 @@ async getReceivedRequests(userID:string)
 
       return requestInfo;
     }
+
+
+
 
 }

@@ -5,6 +5,7 @@ import { AngularFirestore} from 'angularfire2/firestore';
 import { TabsPage } from '../tabs/tabs';
 import { ChangepasswordPage } from '../changepassword/changepassword';
 import { ChangeemailPage } from '../changeemail/changeemail';
+import { FormControl } from '@angular/forms';
 /**
  * Generated class for the AccountsettingsPage page.
  *
@@ -59,44 +60,6 @@ export class AccountsettingsPage {
   }
 
 
-  changeBirthday()
-  {
-
-    // const prompt = this.alertCtrl.create({
-    //   message: "Enter your birthday:",
-    //   inputs: [
-    //     {
-    //       name: 'birthday',
-    //       placeholder: 'Birthday'
-    //     }
-    //   ],
-    //   buttons: [
-    //     {
-    //       text: 'Cancel',
-    //       handler: data => {
-    //         console.log('Cancel clicked');
-    //       }
-    //     },
-    //     {
-    //       text: 'Update',
-    //       handler: data => {
-             
-    //         this.afs.doc(`users/${this.userID}`).update({birthday:data.birthday});
-    //         let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
-    //         userQuery.get().then((querySnapshot) => {           
-    //              querySnapshot.forEach((doc) => {
-    //               this.birthday = doc.data().birthday;
-    //           })
-    //         });
-    //         this.navCtrl.setRoot(TabsPage);
-    //       }
-    //     }
-    //   ]
-    // });
-   // prompt.present();
-
-  }
-
   changeSchool()
   {
 
@@ -118,15 +81,23 @@ export class AccountsettingsPage {
         {
           text: 'Update',
           handler: data => {
-             
-            this.afs.doc(`users/${this.userID}`).update({school:data.school});
-            let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
-            userQuery.get().then((querySnapshot) => {           
-                 querySnapshot.forEach((doc) => {
-                  this.school = doc.data().school;
-              })
-            });
-            this.ngOnInit();
+             if(data.school.length!=0)
+             {
+               this.afs.doc(`users/${this.userID}`).update({school:data.school});
+               let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+                userQuery.get().then((querySnapshot) => {           
+                      querySnapshot.forEach((doc) => {
+                      this.school = doc.data().school;
+                  })
+                });
+             this.ngOnInit();
+
+             }
+             else
+             {
+               this.presentSchoolError();
+             }
+            
           }
           
         }
@@ -157,9 +128,21 @@ export class AccountsettingsPage {
         {
           text: 'Update',
           handler: data => {
-             
-            this.afs.doc(`users/${this.userID}`).update({phoneNumber:data.phone});
-            this.ngOnInit();
+            if ((this.phoneValidator(data.phone)) && (data.phone.length==10) )
+            {
+              this.afs.doc(`users/${this.userID}`).update({phoneNumber:data.phone}).then(any=>
+                {
+                  this.presentSuccessPhoneChange();
+                  this.ngOnInit();
+                });
+              
+            }
+            else
+            {
+             this.presentPhoneError();
+            
+            }
+           
           }
           
         }
@@ -169,6 +152,14 @@ export class AccountsettingsPage {
 
   }
 
+  phoneValidator(phonenumber)
+  {
+      const re = /^-?(0|[1-9]\d*)$/.test(
+        phonenumber
+      );
+      console.log(re);
+      return re;
+  }
   changeEmail()
   {
     let myModal = this.modalCtrl.create(ChangeemailPage, {});
@@ -182,6 +173,52 @@ export class AccountsettingsPage {
   changePassword()
   {
     this.navCtrl.push(ChangepasswordPage);
+  }
+
+  presentSchoolError()
+  {
+    const prompt = this.alertCtrl.create({
+      title: "Error",
+      message: "You must enter a valid name.",
+      buttons: [
+        {
+          text: 'Ok.'
+        }
+      ]
+    });
+    prompt.present();
+
+  }
+
+  presentPhoneError()
+  {
+    const prompt = this.alertCtrl.create({
+      title: "Error",
+      message: "You must enter a valid phone number.",
+      buttons: [
+        {
+          text: 'Ok.'
+        }
+      ]
+    });
+    prompt.present();
+
+  }
+
+  presentSuccessPhoneChange()
+  {
+
+    const prompt = this.alertCtrl.create({
+      title: "Success",
+      message: "Your phone number has been changed!",
+      buttons: [
+        {
+          text: 'Ok.'
+        }
+      ]
+    });
+    prompt.present();
+
   }
   
 }

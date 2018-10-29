@@ -29,13 +29,14 @@ export class SignUpPage {
       password: ['', Validators.compose([Validators.minLength(6), Validators.required])],
       name: ['', Validators.required],
       school: ['', Validators.required],
-      birthday:['', Validators.required],
       bio:['', Validators.required],
-      phoneNumber:['', Validators.required]
+      phoneNumber:['', Validators.compose(
+        [Validators.minLength(10), 
+          Validators.required,
+          Validators.pattern(/^-?(0|[1-9]\d*)?$/)
+      ])]
     });
   }
-
-
 
   /**
    * If the form is valid it will call the AuthData service to sign the user up password displaying a loading
@@ -49,13 +50,11 @@ export class SignUpPage {
     } else {
       this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
       .then(() => {
-        //let id = this.afs.createId();
         let id = this.authData.getUserID();
         this.afs.doc(`users/${id}`).set({
           uid: id,
           name: this.signupForm.value.name,
           bio: this.signupForm.value.bio,
-          birthday: this.signupForm.value.birthday,
           school: this.signupForm.value.school,
           email: this.signupForm.value.email,
           phoneNumber: this.signupForm.value.phoneNumber,
@@ -87,3 +86,12 @@ export class SignUpPage {
     }
   }
 }
+
+
+/*
+
+SOURCE: 
+
+  Form validators: https://angular-templates.io/tutorials/about/angular-forms-and-validations 
+
+*/
