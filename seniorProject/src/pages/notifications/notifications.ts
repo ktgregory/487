@@ -101,6 +101,7 @@ export class NotificationsPage {
   
   }
 
+
   async viewAccepted(requestID:string)
   {
     let request2= await this.reqService.getRequestInfo(requestID);
@@ -126,6 +127,26 @@ export class NotificationsPage {
       }  
     ]
   });
+  pendingMessage.present()
+
+  }
+
+  async requestHasExpired(requestID)
+  {
+    let pendingMessage = this.alertCtrl.create({
+    title: 'Request has expired!',
+    message: "This event is no longer available.",
+    buttons: [
+      {
+        text: 'Clear this request.',
+        handler: () => {
+          this.reqService.clearRequestSender(requestID);
+          this.ngOnInit();
+        }
+      }
+    ]
+  });
+
   pendingMessage.present()
 
   }
