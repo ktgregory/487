@@ -43,18 +43,18 @@ export class AdminPage {
     }
 
     async approvePost(postID:string, eventName:string, eventDate)
-    { 
-      
-      this.eventService.approvePost(postID, eventName, eventDate).catch(error=>
+    {   
+      this.eventService.approvePost(postID, eventName, eventDate)
+      .catch(error=>
         {
           this.presentErrorAlert(error, postID);
-        }).then(any=>
+        })
+        .then(any=>
         {
           this.ngOnInit();
         });
         
       //notify user 
-
     }
 
   presentErrorAlert(errorMessage:string,postID:string)

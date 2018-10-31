@@ -54,9 +54,8 @@ export class HomePage {
     if(type=="admin")
     {
       this.app.getRootNav().setRoot(AdminPage);
-      
     }
-    this.ngOnInit();
+  // check for changes (ie if an event was deleted)
   }
 
   compareDates(post1, post2)
@@ -147,7 +146,7 @@ confirmRequest()
 
   }
 
-  
+
 
 }
 

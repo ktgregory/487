@@ -15,7 +15,7 @@
 </ion-header>
 
 <ion-content padding>
- <ion-slides>
+ <ion-slides slider="data.slider">
     <ion-slide *ngFor = "let post of posts">
     <ion-card *ngIf="post.notExpired">
        
@@ -27,9 +27,11 @@
           <p>{{post.event}}</p>
           <p>{{post.dateString}}</p>
         </ion-item>
-      
+        <div>
         <img src={{post.image}}>
-      
+       <ion-item><p>{{post.description}}</p>
+        </ion-item>
+      </div>
         <ion-row>
           <ion-col>
             <button ion-button color="primary" clear small icon-start (click)="doConfirm(

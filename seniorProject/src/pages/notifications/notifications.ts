@@ -45,7 +45,22 @@ export class NotificationsPage {
 
   async ionViewWillEnter()
   {
-    this.ngOnInit();
+
+    // this.noSent = false;
+    // this.noReceived = false;
+    // this.noPendingPosts = false;
+    this.userID = await this.authData.getUserID(); 
+    this.receivedRequests = await this.reqService.getReceivedRequests(this.userID);
+    this.sentRequests = await this.reqService.getSentRequests(this.userID);
+    this.pendingPosts = await this.eventInfo.getPendingPosts(this.userID);
+    if(this.sentRequests.length==0) this.noSent=true;
+    else this.noSent=false;
+    if(this.receivedRequests.length==0) this.noReceived=true;
+    else this.noReceived=false;
+    if(this.pendingPosts.length==0) this.noPendingPosts=true;
+    else this.noPendingPosts=false;
+    await this.reqService.deleteClearedRequests();
+   
   }
 
   respondToRequest(requestID:string) { //open modal 

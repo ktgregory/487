@@ -31,9 +31,7 @@ export class ChangepasswordPage {
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ChangepasswordPage');
-  }
+
 
   async changePassword()
   {

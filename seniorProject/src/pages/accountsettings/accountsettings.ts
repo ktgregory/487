@@ -26,7 +26,6 @@ export class AccountsettingsPage {
   school;
   birthday;
   phonenumber;
-
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private authData: AuthProvider, private afs: AngularFirestore,
     public alertCtrl: AlertController, public modalCtrl: ModalController) {
@@ -54,7 +53,11 @@ export class AccountsettingsPage {
   }
 
 
-
+  ionViewWillLeave()
+  {
+      this.navCtrl.popToRoot();
+  }
+  
   ionViewDidLoad() {
     console.log('ionViewDidLoad AccountsettingsPage');
   }
@@ -172,7 +175,11 @@ export class AccountsettingsPage {
 
   changePassword()
   {
-    this.navCtrl.push(ChangepasswordPage);
+    let myModal = this.modalCtrl.create(ChangepasswordPage, {});
+      myModal.onDidDismiss(() => {
+        this.ngOnInit();
+      });
+    myModal.present();
   }
 
   presentSchoolError()

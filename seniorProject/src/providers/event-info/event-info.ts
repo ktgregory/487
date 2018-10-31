@@ -124,15 +124,13 @@ export class EventInfoProvider {
 
   async approvePost(postID:string, eventName:string, date)
   {
-    
     let eventInfo = null;
-    let postQuery = await this.afs.firestore.collection(`events`).where("name","==",eventName);    
-    await postQuery.get().then((querySnapshot) => { 
+    let eventQuery = await this.afs.firestore.collection(`events`).where("name","==",eventName);    
+    await eventQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
           eventInfo = doc.data();
       })
     });
-
     if (eventInfo!=null)
     {
       if((eventInfo.name == eventName) && (eventInfo.date.seconds == date.seconds))
@@ -151,9 +149,7 @@ export class EventInfoProvider {
        this.afs.doc(`posts/${postID}`).update({
         status:"approved"
         });
-      
     }
-
   }
 
   async checkIfUserHasPosted(uid:string, eventName:string)

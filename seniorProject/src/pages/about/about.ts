@@ -22,4 +22,10 @@ export class AboutPage {
     console.log('ionViewDidLoad AboutPage');
   }
 
+
+  ionViewWillLeave()
+  {
+    this.navCtrl.popToRoot();
+  }
+
 }

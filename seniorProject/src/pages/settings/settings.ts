@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
-import {TabsPage} from '../tabs/tabs';
 import {UploadPage} from '../uploadprofilepic/uploadprofilepic';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
+import {TabsPage} from '../tabs/tabs';
 @Component({
   selector: 'page-settings',
   templateUrl: 'settings.html'
@@ -32,6 +32,13 @@ export class SettingsPage {
       })
    });
   }
+
+
+  ionViewWillLeave()
+  {
+    this.navCtrl.popToRoot();
+  }
+
     goToTabs() {
       //push another page onto the history stack
       //causing the nav controller to animate the new page in
