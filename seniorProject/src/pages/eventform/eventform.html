@@ -16,13 +16,19 @@
               </select-searchable>
          
           </ion-item>
+          <ng-container *ngIf="showEventInfo">
+                <ion-item>{{name}}</ion-item>
+
+                  <ion-item>{{date}}</ion-item>
+ 
+          </ng-container>
           <ng-container *ngIf="showPart2">
           <ion-item>
             <ion-label>Event Name</ion-label>
             <ion-textarea formControlName="name" type="text" name="name"></ion-textarea>
           </ion-item>
           <ion-item>
-            <ion-label>Date</ion-label> <!-- add drop down -->
+            <ion-label>Date</ion-label>
             <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" [min]="minDate" max="2020" name="myDate"></ion-datetime>
           </ion-item>
         </ng-container>
