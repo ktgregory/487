@@ -27,9 +27,6 @@ export class HomePage {
 
      }
 
-    goToSlide() {
-      this.slides.slideTo(2, 500);
-    }
    
   async ngOnInit()
   {
@@ -37,6 +34,7 @@ export class HomePage {
     this.userID = await this.authData.getUserID(); 
     this.posts = await this.eventInfo.getPostsForTimeline();
     this.posts.sort(this.compareDates);
+    console.log(this.posts);
        //^^^ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
     
     // let type = await this.userService.getUserType(this.userID);

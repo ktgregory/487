@@ -16,8 +16,9 @@
 
 <ion-content padding>
  <ion-slides slider="data.slider">
-    <ion-slide *ngFor = "let post of posts">
-    <ion-card *ngIf="post.notExpired">
+   <ng-container *ngFor = "let post of posts">
+    <ion-slide *ngIf="post.notExpired">
+    <ion-card >
        
         <ion-item>
           <ion-avatar item-start>
@@ -49,5 +50,6 @@
    
       </ion-card>
     </ion-slide>
+  </ng-container>
   </ion-slides>
 </ion-content>

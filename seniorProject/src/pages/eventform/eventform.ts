@@ -21,8 +21,11 @@ export class EventFormPage {
   userID;
   username;
   minDate;
+  name="";
+  date="";
   public eventForm: FormGroup;
   showPart2=false;
+  showEventInfo=false;
 
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
       public formBuilder: FormBuilder, private authData: AuthProvider, 
@@ -74,7 +77,7 @@ export class EventFormPage {
             let timestamp2 = new Date();
             let oneDay = 24*60*60*1000;
             let daysUntil = Math.round(((timestamp.getTime() - timestamp2.getTime())/(oneDay)));
-            if (daysUntil<0)
+            if (daysUntil<-1)
             {
               this.afs.firestore.collection("events").doc(element.eventID).delete();  
             }
@@ -137,10 +140,18 @@ export class EventFormPage {
         if(event.value.name=="Other")
         {
           this.showPart2=true;
+          this.showEventInfo=false;
         }
         else
         {
+          let timestamp = new Date(0);
+          timestamp.setUTCSeconds(event.value.date.seconds);
+          let day = timestamp.getUTCDate();
+          let month = timestamp.getUTCMonth();
+          this.name = event.value.name;
+          this.date = ((month+1) + "/" + day);
           this.showPart2=false;
+          this.showEventInfo=true;
         }
     }
   

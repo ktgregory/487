@@ -17,7 +17,7 @@ export class EventInfoProvider {
           posts.push(doc.data());
       })
    });
-   
+   console.log(posts);
    return this.eventTimeCalculations(posts);
 
   }
@@ -51,7 +51,7 @@ export class EventInfoProvider {
     element.daysUntil = daysUntil;
     
     let weeks = Math.round((daysUntil/7));
-    if(daysUntil<0)
+    if(daysUntil<-1)
     {
       element.notExpired = false;
       element.timeUntil = "expired";
