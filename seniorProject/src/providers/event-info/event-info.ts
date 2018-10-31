@@ -144,7 +144,8 @@ export class EventInfoProvider {
       this.afs.collection(`events`).doc(id).set({
         name: eventName,
         status: "approved",
-        date: date
+        date: date,
+        eventID:id
        });
        this.afs.doc(`posts/${postID}`).update({
         status:"approved"
