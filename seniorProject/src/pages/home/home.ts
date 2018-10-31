@@ -27,10 +27,6 @@ export class HomePage {
 
      }
 
-    goToSlide() {
-      this.slides.slideTo(2, 500);
-    }
-   
   async ngOnInit()
   {
     this.posts=[];
