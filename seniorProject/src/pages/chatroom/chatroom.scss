@@ -1,0 +1,29 @@
+//SOURCE: https://github.com/smukov/AvI/blob/d45845a242b03d16d42d6ae221360a678da184ae/Ionic/app/pages/chatPage/chatPage.js
+
+page-chatroom {
+   
+    .chatPage {
+        //because chat-bubbles are wrapped inside ion-label when ion-item is rendered
+        ion-label {
+            margin: 0px 8px 13px 0;
+        }
+      }
+      
+      .message {
+          margin:2px;
+      }
+      .right
+      {
+        background-color:#9db8c8;
+         color:white;
+        border-radius:18px;
+      }
+
+      .left
+      {
+        background-color:white;
+        border:1pt solid grey;
+        border-radius:18px;
+      }
+
+}

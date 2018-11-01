@@ -44,4 +44,19 @@ export class UserinfoProvider {
 
   }
 
+  async getUserNameByID(userID)
+  {
+    
+    let userInfo=[];
+    let ref = await this.afs.firestore.collection(`users`).where("uid","==",userID); 
+    await ref.get().then((querySnapshot) => { 
+      querySnapshot.forEach((doc) => {
+       userInfo.push(doc.data());
+     })
+   });
+   return userInfo[0].name;
+    
+
+  }
+
 }

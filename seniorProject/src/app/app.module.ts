@@ -18,6 +18,7 @@ import { ChangepasswordPage } from '../pages/changepassword/changepassword';
 import { ChangeemailPage } from '../pages/changeemail/changeemail';
 import { ModifyeventlistPage } from '../pages/modifyeventlist/modifyeventlist';
 import { AdmineventformPage } from '../pages/admineventform/admineventform';
+import { ChatroomPage } from '../pages/chatroom/chatroom';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
@@ -39,7 +40,7 @@ import { SelectSearchableModule } from 'ionic-select-searchable';
 import { EventInfoProvider } from '../providers/event-info/event-info';
 import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
-import { InputMaskModule } from 'ionic-input-mask';
+import { ChatProvider } from '../providers/chat/chat';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { InputMaskModule } from 'ionic-input-mask';
     ChangeemailPage,
     ModifyeventlistPage,
     RequestModalPage,
+    ChatroomPage,
     AdmineventformPage
   ],
   imports: [
@@ -74,8 +76,7 @@ import { InputMaskModule } from 'ionic-input-mask';
     AngularFireStorageModule,
     HttpModule,
     HttpClientModule,
-    SelectSearchableModule,
-    InputMaskModule
+    SelectSearchableModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -98,6 +99,7 @@ import { InputMaskModule } from 'ionic-input-mask';
     ChangeemailPage,
     ModifyeventlistPage,
     RequestModalPage,
+    ChatroomPage,
     AdmineventformPage
   ],
   providers: [
@@ -107,7 +109,8 @@ import { InputMaskModule } from 'ionic-input-mask';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserinfoProvider,
     EventInfoProvider,
-    RequestProvider
+    RequestProvider,
+    ChatProvider
   ]
 })
 export class AppModule {}
