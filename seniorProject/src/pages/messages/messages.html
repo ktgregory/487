@@ -11,8 +11,10 @@
         <ion-card padding *ngIf= 'noChats'>
             No messages.
           </ion-card>
-        <ion-card padding *ngFor= 'let chat of chats' (click)='goToChat(chat.threadID,chat.senderID, userID, chat.senderName)'>
-          {{chat.senderName}} 
-        </ion-card>
+        <ion-item padding *ngFor= 'let chat of chats' (click)='goToChat(chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage)'>
+          <ion-avatar item-start>
+            <img src={{chat.senderImage}}>
+          </ion-avatar> {{chat.senderName}} 
+        </ion-item>
       </ion-list>
 </ion-content>

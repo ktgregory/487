@@ -35,16 +35,18 @@ export class MessagesPage {
         if (chat.greaterID == this.userID) chat.senderID = chat.lesserID;
         else chat.senderID = chat.greaterID;
         chat.senderName = await this.userInfo.getUserNameByID(chat.senderID);
+        chat.senderImage = await this.userInfo.getUserImageByID(chat.senderID);
       });
   }
 
-  goToChat(threadID:string, senderID:string, userID:string, senderName:string)
+  goToChat(threadID:string, senderID:string, userID:string, senderName:string, senderImage:string)
   {
    this.navCtrl.push(ChatroomPage, {
      'threadID': threadID,
      'senderID': senderID,
      'userID': userID,
-     'senderName': senderName
+     'senderName': senderName,
+     'senderImage': senderImage
     });
   }
 

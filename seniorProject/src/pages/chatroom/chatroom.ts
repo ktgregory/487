@@ -24,6 +24,7 @@ export class ChatroomPage {
   otherUserID;
   userID;
   senderName;
+  profileImage;
   noMessages = false;
   public messageForm: FormGroup;
 
@@ -34,7 +35,7 @@ export class ChatroomPage {
       this.userID = this.navParams.get('userID');
       this.otherUserID = this.navParams.get('senderID');
       this.senderName = this.navParams.get('senderName');
-
+      this.profileImage = this.navParams.get('senderImage');
       this.messageForm = formBuilder.group({
         messageContent: ['']
       });
@@ -78,8 +79,8 @@ export class ChatroomPage {
 
   formatNewMessage(message)
   {
-    if(message.senderID == this.userID) message.position="right";
-    else message.position="left";
+    if(message.senderID == this.userID) message.position="speech-bubble-right";
+    else message.position="speech-bubble-left";
     console.log(message.timestamp.seconds)
     let date = new Date();
     date.setSeconds(message.timestamp.seconds);
@@ -95,6 +96,11 @@ export class ChatroomPage {
     this.messageForm = this.formBuilder.group({
       messageContent: ['']
     });
+  }
+
+  goBack()
+  {
+    this.navCtrl.pop();
   }
 
 }
