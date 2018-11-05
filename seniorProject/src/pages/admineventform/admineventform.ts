@@ -1,21 +1,14 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController, ViewController } from 'ionic-angular';
-import {TabsPage} from '../tabs/tabs';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup} from '@angular/forms';
-import { SelectSearchableComponent } from 'ionic-select-searchable';
 import { AngularFirestore} from 'angularfire2/firestore';
-import { AuthProvider } from '../../providers/auth/auth';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
-
-
 
 @Component({
   selector: 'page-admineventform',
   templateUrl: 'admineventform.html'
 })
 export class AdmineventformPage {
-
 
   public eventForm: FormGroup;
   minDate;
@@ -34,6 +27,8 @@ export class AdmineventformPage {
     async ngOnInit()
     {
       this.minDate = new Date().toISOString();
+      // The minimum date that appears as an option is
+      // the current date. 
      
     }
 
@@ -55,7 +50,6 @@ export class AdmineventformPage {
           {
             text: 'Nevermind.',
             handler: () => {
-              
             }
           }
         ]
@@ -70,21 +64,19 @@ export class AdmineventformPage {
 
     async submitEventForm()
     {
-      // add to the "events" collection, dates and get dates from there
-      // for existing pre-approved events, and display those dates on the list
-      // if an event is selected from that list, get date from there
-      // otherwise, get date from new form 
+      // Creates a new document in the Events collection
+      // in the database. 
       let id = this.afs.createId();
-      this.afs.collection(`events`).doc(id).set({
+      this.afs.collection(`events`).doc(id).set(
+        {
           eventID: id,
           name: this.eventForm.value.name,
           status: "approved",
           date: new Date(this.eventForm.value.date)
         });
-
-      }
-        
     }
+        
+  }
 
     
 

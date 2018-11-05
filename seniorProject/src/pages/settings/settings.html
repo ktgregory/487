@@ -5,19 +5,33 @@
 </ion-header>
 
 <ion-content padding>
-
   <ion-list>   
       <ion-item>
-        <h3>Name</h3>  <button clear item-end ion-button icon-only (click)="editName()">
-          <ion-icon name="create"></ion-icon> </button>
-        <p>{{name}}</p>
-  </ion-item>
-  <ion-item>
-    <h3>Bio</h3> <button clear item-end ion-button icon-only (click)="editBio()">
-      <ion-icon name="create"></ion-icon> </button>
-    <p>{{bio}}</p>
-</ion-item>
+        <h3>
+          Name
+        </h3>  
+        <button clear item-end ion-button icon-only (click)="editName()">
+          <ion-icon name="create">
+          </ion-icon> 
+        </button>
+        <p>
+          {{name}}
+        </p>
+    </ion-item>
+    <ion-item>
+      <h3>
+        Bio
+      </h3> 
+      <button clear item-end ion-button icon-only (click)="editBio()">
+        <ion-icon name="create">
+        </ion-icon> 
+      </button>
+      <p>
+        {{bio}}
+      </p>
+    </ion-item>
   </ion-list>
-  <button ion-button outline (click) ="goToUploadPage()">Upload a new profile photo</button>
-
+  <button ion-button outline (click) ="goToUploadPage()">
+    Upload a new profile photo
+  </button>
 </ion-content>

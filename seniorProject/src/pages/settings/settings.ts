@@ -20,13 +20,12 @@ export class SettingsPage {
 
   async ngOnInit()
   {
-
+    // Queries for the user's profile information. 
     this.userID = await this.authData.getUserID();
-    let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+    let userQuery = await this.afs.firestore.collection(`users`)
+    .where("uid","==",this.userID);    
     await userQuery.get().then((querySnapshot) => { 
-        
        querySnapshot.forEach((doc) => {
-
         this.name = doc.data().name;
         this.bio = doc.data().bio;
       })
@@ -36,24 +35,22 @@ export class SettingsPage {
 
   ionViewWillLeave()
   {
+    // If you are on the Settings page and select another tab, this
+    // pops back to the Profile page, so that when you return to the 
+    // Profile tab, the Settings page will no longer be showing.
     this.navCtrl.popToRoot();
   }
 
-    goToTabs() {
-      //push another page onto the history stack
-      //causing the nav controller to animate the new page in
-      this.navCtrl.push(TabsPage);
-    }
+  goToTabs() {
+    this.navCtrl.push(TabsPage);
+  }
 
-    goToUploadPage() {
-      //push another page onto the history stack
-      //causing the nav controller to animate the new page in
-      this.navCtrl.push(UploadPage);
-    }
+  goToUploadPage() {
+    this.navCtrl.push(UploadPage);
+  }
 
-    editName()
-    {
-
+  editName()
+  {
     const prompt = this.alertCtrl.create({
       message: "Enter your name:",
       inputs: [
@@ -65,16 +62,14 @@ export class SettingsPage {
       buttons: [
         {
           text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
+          handler: data => {}
         },
         {
           text: 'Update',
           handler: data => {
-             
             this.afs.doc(`users/${this.userID}`).update({name:data.name});
-            let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+            let userQuery = this.afs.firestore.collection(`users`)
+            .where("uid","==",this.userID);    
             userQuery.get().then((querySnapshot) => {           
                  querySnapshot.forEach((doc) => {
                   this.name = doc.data().name;
@@ -86,13 +81,10 @@ export class SettingsPage {
       ]
     });
     prompt.present();
+  }
 
-    }
-
-    editBio()
-    {
-
-
+  editBio()
+  {
     const prompt = this.alertCtrl.create({
       message: "Enter your bio:",
       inputs: [
@@ -104,16 +96,15 @@ export class SettingsPage {
       buttons: [
         {
           text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
+          handler: data => {}
         },
         {
           text: 'Update',
           handler: data => {
              
             this.afs.doc(`users/${this.userID}`).update({bio:data.bio});
-            let userQuery = this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
+            let userQuery = this.afs.firestore.collection(`users`)
+            .where("uid","==",this.userID);    
             userQuery.get().then((querySnapshot) => {           
                  querySnapshot.forEach((doc) => {
                   this.bio = doc.data().bio;
@@ -123,11 +114,11 @@ export class SettingsPage {
           }
         }
       ]
-    });
+      });
     prompt.present();
-
-    }
-
   }
+
+
+}
 
 

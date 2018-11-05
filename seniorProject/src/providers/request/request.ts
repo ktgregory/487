@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { EventInfoProvider } from '../event-info/event-info';
 
 @Injectable()
 export class RequestProvider {
 
-  constructor(private afAuth: AngularFireAuth,
-    private afs: AngularFirestore) {
-  }
-
+  constructor(private afs: AngularFirestore, 
+    private eventInfo: EventInfoProvider) {}
 
 
   async createNewRequest(userID:string, postID:string)
   {
+    // Checks to see that the user is not trying to send 
+    // a request to themselves and that they have not already
+    // sent a request about the event before creating a new
+    // request document in the database. 
     let postInfo;
-    let postQuery = await this.afs.firestore.collection(`posts`).where("postID","==",postID);    
+    let postQuery = await this.afs.firestore.collection(`posts`)
+    .where("postID","==",postID);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
           postInfo = doc.data();
@@ -22,13 +25,13 @@ export class RequestProvider {
     });
 
     let userInfo;
-    let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",userID);    
+    let userQuery = await this.afs.firestore.collection(`users`)
+    .where("uid","==",userID);    
     await userQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
           userInfo = doc.data();
       })
     });
-
 
     if(userID == postInfo.uid)
     {
@@ -37,7 +40,8 @@ export class RequestProvider {
     else 
     {
       let testData;
-      let ref = await this.afs.firestore.collection(`requests`).where("postID","==",postID)
+      let ref = await this.afs.firestore.collection(`requests`)
+      .where("postID","==",postID)
         .where("senderID", "==", userID);
       
         await ref.get().then((querySnapshot) => { 
@@ -47,11 +51,11 @@ export class RequestProvider {
        });
       if(testData!=null)
       {
-        return Promise.reject('You have already sent a request about this event!');
+        return Promise.reject('You have already sent a request' 
+        + 'about this event!');
       }
       else
-          {
-        
+      {  
         let timestamp = new Date(0);
         timestamp.setUTCSeconds(postInfo.date.seconds);
         let day = timestamp.getUTCDate();
@@ -67,144 +71,150 @@ export class RequestProvider {
           eventName: postInfo.event,
           requestID:id,
           contact:"",
-          receiverName: postInfo.username, //wrong
+          receiverName: postInfo.username,
           senderStatus: "uncleared",
           date: new Date(year, month, day, 0,0,0, 0)
-          });
+        });
       }
     }
   }
 
- async acceptRequest(requestID:string, contactInfo:string)
+ async acceptRequest(requestID:string)
   {
+    // Sets a request's status to accepted in the database. 
     await this.afs.firestore.collection(`requests`).doc(requestID).update({
-      status:"accepted",
-      contact: contactInfo
+      status:"accepted"
     });
-
   }
 
-async clearRequestSender(requestID:string)
+  async clearRequestSender(requestID:string)
   {
+    // Sets the sender's status to cleared.
+    // This is used to prevent the request from being showed
+    // in the sender's request center. 
     await this.afs.firestore.collection(`requests`).doc(requestID).update({
       senderStatus:"cleared"
     });
   }
 
-async clearRequestReceiver(requestID:string)
-{
+  async clearRequestReceiver(requestID:string)
+  {
+    // Sets the request's status to cleared.
+    // This is used to prevent the request from being showed
+    // in the receiver's request center. 
     await this.afs.firestore.collection(`requests`).doc(requestID).update({
       status:"cleared"
     });
-}
+  }
 
-async deleteClearedRequests()
-{
-
-  let requests=[];
-  let requestQuery = await this.afs.firestore.collection(`requests`);   
-    await requestQuery.get().then((querySnapshot) => { 
-       querySnapshot.forEach((doc) => {
-          requests.push(doc.data());
-      })
-    });
-    await this.checkClearedRequests(requests);
-}
-
-async getReceivedRequests(userID:string)
+  async deleteClearedRequests()
   {
+    // Grabs all requests from the database and passes them
+    // to the checkClearedRequests function.
     let requests=[];
-    let requestQuery = await this.afs.firestore.collection(`requests`).where("receiverID","==",userID)
-    .where("status","==","pending");    
+    let requestQuery = await this.afs.firestore.collection(`requests`);   
+      await requestQuery.get().then((querySnapshot) => { 
+        querySnapshot.forEach((doc) => {
+            requests.push(doc.data());
+        })
+      });
+    await this.checkClearedRequests(requests);
+  }
+
+  async getReceivedRequests(userID:string)
+  {
+    // Gets requests that have been received by the user
+    // and that are still pending. Also checks to see if 
+    // the pending requests have expired. 
+    let requests=[];
+    let requestQuery = await this.afs.firestore.collection(`requests`)
+      .where("receiverID","==",userID)
+      .where("status","==","pending");    
     await requestQuery.get().then((querySnapshot) => { 
-       querySnapshot.forEach((doc) => {
-          requests.push(doc.data());
+      querySnapshot.forEach((doc) => {
+      requests.push(doc.data());
       })
     });
     requests.forEach(async request=>
     {
       request = await this.checkExpiredRequests(request);
     });
-
     return requests;
   }
 
+
   async checkClearedRequests(requests)
   {
+    // Filters requests array based on if the request has been 
+    // cleared by both the receiver and the sender and deletes
+    // those requests from the database. 
     requests.forEach(async request=>
     {
-      console.log(request);
       if((request.senderStatus=="cleared") && (request.status=="cleared"))
       {
        await this.afs.collection('requests').doc(request.requestID).delete(); 
       }
-
     });
     let requests2 = requests.filter(function(value, index, arr)
     {
-        return (!((value.senderStatus=="cleared")&&(value.status=="cleared")));
+      // Needs to be modified to accommodate requests that 
+      // have been accepted and cleared. 
+      return (!((value.senderStatus=="cleared")&&(value.status=="cleared"))); 
     });
     return requests2;
   }
 
+
+
  checkExpiredRequests(request)
   {
+    // Checks to see if a request is expired by 
+    // by calculating the days until the event. 
     if(request.length!=0)
     {
       request.expired = false;
-      let timestamp = new Date(0);
-      timestamp.setUTCSeconds(request.date.seconds);
-        let timestamp2 = new Date();
-        let oneDay = 24*60*60*1000;
-        let daysUntil = Math.round(((timestamp.getTime() - timestamp2.getTime())/(oneDay)));
-        if(daysUntil<0)
-        {
-          request.expired = true;
-        }
-        else
-        {
-          request.expired = false;
-        }
-
+      let daysUntil = this.eventInfo.calculateDaysUntil(request);
+      if(daysUntil<-1)
+      {
+        request.expired = true;
+      }
+      else
+      {
+         request.expired = false;
+      }
     }
-    
     return request;
-
   }
 
   async getSentRequests(userID:string)
   {
+    // Gets requests that a user has sent that have 
+    // not been cleared. 
     let requests=[];
-    let requestQuery = await this.afs.firestore.collection(`requests`).where("senderID","==",userID)
+    let requestQuery = await this.afs.firestore.collection(`requests`)
+    .where("senderID","==",userID)
     .where("senderStatus","==","uncleared");    
     await requestQuery.get().then((querySnapshot) => { 
+       querySnapshot.forEach(async (doc) => {
+          requests.push(await this.checkExpiredRequests(doc.data()));
+        });
+      }); 
+    return requests;
+  }
+
+
+  async getRequestInfo(requestID:string)
+  {
+    // Queries for a specific request document from the database
+    // by its ID.
+    let requestInfo=[];
+    let reqQuery = await this.afs.firestore.collection("requests")
+    .where("requestID","==",requestID);    
+    await reqQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
-          requests.push(doc.data());
+        requestInfo.push(doc.data());
       })
     });
-    requests.forEach(async request=>
-      {
-        request =  await this.checkExpiredRequests(request);
-      });
-      
-      return requests;
-
-    }
-
-    async getRequestInfo(requestID:string)
-    {
-      let requestInfo=[];
-      let reqQuery = await this.afs.firestore.collection("requests").where("requestID","==",requestID);    
-      await reqQuery.get().then((querySnapshot) => { 
-         querySnapshot.forEach((doc) => {
-          requestInfo.push(doc.data());
-        })
-      });
-
-      return requestInfo;
-    }
-
-
-
-
+    return requestInfo;
+  }
 }

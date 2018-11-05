@@ -18,20 +18,20 @@ export class MyApp {
     const authObserver = afAuth.authState.subscribe(user => {
       if (user) {
 
-   
-          this.rootPage = TabsPage;
-
-       
+        // If the user is logged in, navigate to 
+        // the TabsPage (i.e. the Home tab).
+        this.rootPage = TabsPage;
         authObserver.unsubscribe();
         
-
       } else {
-        this.rootPage = LoginPage;
+        // If the user is not logged in, navigate to
+        // the Login page. 
+        this.rootPage = LoginPage; 
         authObserver.unsubscribe();
       }
     });
+    
     platform.ready().then(() => {
-     
       statusBar.styleDefault();
       splashScreen.hide();
     });

@@ -28,20 +28,18 @@ export class ProfilePage implements OnInit {
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController, 
     private eventInfo: EventInfoProvider, private afs: AngularFirestore
-    )  {
-        
-    }
+    )  { }
   
    
   async ngOnInit()
     {
-    
+      // Queries for the current user's profile information
+      // and all of their posts. 
       this.userID = await this.authData.getUserID();
-      let userQuery = await this.afs.firestore.collection(`users`).where("uid","==",this.userID);    
-      await userQuery.get().then((querySnapshot) => { 
-          
+      let userQuery = await this.afs.firestore.collection(`users`)
+      .where("uid","==",this.userID);    
+      await userQuery.get().then((querySnapshot) => {  
          querySnapshot.forEach((doc) => {
-
           this.name = doc.data().name;
           this.email = doc.data().email;
           this.school = doc.data().school;
@@ -50,7 +48,6 @@ export class ProfilePage implements OnInit {
         })
      });
      
-    
      this.posts = await this.eventInfo.getEventTimeInfoWithID(this.userID);
 
      if (this.posts.length ==0)
@@ -59,41 +56,44 @@ export class ProfilePage implements OnInit {
      }
      else
      {
+       // Sorts posts chronologically. 
       this.posts.sort(this.compareDates);
      }
-
-
   }
 
   compareDates(post1, post2)
   {
+    // Comparison that is used to sort posts. 
     return post1.daysUntil - post2.daysUntil;
   }
   
   ionViewWillEnter()
   {
+    // Refreshes user's information when the page 
+    // is being loaded. 
     this.ngOnInit();
   }
 
 
-  goToSettings() {
-      //push another page onto the history stack
-      //causing the nav controller to animate the new page in
-      this.navCtrl.push(SettingsPage, this.posts);
-    
+  goToSettings() 
+  {
+    this.navCtrl.push(SettingsPage, this.posts);
   }
-  goToAccountSettings() {
-    //push another page onto the history stack
-    //causing the nav controller to animate the new page in
+
+  goToAccountSettings() 
+  {
     this.navCtrl.push(AccountsettingsPage);
-  
   }
-  //if trash can button is clicked, 
-  //the user is asked to confirm before the post is deleted
-  confirmDeletePost(postID:string) {
+
+  
+  confirmDeletePost(postID:string) 
+  {
+    //If trash can button is clicked, 
+    // the user is asked to confirm before the post is deleted.
     let confirm = this.alertCtrl.create({
       title: 'Delete event post?',
-      message: 'Do you want to delete your post about this event? This cannot be undone.',
+      message: 'Do you want to delete your post about' 
+        + 'this event? This cannot be undone.',
       buttons: [
         {
           text: 'Yes.',
@@ -103,10 +103,7 @@ export class ProfilePage implements OnInit {
           }
         },
         {
-          text: 'Nevermind!',
-          handler: () => {
-            console.log('Disagree clicked');
-          }
+          text: 'Nevermind!'
         }
       ]
     });
@@ -127,10 +124,11 @@ export class ProfilePage implements OnInit {
   }
 
 
-    logout()
-    {
-      this.authData.logoutUser();
-      window.location.reload();
-    }
+  logout()
+  {
+    // Logs user out and returns to the Login page. 
+    this.authData.logoutUser();
+    window.location.reload();
+  }
 
 }

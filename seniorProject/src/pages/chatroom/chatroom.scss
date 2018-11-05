@@ -1,10 +1,7 @@
 
 page-chatroom {
    
-      .chat-page
-      {
-          //background-color:lightslategrey;
-      }
+
       .message {
           margin:2px;
       }
@@ -16,7 +13,7 @@ page-chatroom {
 
       .speech-bubble-right {
         position: relative;
-        border-radius: .4em;
+        border-radius: 13px;
         background-color:#9db8c8;
         color:white;
     }
@@ -32,15 +29,15 @@ page-chatroom {
         border-left-color: #9db8c8;
         border-right: 0;
         border-bottom: 0;
-        margin-top: -10px;
-        margin-right: -20px;
+        margin-top: -8px;
+        margin-right: -14px;
     }
 
     .speech-bubble-left {
         position: relative;
         background-color:#eaf2ff;
         border:1pt solid white;
-        border-radius: .4em;
+        border-radius: 13px;
     }
     
     .speech-bubble-left:after {
@@ -54,8 +51,8 @@ page-chatroom {
         border-right-color:#eaf2ff;
         border-left: 0;
         border-bottom: 0;
-        margin-top: -10px;
-        margin-left: -20px;
+        margin-top: -8px;
+        margin-left: -14px;
     }
 
 

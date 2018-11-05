@@ -14,3 +14,21 @@ Oct. 24th:
 Since last week, I have done the following things: added additional inputs to the post form page if the “Other” event option is selected to allow a user to input the name and date of the event; added a way for users to change their email and password through the account settings page; corrected an issue with the administrative user approval process to check if an event of the same date and name is already included in the event list; reworked the signup form for creating a new account; added a section to the notification center that shows a user’s posts that are pending admin approval; added a form for admin users to create new events for the event list; and added (on the user’s profile page) a field to each of the user’s posts that shows the status of the post (pending, denied, approved). 
 
 Then, I will implement push notifications and a way for users to upload photos for their posts or profile. Other than these features, the MVP requirements have been met. 
+
+__________________________________________________________
+
+Nov. 5th:
+
+After reassessing the MVP of the project, it has been decided that it is more important to implement in-app messaging and have the first version of the app be a PWA (Progressive Web App) instead of a native mobile app. With that decision in mind, I have implemented the in-app messaging feature. Now, when a request is accepted by a user, a new chat thread is created between the users, removing the need to communicate outside of the app. The in-app messaging is lacking in that the chat threads cannot be deleted at this time. The user currently has the ability to select messages to delete, but the function that actually does the thread deletion is incomplete. 
+
+For the MVP to be completed, the ability to upload photos still needs to be added. Additionally, the MVP will now require only in-app notifications (as opposed to push notifications) that have yet to be implemented. 
+
+
+
+
+
+
+
+
+
+

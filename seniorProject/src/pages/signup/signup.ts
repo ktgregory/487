@@ -9,7 +9,6 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { TabsPage } from '../tabs/tabs';
 import { EmailValidator } from '../../validators/email';
 import { AngularFirestore } from 'angularfire2/firestore';
-//import { InputMask } from 'ionic-input-mask';
 
 @Component({
   selector: 'page-signup',
@@ -24,6 +23,7 @@ export class SignUpPage {
     public formBuilder: FormBuilder, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, private afs: AngularFirestore) {
 
+    // Sets signupForm variable equal to html inputs and applies validators. 
     this.signupForm = formBuilder.group({
       email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
       password: ['', Validators.compose([Validators.minLength(6), Validators.required])],
@@ -39,15 +39,12 @@ export class SignUpPage {
   }
 
   /**
-   * If the form is valid it will call the AuthData service to sign the user up password displaying a loading
-   *  component while the user waits.
-   *
-   * If the form is invalid it will just log the form value, feel free to handle that as you like.
+   * If the form is valid it will call the AuthData service to sign the user 
+   *  up password displaying a loading component while the user waits.
    */
   signupUser(){
-    if (!this.signupForm.valid){
-      console.log(this.signupForm.value);
-    } else {
+    if (this.signupForm.valid)
+    {
       this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
       .then(() => {
         let id = this.authData.getUserID();
@@ -87,11 +84,8 @@ export class SignUpPage {
   }
 }
 
-
 /*
-
-SOURCE: 
-
+SOURCES: 
+  Sign in function: https://javebratt.com/ionic-firebase-tutorial-auth/ 
   Form validators: https://angular-templates.io/tutorials/about/angular-forms-and-validations 
-
 */

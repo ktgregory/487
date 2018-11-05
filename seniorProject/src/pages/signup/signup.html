@@ -6,15 +6,18 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
   <form [formGroup]="signupForm" (submit)="signupUser()" novalidate>
     <ion-item>
-      <ion-label stacked>Name</ion-label>
+      <ion-label stacked>
+        Name
+      </ion-label>
       <ion-input required formControlName="name" type="text" name="name"></ion-input>
     </ion-item>
     <ion-item>
-        <ion-label stacked>Phone Number</ion-label>
+        <ion-label stacked>
+          Phone Number
+        </ion-label>
         <ion-input required formControlName="phoneNumber" type="tel" name="phoneNumber" 
         [class.invalid]="!signupForm.controls.phoneNumber.valid && signupForm.controls.phoneNumber.dirty"> 
         </ion-input>
@@ -38,20 +41,18 @@
     <ion-item class="error-message" *ngIf="!signupForm.controls.email.valid  && signupForm.controls.email.dirty">
       <p>Please enter a valid email.</p>
     </ion-item>
-
     <ion-item>
-      <ion-label stacked>Password</ion-label>
+      <ion-label stacked>
+        Password
+      </ion-label>
       <ion-input formControlName="password" type="password" 
         [class.invalid]="!signupForm.controls.password.valid && signupForm.controls.password.dirty"></ion-input>
     </ion-item>
     <ion-item class="error-message" *ngIf="!signupForm.controls.password.valid  && signupForm.controls.password.dirty">
       <p>Your password needs more than 6 characters.</p>
     </ion-item>
-
     <button ion-button block type="submit">
       Create an Account
     </button>
-
   </form>
-
 </ion-content>

@@ -2,25 +2,24 @@
 <ion-content padding>
         <!-- <img src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null">
         <h3 [hidden]="lastImage !== null">Please Select Image!</h3> -->
-
-
-    <button ion-button (click) = "uploadPicture()">Upload My New Picture</button>
-    <button ion-button (click) = "goToSettings()">Cancel</button>
-
-
-<!--      
+  <button ion-button (click) = "uploadPicture()">
+    Upload My New Picture
+  </button>
+  <button ion-button (click) = "goToSettings()">
+    Cancel
+  </button>     
 <ion-footer>
     <ion-toolbar color="primary">
       <ion-buttons>
-        <button ion-button icon-left (click)="presentActionSheet()">
-          <ion-icon name="camera"></ion-icon>Select Image
+        <button ion-button icon-left>
+          <ion-icon name="camera"></ion-icon>
+          Select Image
         </button>
-        <button ion-button icon-left (click)="uploadImage()" [disabled]="lastImage === null">
-          <ion-icon name="cloud-upload"></ion-icon>Upload
+        <button ion-button icon-left>
+          <ion-icon name="cloud-upload"></ion-icon>
+          Upload
         </button>
       </ion-buttons>
     </ion-toolbar>
-  </ion-footer> -->
-
-
+  </ion-footer> 
 </ion-content>

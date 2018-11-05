@@ -1,18 +1,26 @@
 
 <ion-content padding>
-
     <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
-
         <ion-item>
-          <ion-label>Event Name</ion-label>
-          <ion-textarea formControlName="name" type="text" name="name"></ion-textarea>
+          <ion-label>
+              Event Name
+          </ion-label>
+          <ion-textarea formControlName="name" type="text" name="name">
+          </ion-textarea>
         </ion-item>
         <ion-item>
-          <ion-label>Date</ion-label> <!-- add drop down -->
-          <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" [min]="minDate" max="2020" name="myDate"></ion-datetime>
+          <ion-label>
+            Date
+          </ion-label> 
+          <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" 
+          [min]="minDate" max="2020" name="myDate">
+        </ion-datetime>
         </ion-item>
-  
-      <button ion-button type="submit" color="primary" block >Add Event</button>
+      <button ion-button type="submit" color="primary" block>
+        Add Event
+      </button>
     </form>
-    <button ion-button color="primary" clear block (click)="dismiss()">Cancel</button>
+    <button ion-button color="primary" clear block (click)="dismiss()">
+      Cancel
+    </button>
 </ion-content>

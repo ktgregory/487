@@ -7,16 +7,20 @@
 </ion-header>
 
 <ion-content>
- 
   <div>
-      <ion-label>Received</ion-label>
-      <ion-card *ngIf="noReceived">
-          <p>No received requests!</p>   
-        </ion-card>
+    <ion-label>Received</ion-label>
+    <ion-card *ngIf="noReceived">
+      <p>No received requests!</p>   
+    </ion-card>
     <ion-card *ngFor="let request of receivedRequests">
-      <ion-item><p>{{request.senderName}} ~ {{request.eventName}}</p>
-      <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID)"> respond </button> 
-      <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpiredReceiver(request.requestID)"> expired </button> 
+      <ion-item>
+        <p>{{request.senderName}} ~ {{request.eventName}}</p>
+        <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID, request.senderID)"> 
+          respond 
+        </button> 
+        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpiredReceiver(request.requestID)"> 
+          expired 
+        </button> 
       </ion-item>
     </ion-card>
   </div>
@@ -25,27 +29,31 @@
       <ion-card *ngFor="let request of sentRequests">
         <ion-item><p>{{request.receiverName}} ~ {{request.eventName}} </p>
           <ng-container *ngIf="!request.expired">
-          <button *ngIf='request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">pending</button>
- 
-          <button  *ngIf='request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">accepted</button>
+          <button *ngIf='request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
+            pending
+          </button>
+          <button  *ngIf='request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">
+            accepted
+          </button>
         </ng-container>
-        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)"> expired </button>
+        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)"> \
+          expired 
+        </button>
         </ion-item>
       </ion-card>
       <ion-card *ngIf="noSent">
-          <p>No sent requests!</p>
-          
-        </ion-card>
+          <p>No sent requests!</p>   
+      </ion-card>
   </div>
   <div>
     <ion-label>Pending Posts</ion-label>
       <ion-card *ngFor="let post of pendingPosts">
-        <ion-item><p>{{post.event}} ~ {{post.dateString}} </p>
-          
+        <ion-item>
+          <p>{{post.event}} ~ {{post.dateString}} </p>
         </ion-item>
       </ion-card>
       <ion-card *ngIf="noPendingPosts">
           <p>No pending posts!</p>
-        </ion-card>
+      </ion-card>
   </div>
 </ion-content>

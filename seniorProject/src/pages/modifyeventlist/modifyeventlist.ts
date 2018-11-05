@@ -3,13 +3,6 @@ import { IonicPage, NavController, NavParams, ViewController, AlertController } 
 import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { AdmineventformPage } from '../admineventform/admineventform';
 
-/**
- * Generated class for the ModifyeventlistPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-modifyeventlist',
@@ -17,24 +10,29 @@ import { AdmineventformPage } from '../admineventform/admineventform';
 })
 export class ModifyeventlistPage {
 
-  events =[];
+  events = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewCtrl: ViewController,
-    private eventInfo:EventInfoProvider, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, 
+    public viewCtrl: ViewController, private eventInfo:EventInfoProvider, 
+    public alertCtrl: AlertController) {
   }
 
   async ngOnInit()
   { 
-    this.events = [];
+    this.events = []; // Must be reset to an empty array in case ngOnInit
+                      // is re-called to avoid duplicates in the array.
     this.events = await this.eventInfo.getAllEvents();
-  
   }
+
   async ionViewWillEnter()
   {
+    // Refreshes the list (i.e. when the admin has just 
+    // created a new event). 
     this.ngOnInit();
   }
 
   dismiss() {
+    // Closes the modal and returns to the main Admin page. 
     this.viewCtrl.dismiss();
   }
 
@@ -47,6 +45,7 @@ export class ModifyeventlistPage {
           text: 'Yes.',
           handler: () => {
             this.eventInfo.deleteEvent(eventID);
+            // Refreshes the event list after deletion. 
             this.ngOnInit();
           }
         },

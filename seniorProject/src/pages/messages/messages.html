@@ -1,5 +1,8 @@
 <ion-header>
   <ion-navbar>
+    <ion-buttons right *ngIf="!noChats">
+        <button style="font:7px" ion-button small clear (click)="markThreadsToDelete()">edit</button>
+    </ion-buttons>
     <ion-title>
       Messages
     </ion-title>
@@ -11,10 +14,25 @@
         <ion-card padding *ngIf= 'noChats'>
             No messages.
           </ion-card>
-        <ion-item padding *ngFor= 'let chat of chats' (click)='goToChat(chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage)'>
+       
+        <ion-item padding *ngFor= 'let chat of chats' (click)='goToChat(chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage, chat.topic)'>
           <ion-avatar item-start>
             <img src={{chat.senderImage}}>
-          </ion-avatar> {{chat.senderName}} 
+          </ion-avatar> 
+          <h2>{{chat.senderName}}</h2>
+          <p>{{chat.topic}}</p>
+          <button *ngIf="markThreads && !chat.delete" (click)="setToDelete(chat)" item-end clear ion-button icon-only><ion-icon name="radio-button-off"></ion-icon></button>
+          <button *ngIf="chat.delete && markThreads" (click)="resetDelete(chat)" ion-button clear item-end icon-only><ion-icon name="radio-button-on"></ion-icon></button>
         </ion-item>
       </ion-list>
+
 </ion-content>
+
+<ion-footer>
+    <ion-row justify-content-center><button *ngIf = "markThreads" item-end ion-button small (click)="deleteSelectedChats()">
+      Delete selected chats 
+      <ion-icon padding-left name="trash"></ion-icon>
+    </button>
+  </ion-row>
+    <ion-row justify-content-center><button *ngIf = "markThreads" item-end clear ion-button small (click)="cancelDelete()">Cancel</button></ion-row>
+</ion-footer>

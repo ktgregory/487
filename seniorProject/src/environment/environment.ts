@@ -9,3 +9,9 @@ export const environment = {
     messagingSenderId: "982674682013"
   }
 };
+
+
+/*
+  The environment variable links the application to the
+  Firebase database. 
+*/ 

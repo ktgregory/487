@@ -1,42 +1,56 @@
 
 <ion-content padding>
-
-      <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
-  
-        <ion-item>
-            <ion-label>Event</ion-label>
-      
-                <select-searchable
-                item-content
-                [items]="events"
-                itemTextField="name2"
-                [canSearch]="true"
-                formControlName="event"
-                (onChange)="portChange($event)">
-              </select-searchable>
-         
-          </ion-item>
-          <ng-container *ngIf="showEventInfo">
-                <ion-item>{{name}}</ion-item>
-
-                  <ion-item>{{date}}</ion-item>
- 
-          </ng-container>
-          <ng-container *ngIf="showPart2">
-          <ion-item>
-            <ion-label>Event Name</ion-label>
-            <ion-textarea formControlName="name" type="text" name="name"></ion-textarea>
-          </ion-item>
-          <ion-item>
-            <ion-label>Date</ion-label>
-            <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" [min]="minDate" max="2020" name="myDate"></ion-datetime>
-          </ion-item>
-        </ng-container>
-        <ion-item>
-          <ion-label>Description</ion-label>
-          <ion-textarea formControlName="description" type="text" name="description"></ion-textarea>
+  <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
+   <ion-item>
+    <ion-label>
+      Event
+    </ion-label>
+    <select-searchable
+      item-content
+      [items]="events"
+      itemTextField="name2"
+      [canSearch]="true"
+      formControlName="event"
+      (onChange)="portChange($event)">
+    </select-searchable>
+   </ion-item>
+    <ng-container *ngIf="showEventInfo">
+      <ion-item>
+         {{name}}
         </ion-item>
-        <button ion-button type="submit" color="primary" block >Submit Event</button>
-      </form>
-      <button ion-button color="primary" clear block (click)="cancelForm()">Cancel</button>
+      <ion-item>
+        {{date}}
+      </ion-item>
+    </ng-container>
+    <ng-container *ngIf="showPart2">
+      <ion-item>
+        <ion-label>
+          Event Name
+        </ion-label>
+        <ion-textarea formControlName="name" type="text" name="name">
+        </ion-textarea>
+      </ion-item>
+      <ion-item>
+          <ion-label>
+            Date
+          </ion-label>
+          <ion-datetime formControlName="date" displayFormat="MM/DD/YYYY" 
+          [min]="minDate" max="2020" name="myDate">
+          </ion-datetime>
+      </ion-item>
+      </ng-container>
+    <ion-item>
+      <ion-label>
+        Description
+      </ion-label>
+      <ion-textarea formControlName="description" type="text" name="description">
+      </ion-textarea>
+    </ion-item>
+    <button ion-button type="submit" color="primary" block>
+      Submit Event
+    </button>
+    </form>
+    <button ion-button color="primary" clear block (click)="cancelForm()">
+      Cancel
+    </button>
 </ion-content>

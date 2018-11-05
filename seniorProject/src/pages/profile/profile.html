@@ -2,28 +2,34 @@
     <ion-navbar text-center>
         <ion-buttons left>
             <button ion-button icon-only (click)="goToAccountSettings()">
-              <ion-icon name="settings"></ion-icon>
+              <ion-icon name="settings">
+              </ion-icon>
             </button>
             </ion-buttons>
             <ion-buttons right>
             <button ion-button icon-only (click)="logout()">
-              <ion-icon name="log-out"></ion-icon>
+              <ion-icon name="log-out">
+              </ion-icon>
             </button>
           </ion-buttons>
-      <ion-title>Profile</ion-title>
+      <ion-title>
+        Profile
+      </ion-title>
     </ion-navbar>
-  </ion-header>
+</ion-header>
 
 <ion-content class="cards-bg social-cards">
 
   <!-- PROFILE IMAGE + INFO -->
     <ion-card>
-    
       <ion-item>
         <ion-avatar item-start>
           <img src={{imageURL}}>
         </ion-avatar>
-        <button ion-button item-end icon-only clear (click)="goToSettings()"><ion-icon name="construct"></ion-icon></button>
+        <button ion-button item-end icon-only clear (click)="goToSettings()">
+          <ion-icon name="construct">
+          </ion-icon>
+        </button>
         <h2>{{name}}</h2>
         <p>{{school}}</p>
       </ion-item>
@@ -33,25 +39,28 @@
     </ion-card>
 
 
-
-
 <!-- CURRENT USER'S POSTS -->
-    <ion-card *ngIf="noPosts"><p padding>You have no posted events!</p></ion-card>
+    <ion-card *ngIf="noPosts">
+      <p padding>
+        You have no posted events!
+      </p>
+    </ion-card>
     <ion-card *ngFor="let post of posts">
- 
-        <ion-item>
-            
+        <ion-item>   
           <h2>{{post.event}}</h2>
           <p>{{post.dateString}}</p>
-          <button ion-button clear item-end icon-only (click)="confirmDeletePost(post.postID)"><ion-icon name="trash"></ion-icon></button>
+          <button ion-button clear item-end icon-only (click)="confirmDeletePost(post.postID)">
+            <ion-icon name="trash">
+            </ion-icon>
+          </button>
         </ion-item>
-      
         <img src={{post.image}}>
         <ion-item><p>{{post.description}}</p></ion-item>
         <ion-row>
           <ion-col>
             <button ion-button color="primary" clear small icon-start (click)="statusInfo()">
-              <ion-icon name="alert"></ion-icon>
+              <ion-icon name="alert">
+              </ion-icon>
               {{post.status}}
             </button>
           </ion-col>
@@ -61,7 +70,5 @@
             </ion-note>
           </ion-col>
         </ion-row>
-      
     </ion-card>
-
 </ion-content>

@@ -1,16 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/observable';
-import { AngularFirestoreDocument } from 'angularfire2/firestore';
-import { switchMap } from 'rxjs/operators';
-import { AngularFireDatabase } from 'angularfire2/database';
-/*
-  Generated class for the AuthProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
+// import { AngularFirestore } from 'angularfire2/firestore';
+// import { Observable } from 'rxjs/observable';
+// import { AngularFirestoreDocument } from 'angularfire2/firestore';
+// import { switchMap } from 'rxjs/operators';
 
 interface User 
 {
@@ -22,22 +15,24 @@ interface User
 @Injectable()
 export class AuthProvider {
 
-  userDoc;
-  info;
   userID;
-  user: Observable<User | null>;
+ // user: Observable<User | null>;
   constructor(private afAuth: AngularFireAuth,
-    private afs: AngularFirestore, private db : AngularFireDatabase) {
-      this.user = this.afAuth.authState.pipe(
-        switchMap(user => {
-          if (user) {
-            this.userID = user.uid;
-            return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
-          } else {
-            return Observable.of(null);
-          }
-        })
-      );
+    //private afs: AngularFirestore
+    ) {
+      
+      // Pipe for auth state.
+    //   this.user = this.afAuth.authState.pipe
+    //   (
+    //     switchMap(user => {
+    //       if (user) {
+    //         this.userID = user.uid;
+    //         return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
+    //       } else {
+    //         return Observable.of(null);
+    //       }
+    //     })
+    // );
   }
 
 
@@ -47,7 +42,7 @@ export class AuthProvider {
       .signInWithEmailAndPassword(email, password)
       .then(credential => {
         this.userID = credential.user.uid;
-        return this.updateUserData(credential.user);
+       // return this.updateUserData(credential.user);
       }).catch();
   }
 
@@ -63,14 +58,15 @@ export class AuthProvider {
     return this.afAuth.auth.createUserWithEmailAndPassword(newEmail, newPassword);
   }
 
-  private updateUserData(user: User) {
-    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
-      `users/${user.uid}`
-    );
-  }
+  // private updateUserData(user: User) {
+  //   // const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+  //   //   `users/${user.uid}`
+  //   // );
+  // }
 
   updateUserEmail(currentEmail: string, password: string, newEmail:string): Promise<any>
   {
+    // Updates user's email address after re-logging them in.
     this.loginUser(currentEmail, password);
     return this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
@@ -94,7 +90,6 @@ export class AuthProvider {
   {
     return this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
-
 
 
 }

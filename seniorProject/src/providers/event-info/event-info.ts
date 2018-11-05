@@ -4,52 +4,38 @@ import { AngularFirestore } from 'angularfire2/firestore';
 @Injectable()
 export class EventInfoProvider {
   
-  constructor(private afs: AngularFirestore) {
-    
-  }
+  constructor(private afs: AngularFirestore) {}
 
-  async getPostsForTimeline()
-  {
-    let posts=[];
-    let postQuery = await this.afs.firestore.collection(`posts`).where("status","==","approved");    
-    await postQuery.get().then((querySnapshot) => { 
-       querySnapshot.forEach((doc) => {
-          posts.push(doc.data());
-      })
-   });
-   console.log(posts);
-   return this.eventTimeCalculations(posts);
 
-  }
+  //https://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
+  
 
   async getPendingEvents()
   {
+    // Retrieves pending events from the database and adds 
+    // dateString, notExpired, and timeUntil attributes to 
+    // each event. Used for Admin interface. 
     let posts=[];
-    let postQuery = await this.afs.firestore.collection(`posts`).where("status","==","pending");
+    let postQuery = await this.afs.firestore.collection(`posts`)
+    .where("status","==","pending");
     await postQuery.get().then((querySnapshot) => { 
         querySnapshot.forEach((doc) => {
-          posts.push(doc.data());
+          posts.push(this.eventTimeCalculations(doc.data()));
       })
     });
-    return this.eventTimeCalculations(posts);
+    return posts;
   }
   
-  eventTimeCalculations(posts:any[])
+  eventTimeCalculations(element)
   {
-   posts.forEach(element => {
-    let timestamp = new Date(0);
-    timestamp.setUTCSeconds(element.date.seconds);
-    let day = timestamp.getUTCDate();
-    let month = timestamp.getUTCMonth();
-    let year = timestamp.getUTCFullYear();
-   
-    element.dateString = ((month+1) + "/" + day + "/" + year);
-    let timestamp2 = new Date();
-    let oneDay = 24*60*60*1000;
-    let daysUntil = Math.round(((timestamp.getTime() - timestamp2.getTime())/(oneDay)));
-    
+    // Creates a string for the event's date and 
+    // calculates the time until the event. Also
+    // determines if an event is expired. 
+  
+    this.getDateString(element);
+    let daysUntil = this.calculateDaysUntil(element);
+  
     element.daysUntil = daysUntil;
-    
     let weeks = Math.round((daysUntil/7));
     if(daysUntil<-1)
     {
@@ -75,57 +61,71 @@ export class EventInfoProvider {
       element.timeUntil += weeks.toString();
       element.timeUntil += " wks";
     }
-  
-    // https://stackoverflow.com/questions/2627473/how-to-calculate-the-number-of-days-between-two-dates
-   });
-
-   return posts;
-
+   return element;
   }
 
 
   async getEventTimeInfoWithID(userID:string)
   {
+    // Gets posts and corresponding time calculations and date string
+    // that a user has posted. 
     let posts =[];
-    let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",userID);    
+    let postQuery = await this.afs.firestore.collection(`posts`)
+    .where("uid","==",userID);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
-          posts.push(doc.data());
+          posts.push(this.eventTimeCalculations(doc.data()));
       })
     });
-
-   return this.eventTimeCalculations(posts);
-
+   return posts;
   }
 
-  async getPendingPosts(userID:string)
+  getDateString(element)
   {
-    let posts =[];
-    let postQuery = await this.afs.firestore.collection(`posts`).where("uid","==",userID).where("status","==","pending");    
-    await postQuery.get().then((querySnapshot) => { 
-       querySnapshot.forEach((doc) => {
-          posts.push(doc.data());
-      })
-    });
-
-    return this.eventTimeCalculations(posts);
+    // Creates a string of the event's date. 
+    let timestamp = new Date(0);
+    timestamp.setUTCSeconds(element.date.seconds);
+    let day = timestamp.getUTCDate();
+    let month = timestamp.getUTCMonth();
+    let year = timestamp.getUTCFullYear();
+    element.dateString = ((month+1) + "/" + day + "/" + year);
   }
 
+  calculateDaysUntil(element)
+  {
+    // Returns the number of days until the passed event.
+    // SOURCE: 
+    // https://stackoverflow.com/questions/2627473/
+    // how-to-calculate-the-number-of-days-between-two-dates
+    let timestamp = new Date(0);
+    timestamp.setUTCSeconds(element.date.seconds);
+    let timestamp2 = new Date();
+    let oneDay = 24*60*60*1000;
+    let daysUntil = Math.round(((timestamp.getTime() 
+        - timestamp2.getTime())/(oneDay)));
+    return daysUntil;
+  }
 
   async deletePost(postID:string)
   {
+    // Removes a post from the database by its ID. 
     await this.afs.firestore.collection("posts").doc(postID).delete();
   }
 
   async deleteEvent(eventID:string)
   {
+    // Removes an event from the database by its ID. 
     await this.afs.firestore.collection("events").doc(eventID).delete();
   }
 
   async approvePost(postID:string, eventName:string, date)
   {
+    // Checks to see that an event does not already exist by the
+    // same name and date before creating a new event entry in the 
+    // database. Also sets the user's pending post to approved. 
     let eventInfo = null;
-    let eventQuery = await this.afs.firestore.collection(`events`).where("name","==",eventName);    
+    let eventQuery = await this.afs.firestore.collection(`events`)
+    .where("name","==",eventName);    
     await eventQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
           eventInfo = doc.data();
@@ -155,8 +155,10 @@ export class EventInfoProvider {
 
   async checkIfUserHasPosted(uid:string, eventName:string)
   {
+    // Checks to see if a user has already posted about an event. 
     let eventInfo = null;
-    let postQuery = await this.afs.firestore.collection(`posts`).where("event","==",eventName).where("uid","==",uid);    
+    let postQuery = await this.afs.firestore.collection(`posts`)
+    .where("event","==",eventName).where("uid","==",uid);    
     await postQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach((doc) => {
           eventInfo = doc.data();
@@ -168,6 +170,8 @@ export class EventInfoProvider {
 
   async getAllEvents()
   {
+    // Gets all events from the event collection in the database and 
+    // creates a string of each event's date.
     let events=[];
     let postQuery = await this.afs.firestore.collection(`events`);
     await postQuery.get().then((querySnapshot) => { 
@@ -176,16 +180,10 @@ export class EventInfoProvider {
       })
     });
     events.forEach(event=>
-      {
-        let timestamp = new Date(0);
-        timestamp.setUTCSeconds(event.date.seconds);
-        let day = timestamp.getUTCDate();
-        let month = timestamp.getUTCMonth();
-        let year = timestamp.getUTCFullYear();
-        event.dateString = ((month+1) + "/" + day + "/" + year);
-      });
+    {
+      this.getDateString(event);
+    });
     return events;
   }
-  
 
 }

@@ -25,6 +25,10 @@ export class AboutPage {
 
   ionViewWillLeave()
   {
+    // If you are on the About page and select another tab, this
+    // pops back to the Home tab (Post timeline), so that when you
+    // return to the Home tab, the About page will no longer be 
+    // showing.
     this.navCtrl.popToRoot();
   }
 

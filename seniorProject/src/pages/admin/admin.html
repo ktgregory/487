@@ -21,23 +21,25 @@
               <p>No pending requests!</p>
             </ion-row>
           </ion-card>
-          
       <ion-card *ngFor="let event of pendingEvents">
        <ion-item>
         <ion-row>
-        <p>{{event.username}} <br> {{event.event}} <br>
-          {{event.dateString}}</p>
+        <p>{{event.username}} 
+          <br> {{event.event}} <br>
+          {{event.dateString}}
+        </p>
         </ion-row>
           <ion-row>
-          <button ion-button item-end (click)="approvePost(event.postID, event.event, event.date)"> Approve </button> 
-          <button ion-button item-end outline (click)="denyPost(event.postID)"> Deny </button> 
+          <button ion-button item-end (click)="approvePost(event.postID, event.event, event.date)"> 
+            Approve 
+          </button> 
+          <button ion-button item-end outline (click)="denyPost(event.postID)"> 
+            Deny 
+          </button> 
         </ion-row>
         </ion-item>
       </ion-card>
-   
-      </ion-list>
-
-
+    </ion-list>
 </ion-content>
 
 <ion-footer>

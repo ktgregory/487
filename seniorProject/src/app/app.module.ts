@@ -1,3 +1,5 @@
+// Project by Katie Gregory
+
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
@@ -41,6 +43,7 @@ import { EventInfoProvider } from '../providers/event-info/event-info';
 import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
 import { ChatProvider } from '../providers/chat/chat';
+import { FoundationProvider } from '../providers/foundation/foundation';
 
 @NgModule({
   declarations: [
@@ -110,7 +113,8 @@ import { ChatProvider } from '../providers/chat/chat';
     UserinfoProvider,
     EventInfoProvider,
     RequestProvider,
-    ChatProvider
+    ChatProvider,
+    FoundationProvider
   ]
 })
 export class AppModule {}

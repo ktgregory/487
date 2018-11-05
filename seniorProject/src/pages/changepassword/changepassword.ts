@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, Loading, LoadingController } from 'ionic-angular';
+import { IonicPage, 
+  NavController, 
+  NavParams, 
+  AlertController, 
+  Loading, 
+  LoadingController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmailValidator } from '../../validators/email';
 import { AuthProvider } from '../../providers/auth/auth';
-/**
- * Generated class for the ChangepasswordPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({
@@ -18,12 +17,13 @@ import { AuthProvider } from '../../providers/auth/auth';
 export class ChangepasswordPage {
 
   public loginForm:FormGroup;
-
   public loading:Loading;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public formBuilder: FormBuilder, private authData: AuthProvider,
     public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+    // Sets loginForm variable equal to the inputs from the html
+    // and sets validators
     this.loginForm = formBuilder.group({
       email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
       password: ['', Validators.compose([Validators.minLength(6), Validators.required])],
@@ -35,7 +35,8 @@ export class ChangepasswordPage {
 
   async changePassword()
   {
-    this.authData.changePassword(this.loginForm.value.newpassword).then(any=>
+    this.authData.changePassword(this.loginForm.value.newpassword)
+    .then(any=>
       {
         this.loading.dismiss().then(() =>
         {    
@@ -48,23 +49,20 @@ export class ChangepasswordPage {
             }
             ]
             });
-              alert.present();
-            });
-          });
+            alert.present();
+        });
+      });
 
-        this.navCtrl.pop();
-      
+      this.navCtrl.pop(); 
   }
 
   loginUser(){
-    if (!this.loginForm.valid){
-      console.log(this.loginForm.value);
-    } else {
-      this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
+    // Logs the user in before changing their password. 
+    if (this.loginForm.valid){
+      this.authData.loginUser(this.loginForm.value.email, 
+        this.loginForm.value.password)
       .then( authData => {
-
         this.changePassword();
-         
       }, error => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({
@@ -80,6 +78,7 @@ export class ChangepasswordPage {
         });
       });
 
+      // Shows loading symbol.
       this.loading = this.loadingCtrl.create({
         dismissOnPageChange: true,
       });
@@ -89,6 +88,7 @@ export class ChangepasswordPage {
 
   cancel()
   {
+    // Returns to Profile page. 
     this.navCtrl.pop();
   }
 }

@@ -18,13 +18,14 @@
 
 
 <ion-content padding>
-    <div>
-          <ion-card *ngFor="let event of events">
-            <ion-item *ngIf="event.name!='Other'"><p>{{event.name}} <br> {{event.dateString}} </p>
-      
-            <button ion-button clear item-end icon-only (click)="confirmDeleteEvent(event.eventID)"><ion-icon name="trash"></ion-icon></button>
-    
-            </ion-item>
-          </ion-card>
-      </div>
+  <div>
+    <ion-card *ngFor="let event of events">
+      <ion-item *ngIf="event.name!='Other'">
+        <p>{{event.name}} <br> {{event.dateString}}</p>
+        <button ion-button clear item-end icon-only (click)="confirmDeleteEvent(event.eventID)">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item>
+    </ion-card>
+  </div>
 </ion-content>

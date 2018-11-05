@@ -1,127 +1,132 @@
-import { Injectable } from '@angular/core';
-import { AuthProvider } from '../auth/auth';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { convertUrlToDehydratedSegments } from 'ionic-angular/umd/navigation/url-serializer';
+// INCOMPLETE.
 
-//https://firebase.google.com/docs/firestore/data-model#subcollections
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from 'angularfire2/firestore';
+
 
 @Injectable()
 export class ChatProvider {
 
-  constructor(private authData: AuthProvider, private afs: AngularFirestore) {
-    
-  }
+  constructor(private afs: AngularFirestore){}
 
-  startThread(ID1:string, ID2: string)
+  async startThread(ID1:string, ID2: string, eventName:string)
   {
-    let threadID, greaterID, lesserID;
+
+    // Creates the thread ID by adding the two user ID's together
+    // and the first five characters of the event name.
+    // Whichever idea is the greater of the two is added first.
+    // The first five characters of the event name are used because
+    // it's possible for two users to have multiple different chats 
+    // about different events. 
+    let greaterID, lesserID;
+    let threadID = this.makeThreadID(ID1, ID2, eventName);
     if(ID1 > ID2)
     {
       greaterID = ID1; 
       lesserID = ID2;
-      threadID = ID1 + ID2;
     }
     else
     {
       greaterID = ID2;
       lesserID = ID1;
-      threadID = ID2 + ID1;
     }
     
-    this.afs.collection('chats').doc(threadID).set(
+    await this.afs.collection('chats').doc(threadID).set(
       {
           threadID: threadID,
           greaterID: greaterID,
           lesserID: lesserID,
           deletedByGreater: false,
-          deletedByLesser: false
+          deletedByLesser: false,
+          topic: eventName,
+          lastUpdate: new Date() // lastUpdate is the current time. 
+                                 // Will be updated as new messges
+                                 // are sent. 
       }
     );
+    return; 
   }
 
-  // a thread should have an id, a greaterID, a lesserID, deletedByGreater, deletedByLesser 
-
-  makeThreadID(ID1:string, ID2:string)
+  makeThreadID(ID1:string, ID2:string, eventName:string)
   {
+    // Makes thread ID based on values of the two users' IDs.
     let threadID;
     if(ID1 > ID2)
     {
-      threadID = ID1 + ID2;
+      threadID = ID1 + ID2 + eventName[5];
     }
     else
     {
-      threadID = ID2 + ID1;
+      threadID = ID2 + ID1 + eventName[5];
     }
     return threadID;
   }
 
-
-  sendMessage(text:string, senderID:string, receiverID:string)
+  sendMessage(text:string, senderID:string, receiverID:string, 
+    eventName:string)
   {
-    let threadID = this.makeThreadID(senderID, receiverID);
+    // Creates a new message in the database under the corresponding
+    // chat (thread) document, and updates the lastUpdate attribute of
+    // the chat. 
+    let threadID = this.makeThreadID(senderID, receiverID, eventName);
     let messageID = this.afs.createId();
-    this.afs.collection('chats').doc(threadID).collection('messages').doc(messageID).set(
+    let currentTime = new Date();
+    this.afs.collection('chats').doc(threadID).collection('messages')
+    .doc(messageID).set(
       {
         messageText: text,
         senderID: senderID,
         receiverID: receiverID,
-        timestamp: new Date(),
+        timestamp: currentTime,
         messageID: messageID
       }
     );
-  //  return this.afs.collection('chats').doc(threadID).collection('messages').doc(messageID);
+    this.afs.collection('chats').doc(threadID).update(
+      {
+        lastUpdate: currentTime
+      }
+    );
   }
 
   deleteThread(threadID:string)
   {
+    // Removes a chat by its ID from the database. 
     this.afs.collection('chats').doc(threadID).delete();
   }
-
-  async getChatsByUserID(userID:string)
+  
+  compareTimestamps(ob1, ob2)
   {
-    let chats = [];
-    let chatQuery = await this.afs.firestore.collection('chats').where("greaterID","==",userID);
-    await chatQuery.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-          chats.push(doc.data());
-      });
-    });
-
-    chatQuery = await this.afs.firestore.collection('chats').where("lesserID","==",userID);
-    await chatQuery.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-          chats.push(doc.data());
-      });
-    });
-    return chats;
+    // Comparison used to sort messages. 
+    return ob1.timestamp.seconds - ob2.timestamp.seconds;
   }
+
 
   async getMessagesByThreadID(threadID:string)
   {
+    // Returns the sorted messages according to the passed ID.
     let messages = [];
-    let messageQuery = await this.afs.firestore.collection('chats').doc(threadID).collection('messages');
+    let messageQuery = await this.afs.firestore.collection('chats')
+    .doc(threadID).collection('messages');
     await messageQuery.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           messages.push(doc.data());
       });
     });
-
-    return messages;
+    return messages.sort(this.compareTimestamps);
   }
 
-  async getMessageUpdatesByThreadID(threadID:string)
-  {
-    let messages = [];
-    let messageQuery = await this.afs.firestore.collection('chats').doc(threadID).collection('messages');
-    await messageQuery.onSnapshot((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          messages.push(doc.data());
-          
-      });
-    });
-    
-    return await messages;
-
-  }
-
+  // async getMessageUpdatesByThreadID(threadID:string)
+  // {
+  //   let messages = [];
+  //   let messageQuery = await this.afs.firestore.collection('chats')
+  //   .doc(threadID).collection('messages');
+  //   await messageQuery.onSnapshot((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         messages.push(doc.data());
+  //     });
+  //   });
+  //   return await messages;
+  // }
 }
+
+//SOURCE: https://firebase.google.com/docs/firestore/data-model#subcollections

@@ -2,14 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, ViewController, NavParams, AlertController } from 'ionic-angular';
 import { RequestProvider } from '../../providers/request/request';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { ChatProvider } from '../../providers/chat/chat';
 
-/**
- * Generated class for the RequestModalPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({
@@ -26,19 +20,25 @@ export class RequestModalPage implements OnInit {
   eventName;
   phoneNumber;
   email;
+  otherUserID;
+  userID;
   
   constructor(
-    public viewCtrl: ViewController, params: NavParams, private reqService: RequestProvider,
-    private userService: UserinfoProvider, private afs: AngularFirestore,
-    public alertCtrl: AlertController
+    public viewCtrl: ViewController, params: NavParams, 
+    private reqService: RequestProvider, private userService: UserinfoProvider,
+    public alertCtrl: AlertController, private chat: ChatProvider
   ) {
-    this.requestID = params.get('myParam');
-    
+    // Gets navigation parameters and updates corresponding variables. 
+    this.requestID = params.get('requestID');
+    this.otherUserID = params.get('otherUserID');
+    this.userID = params.get('userID');
   }
 
 
   async ngOnInit()
   {
+    // Gets the sender of the request's profile information
+    // to be displayed.
     let request = await this.reqService.getRequestInfo(this.requestID);
     this.requestInfo = request[0];
     this.eventName = this.requestInfo.eventName;
@@ -47,34 +47,22 @@ export class RequestModalPage implements OnInit {
     this.name = senderInfo.name;
     this.bio = senderInfo.bio;
     this.profileimage = senderInfo.profileimage;
-    this.getEmail();
-    this.getPhoneNumber();
   }
 
-  async getEmail()
+  dismiss() 
   {
-    let id = this.requestInfo.receiverID;
-    let receiver = await this.userService.getUserInfo(id);
-    this.email=receiver[0].email;
-
-  }
-
-  async getPhoneNumber()
-  {  
-    let id = this.requestInfo.receiverID;
-    let receiver = await this.userService.getUserInfo(id);
-    this.phoneNumber = receiver[0].phoneNumber;
-  }
-
-  dismiss() {
+    // Closes the modal. 
     this.viewCtrl.dismiss();
   }
 
  clearRequest()
   {
+    // Asks user to confirm that they want to clear 
+    // the request before clearing it. 
     let clearMessage = this.alertCtrl.create({
       title: 'Clear this request?',
-      message: 'The request will no longer be viewable to you, and this action cannot be undone!',
+      message: 'The request will no longer be viewable to you'
+      + 'and this action cannot be undone!',
       buttons: [
         {
           text: 'Nevermind!',
@@ -89,88 +77,58 @@ export class RequestModalPage implements OnInit {
             this.dismiss();
           }
         }
-        
       ]
     });
-    clearMessage.present()
-  
+    clearMessage.present();
   }
 
-  acceptRequest()
+  async acceptRequest()
   {
+    // Asks user to confirm that they want to accept
+    // the request, and then creates a new thread 
+    // between the users. 
     let acceptMessage = this.alertCtrl.create({
       title: 'Accept?',
       message: 'Would you like to accept this request?',
       buttons: [
         {
           text: 'Nevermind.',
-          handler: () => {
-            
-          }
+          handler: () => {}
         },
         {
           text: 'Yes, accept!',
-          handler: () => {
-            
-            this.contactInfoAlert();
+          handler: async () => {
+            await this.chat
+            .startThread(this.userID, this.otherUserID, this.eventName)
+            .then(any=>
+            {
+                this.reqService.acceptRequest(this.requestID);
+                this.announceAcceptance();
+            });
           }
         }
-        
       ]
     });
     acceptMessage.present()
-  
-  }
-
-  contactInfoAlert()
-  {
-    let contactInfo = this.alertCtrl.create({
-      title: 'Method of contact?',
-      message: 'How would you like to be contacted?',
-      buttons: [
-        { text: 'Cancel',
-          handler: () => {
-         
-        }
-        },
-        {
-          text: 'Text',
-          handler: () => {
-            this.reqService.acceptRequest(this.requestID, this.phoneNumber);
-            this.announceAcceptance();
-          }
-        },
-        {
-          text: 'Email',
-          handler: () => {
-            this.reqService.acceptRequest(this.requestID, this.email);
-            this.announceAcceptance();
-          }
-        }
-
-      ]
-      }
-    );
-    
-      contactInfo.present();
   }
 
   announceAcceptance()
   {
+    // Notifies user that the request was successfully accepted
+    // and that a new chat thread has been created. 
     let acceptMessage = this.alertCtrl.create({
       title: 'Request Accepted!',
-      message: 'Your chosen contact information was sent',
+      message: 'A new chat has been started with ' 
+      + this.name + ' on the topic of ' + this.eventName,
       buttons: [
         { text: 'OK.',
           handler: () => {
             this.dismiss();
-        }
-        }
-      ]
+          }
+        }]
       }
     );
-    
-      acceptMessage.present();
+    acceptMessage.present();
   }
 
 
