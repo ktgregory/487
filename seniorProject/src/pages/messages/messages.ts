@@ -5,6 +5,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { ChatroomPage } from '../chatroom/chatroom';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { FormArrayName } from '@angular/forms';
 
 @Component({
   selector: 'page-messages',

@@ -1,20 +1,27 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, ModalController } from 'ionic-angular';
+import { NavController, AlertController, ModalController, App } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AccountsettingsPage} from '../accountsettings/accountsettings';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { ModifyeventlistPage } from '../modifyeventlist/modifyeventlist';
+import { TabsPage } from '../tabs/tabs';
 
 @Component({
   selector: 'page-admin',
   templateUrl: 'admin.html'
 })
+
 export class AdminPage {
+
+  // Variable that is toggled with the drop-down menu at the top 
+  // of the page (for switching to the regular user interface)
+  interface="admin";
 
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private eventService: EventInfoProvider, private afs: AngularFirestore,
-    public alertCtrl: AlertController, public modalCtrl: ModalController) { }
+    public alertCtrl: AlertController, public modalCtrl: ModalController,
+    public app: App) { }
 
     noPending = false;
     pendingEvents = [];
@@ -95,6 +102,15 @@ export class AdminPage {
   {
     this.authData.logoutUser();
     window.location.reload();
+  }
+
+  switchToRegularInterface()
+  {
+    // Switches back to the regular user interface,
+    // when the "Home" option is selected from the drop
+    // down menu at the top of the page.
+    if (this.interface=="home")
+      this.app.getRootNav().setRoot(TabsPage);
   }
 
 }

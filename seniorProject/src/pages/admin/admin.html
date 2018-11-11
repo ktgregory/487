@@ -10,7 +10,14 @@
             <ion-icon name="log-out"></ion-icon>
           </button>
         </ion-buttons>
-    <ion-title>DateDash Admin</ion-title>
+        <ion-row justify-content-center>
+          <ion-item class="select" >
+            <ion-select [(ngModel)]="interface"  (ionChange)="switchToRegularInterface()" cancelText="Dismiss" interface="popover">
+              <ion-option value="admin" selected="true">Admin</ion-option>
+              <ion-option value="home">Home</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-row>
   </ion-navbar>
 </ion-header>
 

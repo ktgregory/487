@@ -45,6 +45,14 @@ export class NotificationsPage {
       await this.receivedRequestListener();
   }
 
+  ionViewWillEnter()
+  {
+    // this.receivedRequests = [];//await this.reqService.getReceivedRequests(this.userID);
+    // this.sentRequests = []; //await this.reqService.getSentRequests(this.userID);
+    // this.pendingPosts = []; //await this.eventInfo.getPendingPosts(this.userID); 
+    // this.ngOnInit();
+  }
+
   respondToRequest(requestID:string, userID: string) { 
     // Opens Request modal and passes relevant parameters. 
     let myModal = this.modalCtrl.create(RequestModalPage, { 

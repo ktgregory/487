@@ -62,7 +62,8 @@ export class LoginPage {
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
       .then( authData => {
-        this.navigateBasedOnUserType();
+        this.navCtrl.setRoot(TabsPage);
+       // this.navigateBasedOnUserType();
       }, error => {
         this.loading.dismiss().then( () => {
           let alert = this.alertCtrl.create({
@@ -93,20 +94,20 @@ export class LoginPage {
     this.navCtrl.push(SignUpPage);
   }
 
-  async navigateBasedOnUserType()
-  {
-    // Determines whether the user needs to be navigated
-    // to the Admin page or Home page. 
-    let id = await this.authData.getUserID();
-    let userInfo = await this.userService.getUserInfo(id);
-    let type = userInfo[0].type;
-    if(type=="admin")
-    {
-      this.navCtrl.setRoot(AdminPage);
-    }
-    else
-    {
-      this.navCtrl.setRoot(TabsPage);
-    }
-  }
+  // async navigateBasedOnUserType()
+  // {
+  //   // Determines whether the user needs to be navigated
+  //   // to the Admin page or Home page. 
+  //   let id = await this.authData.getUserID();
+  //   let userInfo = await this.userService.getUserInfo(id);
+  //   let type = userInfo[0].type;
+  //   if(type=="admin")
+  //   {
+  //     this.navCtrl.setRoot(AdminPage);
+  //   }
+  //   else
+  //   {
+  //     this.navCtrl.setRoot(TabsPage);
+  //   }
+  // }
 }

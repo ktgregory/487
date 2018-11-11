@@ -5,7 +5,15 @@
             <ion-icon name="add"></ion-icon>
           </button>
         </ion-buttons>
-    <ion-title>Home</ion-title>
+    <ion-title *ngIf="!admin">Home</ion-title>
+    <ion-row justify-content-center *ngIf="admin">
+    <ion-item class="select" >
+      <ion-select [(ngModel)]="interface"  (ionChange)="switchToAdminInterface()" cancelText="Dismiss" interface="popover">
+        <ion-option value="reg" selected="true">Home</ion-option>
+        <ion-option value="admin">Admin</ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-row>
     <ion-buttons left>
         <button ion-button icon-only (click)="goToAboutPage()">
           <ion-icon name="information-circle"></ion-icon>

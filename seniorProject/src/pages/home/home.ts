@@ -20,6 +20,9 @@ export class HomePage {
   @ViewChild(Slides) slides: Slides;
   userID;
   posts=[];
+  type;
+  admin = false;
+  interface = "reg";
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
     private eventInfo: EventInfoProvider, private reqService: RequestProvider,
@@ -35,6 +38,12 @@ export class HomePage {
 
     // Sorts the posts in chronological order. 
     this.posts = this.posts.sort(this.compareDates);
+
+    this.type = await this.userService.getUserType(this.userID);
+    if(this.type=="admin")
+    {
+      this.admin=true;
+    }
   }
 
   async ionViewWillEnter()
@@ -43,11 +52,11 @@ export class HomePage {
     // If so, they are redirected to the Admin page. 
     // This is needed for when an admin user refreshes
     // their page. 
-    let type = await this.userService.getUserType(this.userID);
-    if(type=="admin")
-    {
-      this.app.getRootNav().setRoot(AdminPage);
-    }
+    // let type = await this.userService.getUserType(this.userID);
+    // if(type=="admin")
+    // {
+    //   this.app.getRootNav().setRoot(AdminPage);
+    // }
   }
 
   async getPostsForTimeline()
@@ -156,5 +165,14 @@ export class HomePage {
       }]
     });
     error.present();
+  }
+
+  switchToAdminInterface()
+  {
+    // Switches to the administrative user interface,
+    // when the "Admin" option is selected from the drop
+    // down menu at the top of the page.
+    if (this.interface=="admin")
+      this.app.getRootNav().setRoot(AdminPage);
   }
 }
