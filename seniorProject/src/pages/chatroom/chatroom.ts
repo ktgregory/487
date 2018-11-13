@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ChatProvider } from '../../providers/chat/chat';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { EventInfoProvider } from '../../providers/event-info/event-info';
 
 @IonicPage()
 @Component({
@@ -23,7 +24,7 @@ export class ChatroomPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private chat: ChatProvider, public formBuilder: FormBuilder,
-    private afs: AngularFirestore) {
+    private afs: AngularFirestore, private eventInfo: EventInfoProvider) {
 
       // Retreive navigation parameters from Messages page and
       // set messageForm variable equal to message input. 
@@ -62,6 +63,10 @@ export class ChatroomPage {
     await messageQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(change => {
         this.messages.push(this.formatNewMessage(change.doc.data()));
+        if(this.userID<this.otherUserID)
+          this.afs.collection('chats').doc(this.threadID).update({unreadByLesser:false});
+        else
+          this.afs.collection('chats').doc(this.threadID).update({unreadByGreater:false});
         if(this.noMessages==true) this.noMessages = false;
       });
     });
@@ -87,12 +92,7 @@ export class ChatroomPage {
       message.position="speech-bubble-right";
     else 
       message.position="speech-bubble-left";
-    let date = new Date();
-    date.setSeconds(message.timestamp.seconds);
-    if (date.getMinutes()<10) 
-      message.timestring = date.getHours()+ ":0" + date.getMinutes();
-    else 
-        message.timestring = date.getHours() + ":" + date.getMinutes();
+    message.timestring = this.eventInfo.getTimeString(message);
     return message;
   }
 

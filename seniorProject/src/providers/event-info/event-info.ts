@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { Injectable } from '@angular/core';
+
+
 
 @Injectable()
 export class EventInfoProvider {
@@ -89,6 +91,31 @@ export class EventInfoProvider {
     let month = timestamp.getUTCMonth();
     let year = timestamp.getUTCFullYear();
     element.dateString = ((month+1) + "/" + day + "/" + year);
+  }
+
+  getTimeString(element)
+  {
+    // Creates a string of the event's time stamp. 
+    let timestamp = new Date(0);
+    timestamp.setUTCSeconds(element.date.seconds);
+    let pmOrAm;
+    let minString;
+    let date = timestamp.toString().substring(16,21);
+    let hour = parseInt(date.substring(0,2));
+    let min = parseInt(date.substring(3,5));
+    if (hour > 12)
+    {
+      hour = hour - 12;
+      pmOrAm = "PM";
+    }
+    else
+    {
+      pmOrAm = "AM"
+    }
+    if(min<10) minString = "0" + min;
+    else minString = min.toString();
+    let dateString = (hour + ":" + minString + " " + pmOrAm);
+    return dateString;
   }
 
   calculateDaysUntil(element)

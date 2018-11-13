@@ -39,7 +39,10 @@ export class ChatProvider {
           deletedByGreater: false,
           deletedByLesser: false,
           topic: eventName,
-          lastUpdate: new Date() // lastUpdate is the current time. 
+          unreadByLesser: true,
+          unreadByGreater: true,
+          messagePreview: "New chat!",
+          date: new Date() // last update is the current time. 
                                  // Will be updated as new messges
                                  // are sent. 
       }
@@ -77,15 +80,33 @@ export class ChatProvider {
         messageText: text,
         senderID: senderID,
         receiverID: receiverID,
-        timestamp: currentTime,
+        date: currentTime,
         messageID: messageID
       }
     );
-    this.afs.collection('chats').doc(threadID).update(
-      {
-        lastUpdate: currentTime
-      }
-    );
+    if(text.length > 10)
+      text = text.substring(0,9) + "...";
+    if(receiverID<senderID)
+    {
+      this.afs.collection('chats').doc(threadID).update(
+        {
+          date: currentTime,
+          messagePreview: text,
+          unreadByLesser:true
+        }
+      );
+    }
+    else
+    {
+      this.afs.collection('chats').doc(threadID).update(
+        {
+          date: currentTime,
+          messagePreview: text,
+          unreadByGreater:true
+        }
+      );
+    }
+
   }
 
   deleteThread(threadID:string)
@@ -96,8 +117,14 @@ export class ChatProvider {
   
   compareTimestamps(ob1, ob2)
   {
-    // Comparison used to sort messages. 
-    return ob1.timestamp.seconds - ob2.timestamp.seconds;
+    // Comparison used to sort messages.
+   return ob1.date.seconds - ob2.date.seconds;
+  }
+    
+  compareTimestampsChats(ob1, ob2)
+  {
+    // Comparison used to sort chats. 
+   return ob2.date.seconds - ob1.date.seconds;
   }
 
 
@@ -107,9 +134,9 @@ export class ChatProvider {
     let messages = [];
     let messageQuery = await this.afs.firestore.collection('chats')
     .doc(threadID).collection('messages');
-    await messageQuery.get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          messages.push(doc.data());
+    await messageQuery.get().then(( querySnapshot) => {
+        querySnapshot.forEach(async (doc) => {
+          await messages.push(doc.data());
       });
     });
     return messages.sort(this.compareTimestamps);
