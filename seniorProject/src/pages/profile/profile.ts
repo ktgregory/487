@@ -77,7 +77,11 @@ export class ProfilePage implements OnInit {
 
   goToSettings() 
   {
-    this.navCtrl.push(SettingsPage, this.posts);
+    this.navCtrl.push(SettingsPage,
+      {
+        'profilePic':this.imageURL,
+        'userID': this.userID
+      });
   }
 
   goToAccountSettings() 

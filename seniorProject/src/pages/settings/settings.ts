@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, NavParams } from 'ionic-angular';
 import {UploadPage} from '../uploadprofilepic/uploadprofilepic';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
@@ -14,14 +14,19 @@ export class SettingsPage {
   name;
   bio;
   userID;
+  profilePic;
 
   constructor(public navCtrl: NavController, public authData: AuthProvider,
-    private afs: AngularFirestore, public alertCtrl: AlertController) { }
+    private afs: AngularFirestore, public alertCtrl: AlertController,
+    public navParams: NavParams) {
+      this.profilePic = this.navParams.get('profilePic');
+      this.userID = this.navParams.get('userID');
+     }
 
   async ngOnInit()
   {
     // Queries for the user's profile information. 
-    this.userID = await this.authData.getUserID();
+    //this.userID = await this.authData.getUserID();
     let userQuery = await this.afs.firestore.collection(`users`)
     .where("uid","==",this.userID);    
     await userQuery.get().then((querySnapshot) => { 
@@ -38,7 +43,7 @@ export class SettingsPage {
     // If you are on the Settings page and select another tab, this
     // pops back to the Profile page, so that when you return to the 
     // Profile tab, the Settings page will no longer be showing.
-    this.navCtrl.popToRoot();
+    // this.navCtrl.popToRoot();
   }
 
   goToTabs() {
@@ -46,7 +51,11 @@ export class SettingsPage {
   }
 
   goToUploadPage() {
-    this.navCtrl.push(UploadPage);
+    this.navCtrl.push(UploadPage, 
+      {
+        'profilePic':this.profilePic,
+        'userID': this.userID
+      });
   }
 
   editName()

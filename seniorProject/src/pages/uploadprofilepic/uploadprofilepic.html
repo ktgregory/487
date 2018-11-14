@@ -1,25 +1,20 @@
-
 <ion-content padding>
-        <!-- <img src="{{pathForImage(lastImage)}}" style="width: 100%" [hidden]="lastImage === null">
-        <h3 [hidden]="lastImage !== null">Please Select Image!</h3> -->
-  <button ion-button (click) = "uploadPicture()">
+  <ion-card> <img src="{{profilePic}}"></ion-card>
+  <button ion-button>
+    <label class="file-label">
+      <input class="file-input" type="file" (change)="setUpload($event.target.files)">
+        <span class="file-cta">
+        </span>
+      </label>
+  </button>
+  <ion-row  justify-content-center>
+  <button ion-button (click) = "startUpload()">
     Upload My New Picture
   </button>
-  <button ion-button (click) = "goToSettings()">
+</ion-row>
+<ion-row justify-content-center>
+  <button ion-button clear (click) = "goToSettings()">
     Cancel
-  </button>     
-<ion-footer>
-    <ion-toolbar color="primary">
-      <ion-buttons>
-        <button ion-button icon-left>
-          <ion-icon name="camera"></ion-icon>
-          Select Image
-        </button>
-        <button ion-button icon-left>
-          <ion-icon name="cloud-upload"></ion-icon>
-          Upload
-        </button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-footer> 
+  </button> 
+</ion-row>    
 </ion-content>

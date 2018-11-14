@@ -44,6 +44,7 @@ import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
 import { ChatProvider } from '../providers/chat/chat';
 import { FoundationProvider } from '../providers/foundation/foundation';
+//import { UploadImageProvider } from '../providers/upload-image/upload-image';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     HttpModule,
     HttpClientModule,
     SelectSearchableModule
+    //ImagePicker
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -114,7 +116,8 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     EventInfoProvider,
     RequestProvider,
     ChatProvider,
-    FoundationProvider
+    FoundationProvider,
+    // UploadImageProvider
   ]
 })
 export class AppModule {}
