@@ -1,6 +1,7 @@
 <ion-tabs text-center>
-  <ion-tab [root]="tab1Root" tabIcon="home"></ion-tab>
-  <ion-tab [root]="tab2Root" tabIcon="chatbubbles"></ion-tab>
-  <ion-tab [root]="tab3Root" tabIcon="heart-outline"  tabBadge="3" tabBadgeStyle="danger"></ion-tab>
-  <ion-tab [root]="tab4Root" tabIcon="contact"></ion-tab>
+  <ion-tab [root]="tab1Root" tabIcon="home" (ionSelect)="homeSelected()"></ion-tab>
+  <ion-tab [root]="tab2Root" tabIcon="chatbubbles" (ionSelect)="homeSelected()"></ion-tab>
+  <ion-tab [root]="tab3Root" tabIcon="heart-outline"  [tabBadge] = "newRequestCount>0 ? newRequestCount : null"  tabBadgeStyle="danger" 
+  (ionSelect)="homeSelected()"></ion-tab>
+  <ion-tab [root]="tab4Root" tabIcon="contact" (ionSelect)="homeSelected()"></ion-tab>
 </ion-tabs>

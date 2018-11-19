@@ -18,4 +18,6 @@ export class TabsPage {
   constructor() {}
 
   // add listeners for MessagesPage and NotificationsPage tabs
+  // if a tab is clicked, badge count goes to 0
+  // [tabBadge] = "badgeValue>0 ? badgeValue : null" (for the html!)
 }
