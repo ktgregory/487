@@ -16,4 +16,6 @@ export class TabsPage {
   tab4Root = ProfilePage;
 
   constructor() {}
+
+  // add listeners for MessagesPage and NotificationsPage tabs
 }

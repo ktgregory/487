@@ -22,7 +22,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
- <ion-slides slider="data.slider">
+ <ion-slides slider="data.slider" #imageSlides>
    <ng-container *ngFor = "let post of posts">
     <ion-slide *ngIf="post.notExpired">
     <ion-card>
@@ -35,7 +35,7 @@
           <p>{{post.dateString}}</p>
         </ion-item>
         <div>
-        <img-loader src={{post.image}} useImg></img-loader>
+        <img [lazyLoad]="post.image" [scrollObservable]="imageSlides.ionSlideDrag">
        <ion-item>
          <p>{{post.description}}</p>
         </ion-item>

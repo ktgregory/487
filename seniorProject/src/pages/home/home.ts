@@ -11,7 +11,6 @@ import { AdminPage } from '../admin/admin';
 import { ViewChild } from '@angular/core';
 import { Slides } from 'ionic-angular';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
-import { ImageLoader} from 'ionic-image-loader';
 
 @Component({
   selector: 'page-home',
@@ -30,7 +29,9 @@ export class HomePage {
     private authData: AuthProvider, private afs: AngularFirestore,
     private timeInfo: TimeDateCalculationsProvider, private reqService: RequestProvider,
     private userService: UserinfoProvider, public app: App, 
-    public modalCtrl: ModalController, private userInfo: UserinfoProvider) {}
+    public modalCtrl: ModalController, private userInfo: UserinfoProvider) {
+      
+    }
 
    
   async ngOnInit()

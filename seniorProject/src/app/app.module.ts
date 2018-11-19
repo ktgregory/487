@@ -46,7 +46,11 @@ import { RequestModalPage } from '../pages/request-modal/request-modal';
 import { ChatProvider } from '../providers/chat/chat';
 import { FoundationProvider } from '../providers/foundation/foundation';
 import { TimeDateCalculationsProvider } from '../providers/time-date-calculations/time-date-calculations';
-import { IonicImageLoader } from 'ionic-image-loader';
+import { NgModuleRef } from '@angular/core'
+import { BrowserTransferStateModule } from '@angular/platform-browser';
+import { LazyLoadImageModule } from 'ng-lazyload-image';
+
+
 
 //import { UploadImageProvider } from '../providers/upload-image/upload-image';
 
@@ -86,7 +90,7 @@ import { IonicImageLoader } from 'ionic-image-loader';
     HttpModule,
     HttpClientModule,
     SelectSearchableModule,
-    IonicImageLoader.forRoot()
+    LazyLoadImageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
