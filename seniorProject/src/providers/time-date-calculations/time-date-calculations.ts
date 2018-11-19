@@ -70,11 +70,11 @@ export class TimeDateCalculationsProvider {
     if (hour > 12)
     {
       hour = hour - 12;
-      pmOrAm = "PM";
+      pmOrAm = "AM";
     }
     else
     {
-      pmOrAm = "AM"
+      pmOrAm = "PM"
     }
     if(min<10) minString = "0" + min;
     else minString = min.toString();

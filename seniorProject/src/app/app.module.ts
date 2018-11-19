@@ -49,6 +49,7 @@ import { TimeDateCalculationsProvider } from '../providers/time-date-calculation
 import { NgModuleRef } from '@angular/core'
 import { BrowserTransferStateModule } from '@angular/platform-browser';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
+import { AutosizeDirective} from '../directives/autosize/autosize';
 
 
 

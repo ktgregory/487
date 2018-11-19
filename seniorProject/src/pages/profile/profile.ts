@@ -25,6 +25,7 @@ export class ProfilePage implements OnInit {
   userData;
   imageURL;
   posts=[];
+  newlyApproved=[];
   noPosts=false;
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
@@ -53,11 +54,42 @@ export class ProfilePage implements OnInit {
      });
      
      this.getEventTimeInfoWithID();
-    
+     this.newlyApproved.forEach(post=>
+      {
+        let notification = this.alertCtrl.create({
+          title: 'Post Status:',
+          message: "Your post about " + post.event + " has been approved!",
+          buttons: [
+            {
+              text: 'Okay.',
+            }
+          ]
+        });
+        notification.present();
+      });
+      this.newlyApproved=[];
      if (this.posts.length ==0)
      {
        this.noPosts=true;
      }
+  }
+
+  ionViewDidEnter()
+  {
+    this.newlyApproved.forEach(post=>
+      {
+        let notification = this.alertCtrl.create({
+          title: 'Post Status:',
+          message: "Your post about " + post.event + " has been approved!",
+          buttons: [
+            {
+              text: 'Okay.',
+            }
+          ]
+        });
+        notification.present();
+      });
+      this.newlyApproved=[];
   }
 
   compareDates(post1, post2)
@@ -106,10 +138,20 @@ export class ProfilePage implements OnInit {
     confirm.present();
   }
 
-  statusInfo() {
+  statusInfo(status) {
+
+    let message;
+    if(status=="approved")
+    {
+      message = "This post has been approved and is displayed to other users on their Home Tabs!"
+    }
+    else 
+    {
+      message = "This post is still pending. You will be notified when it is approved!"
+    }
     let confirm = this.alertCtrl.create({
       title: 'Post Status:',
-      message: 'If a post is pending, you will be notified when it is approved or denied!',
+      message: message,
       buttons: [
         {
           text: 'Okay.',
@@ -134,6 +176,10 @@ export class ProfilePage implements OnInit {
           this.posts.push(await this.timeInfo.eventTimeCalculations(change.doc.data()));
           this.noPosts=false;
           this.posts.sort(this.compareDates);
+          if(change.doc.data().status=="approved" && change.doc.data().approvalViewed==false)
+          {
+            this.newlyApproved.push(change.doc.data());
+          }
         }
         if (change.type === "removed")
         {
@@ -141,6 +187,10 @@ export class ProfilePage implements OnInit {
           this.removePost(change.doc.data());
           if(this.posts.length==0)
             this.noPosts=true;
+        }
+        if (change.type === "modified")
+        {
+          this.checkForNewApproved(change.doc.data());
         }
       })
     });
@@ -165,6 +215,22 @@ export class ProfilePage implements OnInit {
     // Logs user out and returns to the Login page. 
     this.authData.logoutUser();
     window.location.reload();
+  }
+
+  checkForNewApproved(updatedPost)
+  {
+    this.posts.forEach(post=>
+    {
+        if(updatedPost.postID == post.postID)
+        {
+          post = updatedPost;
+          if (post.status=="approved" && post.approvalViewed==false)
+          {
+            console.log('here');
+            this.newlyApproved.push(post);
+          }
+        }
+    });
   }
 
 }

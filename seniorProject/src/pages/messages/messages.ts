@@ -6,6 +6,8 @@ import { ChatroomPage } from '../chatroom/chatroom';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
+import { unwrapResolvedMetadata, IfStmt } from '@angular/compiler';
+import { isRightSide } from 'ionic-angular/umd/util/util';
 
 @Component({
   selector: 'page-messages',
@@ -30,16 +32,12 @@ export class MessagesPage {
     this.userID = this.authData.getUserID();
     await this.getChatsByUserID(this.userID);
     if (this.chats.length == 0) this.noChats = true;
-    this.chats.forEach(chat=>
-      {
-        this.getChatUpdateByThreadID(chat.threadID, chat.date);
-      });
   }
 
 
   async ionViewWillEnter()
   {
-    this.refreshChats(this.userID);
+    //this.refreshChats(this.userID);
   }
 
   async getChatSender(chat, deleteBool)
@@ -49,12 +47,12 @@ export class MessagesPage {
     if (chat.greaterID == this.userID) 
     {
       chat.senderID = chat.lesserID;
-      chat.unread = chat.unreadByGreater;
+      chat.unread = (chat.unreadByGreaterCount>0);
     }
     else 
     {
       chat.senderID = chat.greaterID;
-      chat.unread = chat.unreadByLesser;
+      chat.unread = (chat.unreadByLesserCount>0);
     }
     chat.senderName = await this.userInfo.getUserNameByID(chat.senderID);
     chat.senderImage = await this.userInfo.getUserImageByID(chat.senderID);
@@ -64,9 +62,7 @@ export class MessagesPage {
   }
 
 
-
-
-  goToChat(threadID:string, senderID:string, userID:string, 
+  goToChat(chat, threadID:string, senderID:string, userID:string, 
     senderName:string, senderImage:string, eventName:string, topic:string)
   {
     // When marking threads to delete, this prevents 
@@ -85,6 +81,11 @@ export class MessagesPage {
         'eventName': eventName,
         'topic':topic
        });
+       chat.unread=false;
+       if(this.userID<senderID)
+        this.afs.collection('chats').doc(threadID).update({unreadByLesserCount:0});
+       else
+        this.afs.collection('chats').doc(threadID).update({unreadByGreaterCount:0});
     }
   }
 
@@ -106,18 +107,27 @@ export class MessagesPage {
     this.markThreads = true;
   }
 
+  deletedByThisUser(chat)
+  {
+    if(chat.lesserID==this.userID && chat.deletedByLesser==true)
+      this.removeChat(chat);
+    if(chat.greaterID == this.userID && chat.deletedByGreater==true)
+      this.removeChat(chat);
+    if(this.chats.length==0)
+      this.noChats=true;
+  }
 
   // Incomplete. 
   async deleteSelectedChats()
   {
     this.chats.forEach(async chat=>
     {
-
         if(chat.delete == true)
         {
-          // if (chat.greaterID == this.userID) chat.senderID = chat.lesserID;
-          // else chat.senderID = chat.greaterID;
-          // await this.chat.deleteThread(chat.threadID);
+          if(this.userID == chat.greaterID)
+            await this.afs.collection('chats').doc(chat.threadID).update({deletedByGreater:true});
+          else
+            await this.afs.collection('chats').doc(chat.threadID).update({deletedByLesser:true});  
         }
     });
 
@@ -167,15 +177,35 @@ export class MessagesPage {
           this.chats.push(await this.getChatSender(change.doc.data(),false));
           if(this.noChats==true) this.noChats=false;
           this.chats.sort(this.chat.compareTimestampsChats);
+          this.deletedByThisUser(change.doc.data());
         }
 
         if (change.type === "removed") 
         {
-         this.chats = this.chats.filter(
-           item => item != (this.getChatSender(change.doc.data(),true)));
+          this.removeChat(change.doc.data());
           if (this.chats.length==0) this.noChats = true;
           this.chats.sort(this.chat.compareTimestampsChats);
         }  
+
+        if (change.type === "modified")
+        {
+          if(this.userID==change.doc.data().lesserID)
+          {
+            if(change.doc.data().deletedByLesser)
+              this.removeChat(change.doc.data());
+            else
+              this.updateChatInfo(change.doc.data());
+          }
+          if(this.userID==change.doc.data().greaterID)
+          {
+            if(change.doc.data().deletedByGreater)
+              this.removeChat(change.doc.data());
+            else
+              this.updateChatInfo(change.doc.data()); 
+          }
+          if(this.chats.length==0)
+            this.noChats=true;
+        }
       });
     });
 
@@ -190,86 +220,146 @@ export class MessagesPage {
           this.chats.push(await this.getChatSender(change.doc.data(),false));
           this.chats.sort(this.chat.compareTimestampsChats);
           if(this.noChats==true) this.noChats=false;
+          this.deletedByThisUser(change.doc.data());
         }
         if (change.type === "removed") 
         {
-          this.chats = this.chats.filter(
-            item => item != (this.getChatSender(change.doc.data(),true)));
-            this.chats.sort(this.chat.compareTimestampsChats);
+          this.removeChat(change.doc.data());
           if (this.chats.length==0) this.noChats = true;
         }  
+
+        if (change.type === "modified")
+        {
+          if(this.userID==change.doc.data().lesserID)
+          {
+            if(change.doc.data().deletedByLesser)
+            {
+              this.removeChat(change.doc.data());
+              if(change.doc.data().deletedByGreater)
+              {
+                this.afs.collection('chats').doc(change.doc.data().threadID).delete();
+              }
+            }
+            else
+              this.updateChatInfo(change.doc.data());
+          }
+          if(this.userID==change.doc.data().greaterID)
+          {
+            if(change.doc.data().deletedByGreater)
+            {
+              this.removeChat(change.doc.data());
+              if(change.doc.data().deletedByLesser)
+              {
+                this.afs.collection('chats').doc(change.doc.data().threadID).delete();
+              }
+            }      
+            else
+              this.updateChatInfo(change.doc.data());
+          }
+          if(this.chats.length==0)
+            this.noChats=true; 
+        }
       });
     });
   }
 
-  async getChatUpdateByThreadID(threadID:string, date)
-  {
+  // async getChatUpdateByThreadID(threadID:string, date)
+  // {
    
-   // Listener that checks each chat for new messages
-   // if a new message is received, update the relevant chat.
-   // (will need a similar function in notification center)
-    // Called every time a chat is add to the chats array.
-    let messageQuery = await this.afs.firestore.collection('chats')
-    .doc(threadID).collection('messages');
+  //  // Listener that checks each chat for new messages
+  //  // if a new message is received, update the relevant chat.
+  //  // (will need a similar function in notification center)
+  //   // Called every time a chat is add to the chats array.
+  //   // let messageQuery = await this.afs.firestore.collection('chats')
+  //   // .doc(threadID).collection('messages');
 
-    await messageQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(async change => {
-          await this.updateChat(threadID, change.doc.data());
-      });
-    });
-  }
+  //   // await messageQuery.onSnapshot((snapshot) => { 
+  //   //   snapshot.docChanges().forEach(async change => {
+  //   //       await this.updateChat(threadID, change.doc.data());
+  //   //   });
+  //   // });
+  // }
 
-  async updateChat(threadID:string, docData)
+  // async updateChat(threadID:string, docData)
+  // {
+  //   this.chats.forEach(chat=>
+  //   {
+  //     if(chat.threadID == threadID)
+  //     {
+  //       chat.dateString = this.timeInfo.getTimeString(docData);
+  //       chat.messagePreview = docData.messageText.substring(0,9) + "...";
+  //       if(this.userID==chat.lesserID)
+  //         chat.unread=(chat.unreadByLesserCount>0);
+  //       else
+  //         chat.unread=(chat.unreadByGreaterCount>0);
+  //       }
+  //   });
+
+  //   this.chats.sort(this.chat.compareTimestampsChats);
+  //   // reload chats message preview and timestamp
+  // }
+
+  // async updateChatWithChatDoc(docData)
+  // {
+  //   this.chats.forEach(chat=>
+  //   {
+  //     if(chat.threadID == docData.threadID)
+  //     {
+  //       chat.dateString = this.timeInfo.getTimeString(docData);
+  //       chat.messagePreview = docData.messagePreview;
+  //       if(this.userID==chat.lesserID)
+  //         chat.unread=(chat.unreadByLesserCount>0);
+  //       else
+  //         chat.unread=(chat.unreadByGreaterCount>0);
+  //       this.chats.sort(this.chat.compareTimestampsChats);
+  //     }
+  //   });
+  //   // reload chats message preview and timestamp
+  // }
+
+  // async refreshChats(userID:string)
+  // {
+  //   let chatQuery = await this.afs.firestore.collection('chats')
+  //   .where("greaterID","==",userID);
+  //   await chatQuery.onSnapshot((snapshot) => { 
+  //     snapshot.docChanges().forEach(async change => {
+
+  //       this.updateChatWithChatDoc(change.doc.data());
+  //        // this.chats.push(await this.getChatSender(change.doc.data(),false));
+        
+  //     });
+  //   });
+
+
+  //   chatQuery = await this.afs.firestore.collection('chats')
+  //   .where("lesserID","==",userID);
+  //   await chatQuery.onSnapshot((snapshot) => { 
+  //     snapshot.docChanges().forEach(async change => {
+  //       this.updateChatWithChatDoc(change.doc.data());
+  //     });
+  //   });
+  // }
+
+  removeChat(element)
   {
-    this.chats.forEach(chat=>
+    for(let i=0; i < this.chats.length; i++)
     {
-      if(chat.threadID == threadID)
+      if (this.chats[i].threadID==element.threadID)
       {
-        chat.dateString = this.timeInfo.getTimeString(docData);
-        chat.messagePreview = docData.messageText.substring(0,9) + "...";
-        chat.unread=true;
+        this.chats.splice(i,1);
       }
-    });
-
-    this.chats.sort(this.chat.compareTimestampsChats);
-    // reload chats message preview and timestamp
+    }
   }
 
-  async updateChatWithChatDoc(docData)
+  async updateChatInfo(updatedChat)
   {
-    this.chats.forEach(chat=>
+    for(let i=0; i<this.chats.length; i++)
     {
-      if(chat.threadID == docData.threadID)
+      if(this.chats[i].threadID==updatedChat.threadID)
       {
-        chat.dateString = this.timeInfo.getTimeString(docData);
-        chat.messagePreview = docData.messagePreview;
-        chat.unread=false;
+        this.chats[i]=(await this.getChatSender(updatedChat,false));
         this.chats.sort(this.chat.compareTimestampsChats);
       }
-    });
-    // reload chats message preview and timestamp
-  }
-
-  async refreshChats(userID:string)
-  {
-    let chatQuery = await this.afs.firestore.collection('chats')
-    .where("greaterID","==",userID);
-    await chatQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(async change => {
-
-        this.updateChatWithChatDoc(change.doc.data());
-         // this.chats.push(await this.getChatSender(change.doc.data(),false));
-        
-      });
-    });
-
-
-    chatQuery = await this.afs.firestore.collection('chats')
-    .where("lesserID","==",userID);
-    await chatQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(async change => {
-        this.updateChatWithChatDoc(change.doc.data());
-      });
-    });
+    }
   }
 }

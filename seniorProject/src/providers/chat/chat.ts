@@ -39,12 +39,12 @@ export class ChatProvider {
           deletedByGreater: false,
           deletedByLesser: false,
           topic: eventName,
-          unreadByLesser: true,
-          unreadByGreater: true,
+          unreadByLesserCount: 1,
+          unreadByGreaterCount: 1,
           messagePreview: "New chat!",
           date: new Date() // last update is the current time. 
-                                 // Will be updated as new messges
-                                 // are sent. 
+                            // Will be updated as new messges
+                            // are sent. 
       }
     );
     return; 
@@ -84,27 +84,43 @@ export class ChatProvider {
         messageID: messageID
       }
     );
-    if(text.length > 10)
-      text = text.substring(0,9) + "...";
+    if(text.length > 23)
+      text = text.substring(0,20) + "...";
     if(receiverID<senderID)
     {
-      this.afs.collection('chats').doc(threadID).update(
-        {
-          date: currentTime,
-          messagePreview: text,
-          unreadByLesser:true
-        }
-      );
+      let count;
+      this.afs.collection('chats').doc(threadID).get().subscribe(doc=>
+      {
+        count = doc.data().unreadByLesserCount;
+        count++;
+        console.log("lesser count= " + count);
+        this.afs.collection('chats').doc(threadID).update(
+          {
+            date: currentTime,
+            messagePreview: text,
+            unreadByLesserCount:count
+          }
+        );
+      });
     }
     else
     {
-      this.afs.collection('chats').doc(threadID).update(
-        {
-          date: currentTime,
-          messagePreview: text,
-          unreadByGreater:true
-        }
-      );
+      let count;
+      console.log("here 3");
+      this.afs.collection('chats').doc(threadID).get().subscribe(doc=>
+      {
+        console.log("here 4");
+        count = doc.data().unreadByGreaterCount;
+        count++;
+        this.afs.collection('chats').doc(threadID).update(
+          {
+            date: currentTime,
+            messagePreview: text,
+            unreadByGreaterCount:count
+          }
+        );
+      });
+
     }
 
   }

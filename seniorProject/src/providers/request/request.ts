@@ -73,7 +73,9 @@ export class RequestProvider {
           contact:"",
           receiverName: postInfo.username,
           senderStatus: "uncleared",
-          date: new Date(year, month, day, 0,0,0, 0)
+          date: new Date(year, month, day, 0,0,0, 0),
+          viewed:false,
+          viewedBySender:false
         });
       }
     }

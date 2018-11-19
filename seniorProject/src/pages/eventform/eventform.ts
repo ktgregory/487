@@ -187,13 +187,14 @@ async submitEventForm()
   // Otherwise, get date from the form input.
   let date = this.eventForm.value.event.date;
   let status = "approved";
+  let approvalViewed;
   let name;
   if (this.showPart2)
   {
     // If "Other" was selected, the status should be changed to
     // pending. 
     status = "pending";
-
+    approvalViewed=false;
     // Needed to create a timestamp for the database entry. 
     date = this.eventForm.value.date + "T00:00";
     date = new Date(date);
@@ -205,6 +206,7 @@ async submitEventForm()
   {
     // Since other was not selected, name comes from event array. 
     name = this.eventForm.value.event.name;
+    approvalViewed = true;
   }
 
   // Checks to make sure a user has not already posted about the 
@@ -233,7 +235,8 @@ async submitEventForm()
         username: this.username,
         postID: this.postID,
         status: status,
-        image: this.eventPic
+        image: this.eventPic,
+        approvalViewed:approvalViewed
       }).then(()=>{
 
           if(status=="pending")

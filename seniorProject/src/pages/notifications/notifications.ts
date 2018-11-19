@@ -59,6 +59,7 @@ export class NotificationsPage {
         //this.ngOnInit();
     });
     myModal.present();
+    this.afs.firestore.collection('requests').doc(requestID).update({viewed:true});
   }
 
   pendingAlert(requestID:string)
@@ -128,7 +129,8 @@ export class NotificationsPage {
         }
       ]
     });
-    pendingMessage.present()
+    pendingMessage.present();
+    this.afs.firestore.collection('requests').doc(requestID).update({viewedBySender:true});
   }
 
   async requestHasExpired(requestID)
@@ -221,6 +223,7 @@ export class NotificationsPage {
         }
         if (change.type === "modified")
         {
+          // remove request if accepted by receiver 
           this.updateRequestInfoReceived(this.reqService.checkExpiredRequests(change.doc.data()));
         }
       });  
@@ -236,6 +239,7 @@ export class NotificationsPage {
       {
         request.status = updatedRequest.status;
         request.senderStatus = updatedRequest.senderStatus;
+        request.viewed=updatedRequest.viewed;
       }
     });
   }
@@ -248,6 +252,7 @@ export class NotificationsPage {
       {
         request.status = updatedRequest.status;
         request.senderStatus = updatedRequest.senderStatus;
+        request.viewedBySender = updatedRequest.viewedBySender;
       }
     });
   }

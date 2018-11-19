@@ -14,6 +14,7 @@
     </ion-card>
     <ion-card *ngFor="let request of receivedRequests">
       <ion-item>
+        <p item-start *ngIf="!request.viewed" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
         <p>{{request.senderName}} ~ {{request.eventName}}</p>
         <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID, request.senderID)"> 
           respond 
@@ -27,7 +28,9 @@
   <div>
     <ion-label>Sent</ion-label>
       <ion-card *ngFor="let request of sentRequests">
-        <ion-item><p>{{request.receiverName}} ~ {{request.eventName}} </p>
+        <ion-item>
+            <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
+          <p>{{request.receiverName}} ~ {{request.eventName}} </p>
           <ng-container *ngIf="!request.expired">
           <button *ngIf='request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
             pending
