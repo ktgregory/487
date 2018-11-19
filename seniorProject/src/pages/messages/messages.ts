@@ -5,7 +5,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { ChatroomPage } from '../chatroom/chatroom';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
 @Component({
   selector: 'page-messages',
@@ -21,7 +21,8 @@ export class MessagesPage {
 
   constructor(public navCtrl: NavController, private chat: ChatProvider,
     private authData: AuthProvider, private userInfo: UserinfoProvider,
-    private afs: AngularFirestore, private eventInfo: EventInfoProvider) {
+    private afs: AngularFirestore,
+    private timeInfo: TimeDateCalculationsProvider) {
   }
 
   async ngOnInit()
@@ -58,7 +59,7 @@ export class MessagesPage {
     chat.senderName = await this.userInfo.getUserNameByID(chat.senderID);
     chat.senderImage = await this.userInfo.getUserImageByID(chat.senderID);
     chat.delete = deleteBool;
-    chat.dateString = this.eventInfo.getTimeString(chat);
+    chat.dateString = this.timeInfo.getTimeString(chat);
     return chat;
   }
 
@@ -224,7 +225,7 @@ export class MessagesPage {
     {
       if(chat.threadID == threadID)
       {
-        chat.dateString = this.eventInfo.getTimeString(docData);
+        chat.dateString = this.timeInfo.getTimeString(docData);
         chat.messagePreview = docData.messageText.substring(0,9) + "...";
         chat.unread=true;
       }
@@ -240,7 +241,7 @@ export class MessagesPage {
     {
       if(chat.threadID == docData.threadID)
       {
-        chat.dateString = this.eventInfo.getTimeString(docData);
+        chat.dateString = this.timeInfo.getTimeString(docData);
         chat.messagePreview = docData.messagePreview;
         chat.unread=false;
         this.chats.sort(this.chat.compareTimestampsChats);

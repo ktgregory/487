@@ -4,6 +4,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { ChangepasswordPage } from '../changepassword/changepassword';
 import { ChangeemailPage } from '../changeemail/changeemail';
+import { DeleteAccountPage } from '../delete-account/delete-account';
 
 
 @IonicPage()
@@ -216,6 +217,14 @@ export class AccountsettingsPage {
       ]
     });
     prompt.present();
+  }
+
+
+  goToDeleteAccount() { 
+    // Opens UploadPage as a modal and passes relevant parameters. 
+    let myModal = this.modalCtrl.create(DeleteAccountPage);
+
+    myModal.present();
   }
   
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, NavParams } from 'ionic-angular';
+import { NavController, AlertController, NavParams, ModalController } from 'ionic-angular';
 import {UploadPage} from '../uploadprofilepic/uploadprofilepic';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
@@ -18,7 +18,7 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     private afs: AngularFirestore, public alertCtrl: AlertController,
-    public navParams: NavParams) {
+    public navParams: NavParams, public modalCtrl: ModalController) {
       this.profilePic = this.navParams.get('profilePic');
       this.userID = this.navParams.get('userID');
      }
@@ -46,17 +46,26 @@ export class SettingsPage {
     // this.navCtrl.popToRoot();
   }
 
+
+
+  goToUploadPage() { 
+    // Opens UploadPage as a modal and passes relevant parameters. 
+    let myModal = this.modalCtrl.create(UploadPage, { 
+      'profilePic':this.profilePic,
+      'userID': this.userID
+    });
+        myModal.onDidDismiss(() => {
+        //this.ngOnInit();
+    });
+    myModal.present();
+  }
+
+
   goToTabs() {
     this.navCtrl.push(TabsPage);
   }
 
-  goToUploadPage() {
-    this.navCtrl.push(UploadPage, 
-      {
-        'profilePic':this.profilePic,
-        'userID': this.userID
-      });
-  }
+
 
   editName()
   {

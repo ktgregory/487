@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { UserinfoProvider } from '../userinfo/userinfo';
 // import { AngularFirestore } from 'angularfire2/firestore';
 // import { Observable } from 'rxjs/observable';
 // import { AngularFirestoreDocument } from 'angularfire2/firestore';
@@ -17,7 +18,7 @@ export class AuthProvider {
 
   userID;
  // user: Observable<User | null>;
-  constructor(private afAuth: AngularFireAuth,
+  constructor(private afAuth: AngularFireAuth, private userInfo: UserinfoProvider
     //private afs: AngularFirestore
     ) {
       
@@ -89,6 +90,12 @@ export class AuthProvider {
   changeEmail(newEmail:string)
   {
     return this.afAuth.auth.currentUser.updateEmail(newEmail);
+  }
+
+  deleteAccount()
+  {
+    this.userInfo.deleteUser(this.userID);
+    return this.afAuth.auth.currentUser.delete();
   }
 
 

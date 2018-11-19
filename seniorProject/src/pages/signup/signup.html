@@ -7,6 +7,18 @@
 </ion-header>
 
 <ion-content padding>
+<input style="display:none" id="file" class="file-input" type="file" (change)="setUpload($event.target.files)">
+
+<ion-row justify-content-center *ngIf="profilePic!=''">
+<ion-card style="width:50%"> <img src="{{profilePic}}">
+  </ion-card>
+</ion-row>
+<ion-row justify-content-center>
+    <button ion-button outline type="button" onclick="document.getElementById('file').click();">
+      Profile Photo <br>
+      <ion-icon name="images"></ion-icon>
+    </button>
+  </ion-row>
   <form [formGroup]="signupForm" (submit)="signupUser()" novalidate>
     <ion-item>
       <ion-label stacked>
@@ -50,7 +62,8 @@
     </ion-item>
     <ion-item class="error-message" *ngIf="!signupForm.controls.password.valid  && signupForm.controls.password.dirty">
       <p>Your password needs more than 6 characters.</p>
-    </ion-item>
+    </ion-item>  
+
     <button ion-button block type="submit">
       Create an Account
     </button>

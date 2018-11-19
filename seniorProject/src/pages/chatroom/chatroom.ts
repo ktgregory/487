@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ChatProvider } from '../../providers/chat/chat';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
 @IonicPage()
 @Component({
@@ -24,7 +24,7 @@ export class ChatroomPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private chat: ChatProvider, public formBuilder: FormBuilder,
-    private afs: AngularFirestore, private eventInfo: EventInfoProvider) {
+    private afs: AngularFirestore, private timeInfo: TimeDateCalculationsProvider) {
 
       // Retreive navigation parameters from Messages page and
       // set messageForm variable equal to message input. 
@@ -92,7 +92,7 @@ export class ChatroomPage {
       message.position="speech-bubble-right";
     else 
       message.position="speech-bubble-left";
-    message.timestring = this.eventInfo.getTimeString(message);
+    message.timestring = this.timeInfo.getTimeString(message);
     return message;
   }
 

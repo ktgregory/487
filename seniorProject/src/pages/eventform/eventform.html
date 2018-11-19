@@ -1,5 +1,5 @@
-
 <ion-content padding>
+<input style="display:none" id="file" class="file-input" type="file" (change)="setUpload($event.target.files)">
   <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
    <ion-item>
     <ion-label>
@@ -46,6 +46,16 @@
       <ion-textarea formControlName="description" type="text" name="description">
       </ion-textarea>
     </ion-item>
+        <ion-card *ngIf="eventPic!=''"> <img src="{{eventPic}}"></ion-card>
+        <ion-row justify-content-center>
+        <button ion-button block outline type="button" onclick="document.getElementById('file').click();">
+          Attach a photo <br>
+          <ion-icon name="images"></ion-icon>
+        </button>
+      </ion-row>
+        <ion-row  justify-content-center>
+      </ion-row> 
+      
     <button ion-button type="submit" color="primary" block>
       Submit Event
     </button>

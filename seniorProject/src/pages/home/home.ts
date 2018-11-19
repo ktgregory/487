@@ -5,12 +5,14 @@ import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
 import { RequestProvider } from '../../providers/request/request';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AdminPage } from '../admin/admin';
 import { ViewChild } from '@angular/core';
 import { Slides } from 'ionic-angular';
+import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
+import { ImageLoader} from 'ionic-image-loader';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -23,11 +25,12 @@ export class HomePage {
   type;
   admin = false;
   interface = "reg";
+  pullToRefresh:boolean;
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
-    private eventInfo: EventInfoProvider, private reqService: RequestProvider,
+    private timeInfo: TimeDateCalculationsProvider, private reqService: RequestProvider,
     private userService: UserinfoProvider, public app: App, 
-    public modalCtrl: ModalController) {}
+    public modalCtrl: ModalController, private userInfo: UserinfoProvider) {}
 
    
   async ngOnInit()
@@ -48,15 +51,7 @@ export class HomePage {
 
   async ionViewWillEnter()
   {
-    // Checks to see if the user is admin.
-    // If so, they are redirected to the Admin page. 
-    // This is needed for when an admin user refreshes
-    // their page. 
-    // let type = await this.userService.getUserType(this.userID);
-    // if(type=="admin")
-    // {
-    //   this.app.getRootNav().setRoot(AdminPage);
-    // }
+
   }
 
   async getPostsForTimeline()
@@ -64,33 +59,40 @@ export class HomePage {
     let postQuery = await this.afs.firestore.collection(`posts`)
     .where("status","==","approved");    
     await postQuery.onSnapshot((querySnapshot) => { 
-     querySnapshot.docChanges().forEach((change) => {
-
+     querySnapshot.docChanges().forEach(async (change) => {
+      let post;
       // If a post is added, call the eventTimeCalculations method 
       // and push to the posts array, and resorts the posts. 
       if (change.type === "added") {
-        this.posts.push(this.eventInfo.eventTimeCalculations(change.doc.data()));
+        post = await this.timeInfo.eventTimeCalculations(change.doc.data());
+        post.profileimage = await this.userInfo.getUserImageByID(post.uid);
+        post.username = await this.userInfo.getUserNameByID(post.uid);
+        this.posts.push(post);
         this.posts.sort(this.compareDates);
       }
 
       // If a post is removed, the eventTimeCalculations must be re-called
       // so the document data will match what is in the posts array.
       if (change.type === "removed") {
-        this.remove(this.posts, (this.eventInfo.eventTimeCalculations(change.doc.data())));
+        this.removePost(change.doc.data());
       }   
     })
    });   
  }
 
  // Used to remove a post from the posts array. 
-  remove(array, element) { 
-    // SOURCE: https://blog.mariusschulz.com/2016/07/16/removing-elements-from-javascript-arrays
-    const index = array.indexOf(element);
-    if (index != -1) {
-      array.splice(index, 1);
+ removePost(removedPost) { 
+  for(let i=0; i < this.posts.length; i++)
+  {
+    if(this.posts[i].postID == removedPost.postID)
+    {
+      this.posts.splice(i,1);
+      this.posts.sort(this.compareDates);
+      if(this.slides.getActiveIndex()==i)
+        this.slides.slidePrev(0);
     }
   }
-
+}
   compareDates(post1, post2)
   {
     return post1.daysUntil - post2.daysUntil;
@@ -123,7 +125,7 @@ export class HomePage {
           // Creates a new requests, and either catches any errors or 
           // displays confirmation that the request was successfully sent.
           this.reqService.createNewRequest(this.userID, postID)
-          .then(any=>
+          .then(()=>
           {
             this.confirmRequest();
           }).catch(error=>
@@ -175,4 +177,5 @@ export class HomePage {
     if (this.interface=="admin")
       this.app.getRootNav().setRoot(AdminPage);
   }
+   
 }

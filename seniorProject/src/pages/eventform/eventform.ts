@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 import { NavController, 
   ModalController, 
-  ViewController } from 'ionic-angular';
+  ViewController, 
+  LoadingController,
+  Loading} from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { SelectSearchableComponent } from 'ionic-select-searchable';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
 import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { AngularFireStorage } from 'angularfire2/storage';
 
 
 @Component({
@@ -23,14 +26,20 @@ export class EventFormPage {
     minDate;
     name="";
     date="";
+    eventPic;
+    previewRef;
+    file;
+    postID;
     showPart2=false;
     showEventInfo=false;
     public eventForm: FormGroup;
+    loading: Loading;
 
-constructor(public navCtrl: NavController, public alerCtrl: AlertController,
+constructor(public navCtrl: NavController, public alertCtrl: AlertController,
       public formBuilder: FormBuilder, private authData: AuthProvider, 
       private afs: AngularFirestore,public modalCtrl: ModalController,
-      private eventInfo: EventInfoProvider, public viewCtrl: ViewController) { 
+      private eventInfo: EventInfoProvider, public viewCtrl: ViewController,
+      public loadingCtrl: LoadingController, private storage: AngularFireStorage) { 
 
       // Sets eventForm variable to the corresponding html inputs.
       this.eventForm = formBuilder.group({
@@ -48,6 +57,7 @@ async ngOnInit()
   this.minDate = new Date().toISOString(); 
   this.events=[];
   this.userID = await this.authData.getUserID();
+  this.postID = this.afs.createId();
 
   // Queries for the current user's name so that it can be associated 
   // with their post should they submit one. 
@@ -102,9 +112,13 @@ async ngOnInit()
   });
 }
 
+ionViewWillLeave()
+{
+}
+
 confirmSubmission()
 {
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Submit this event post?',
     message: 'Are you sure you want to submit this post?',
     buttons: [
@@ -126,7 +140,7 @@ submitEvent()
 {
   // Displays after an event post has been successfully
   // submitted. 
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Submission succeeded!',
     buttons: [
     {
@@ -202,44 +216,106 @@ async submitEventForm()
   });
   if (userCheck)
   {
+    this.loading = this.loadingCtrl.create({
+      dismissOnPageChange: true,
+    });
+    this.loading.present();
+
+    let description = this.eventForm.value.description;
+    if(description==null)
+      description=" ";
     // Creates new document in the "posts" collection in the database. 
-    let id = this.afs.createId();
-    this.afs.collection(`posts`).doc(id).set({
-      uid: this.userID,
-      event: name,
-      description: this.eventForm.value.description,
-      date: date,
-      username: this.username,
-      postID: id,
-      status: status
-    })
-    .then(any=>{
-      if(status=="pending")
-      {
-        // Presents a message regarding the post needing to be approved. 
-        this.openModalMessage(id); 
-      }
-      else
-      {
-        this.submitEvent();
-      }
+    this.afs.collection(`posts`).doc(this.postID).set({
+        uid: this.userID,
+        event: name,
+        description: description,
+        date: date,
+        username: this.username,
+        postID: this.postID,
+        status: status,
+        image: this.eventPic
+      }).then(()=>{
+
+          if(status=="pending")
+          {
+            // Presents a message regarding the post needing to be approved. 
+            this.openModalMessage(this.postID); 
+          }
+          else
+          {
+            this.submitEvent();
+          }
     });
   }
+  this.loading.dismiss();
 }
 
 
+async setUpload(event: FileList) 
+{
+  this.deletePreview;
+  this.file = event.item(0);
+  this.uploadPreview();
+}
 
+
+presentErrorMessage(errorMessage:string)
+{
+  // Displayed for a pending sent request. 
+  let pendingMessage = this.alertCtrl.create({
+    title: 'Error!',
+    message: errorMessage,
+    buttons: [
+      {
+        text: 'Ok!'
+      }
+    ]
+  });
+  pendingMessage.present()
+}
+
+uploadPreview()
+{
+  const file = this.file;
+
+  if (file.type.split('/')[0] !== 'image') { 
+    this.presentErrorMessage("You have selected an unsupported file type!");
+    return;
+  }
+  this.loading = this.loadingCtrl.create({
+    dismissOnPageChange: true,
+  });
+  this.loading.present();
+
+  const path = `postPhotos/${this.postID}`;
+  this.previewRef = this.storage.ref(path);
+  this.previewRef.put(file).then(async ()=>
+  { 
+    this.previewRef.getDownloadURL().subscribe(result=>
+    {
+      this.eventPic = result;
+      this.loading.dismiss();
+    });
+  });
+}
+
+deletePreview()
+{
+  if (this.file!=null)
+    this.previewRef.delete(this.file);
+}
 
 cancelForm()
 {
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Cancel post?',
     message: 'Any information you\'ve entered will be lost!',
     buttons: [
     {
       text: 'Yes, cancel!',
       handler: () => {   
-        // Closes the modal and returns to the Home page.  
+        // Closes the modal and returns to the Home page.
+        this.deletePreview();
         this.viewCtrl.dismiss();
       }
     },
@@ -248,15 +324,13 @@ cancelForm()
     }
     ]
   });
-  confirm.present()
+  confirm.present();
 }
-
-
 
 
 presentError(error:string)
 {
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Error!',
     message: error,
     buttons: [
@@ -265,14 +339,13 @@ presentError(error:string)
     }
     ]
   });
-  confirm.present()
+  confirm.present();
 }
-
 
 
 openModalMessage(postID:string)
 {
-  let confirm = this.alerCtrl.create({
+  let confirm = this.alertCtrl.create({
     title: 'Submit a new event for approval?',
     message: 'Because you have selected \"Other,\" your post is subject to approval!',
     buttons: [

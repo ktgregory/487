@@ -6,7 +6,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { RequestProvider } from '../../providers/request/request';
 import { RequestModalPage } from '../../pages/request-modal/request-modal';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
 @Component({
   selector: 'page-notifications',
@@ -17,29 +17,24 @@ export class NotificationsPage {
   userID;
   receivedRequests=[];
   sentRequests=[];
-  pendingPosts=[];
   noSent = false;
   noReceived = false;
-  noPendingPosts = false;
 
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private afs: AngularFirestore, private reqService: RequestProvider,
     public alertCtrl: AlertController, public modalCtrl: ModalController,
-    public NgZone:NgZone, private eventInfo: EventInfoProvider) {}
+    public NgZone:NgZone, private timeInfo: TimeDateCalculationsProvider) {}
 
    
   async ngOnInit()
   {
       this.noSent = false;
       this.noReceived = false;
-      this.noPendingPosts = false;
       this.userID = await this.authData.getUserID(); 
       this.receivedRequests = [];//await this.reqService.getReceivedRequests(this.userID);
       this.sentRequests = []; //await this.reqService.getSentRequests(this.userID);
-      this.pendingPosts = []; //await this.eventInfo.getPendingPosts(this.userID);
       if(this.sentRequests.length==0) this.noSent=true;
       if(this.receivedRequests.length==0) this.noReceived=true;
-      if(this.pendingPosts.length==0) this.noPendingPosts=true;
       await this.reqService.deleteClearedRequests();
       await this.sentRequestListener();
       await this.receivedRequestListener();
@@ -61,7 +56,7 @@ export class NotificationsPage {
       'userID': this.userID
     });
         myModal.onDidDismiss(() => {
-        this.ngOnInit();
+        //this.ngOnInit();
     });
     myModal.present();
   }
@@ -101,7 +96,6 @@ export class NotificationsPage {
           text: 'Yes, clear it please.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
-            this.ngOnInit();
           }
         },
         {
@@ -195,7 +189,13 @@ export class NotificationsPage {
          this.sentRequests = this.sentRequests.filter(
            item => item !== (this.reqService.checkExpiredRequests(change.doc.data())));
           if (this.sentRequests.length==0) this.noSent = true;
-        }  
+        }
+        
+        if (change.type === "modified")
+        {
+          this.updateRequestInfoSent(this.reqService.checkExpiredRequests(change.doc.data()));
+        }
+
       });  
     });
   }
@@ -218,33 +218,37 @@ export class NotificationsPage {
          this.receivedRequests = this.receivedRequests.filter(
            item => item !== (this.reqService.checkExpiredRequests(change.doc.data())));
           if (this.receivedRequests.length==0) this.noReceived = true;
-        }  
+        }
+        if (change.type === "modified")
+        {
+          this.updateRequestInfoReceived(this.reqService.checkExpiredRequests(change.doc.data()));
+        }
       });  
     });
   }
 
-  async pendingPostListener(userID:string)
+
+  updateRequestInfoReceived(updatedRequest)
   {
-   // Queries for pending posts made by the current user 
-   // and listens for new additions. 
-    let postQuery = await this.afs.firestore.collection(`posts`)
-    .where("uid","==",userID).where("status","==","pending");    
-    await postQuery.onSnapshot((querySnapshot) => { 
-       querySnapshot.docChanges().forEach(change => {
-         // Add any additions to the pendingPosts array. 
-        if (change.type === "added") {
-          this.pendingPosts.push(this.eventInfo.eventTimeCalculations(change.doc.data()));
-          if (this.noPendingPosts == true) this.noPendingPosts = false;
-        }
-        if (change.type === "removed") {
-         // Remove from pendingPosts array....
-         this.pendingPosts = this.pendingPosts.filter(
-           item => item !== (this.eventInfo.eventTimeCalculations(change.doc.data())));
-          if (this.pendingPosts.length==0) this.noPendingPosts = true;
-        }   
-          
-      })
+    this.receivedRequests.forEach(request=>
+    {
+      if(request.requestID == updatedRequest.requestID)
+      {
+        request.status = updatedRequest.status;
+        request.senderStatus = updatedRequest.senderStatus;
+      }
     });
   }
 
+  updateRequestInfoSent(updatedRequest)
+  {
+    this.sentRequests.forEach(request=>
+    {
+      if(request.requestID == updatedRequest.requestID)
+      {
+        request.status = updatedRequest.status;
+        request.senderStatus = updatedRequest.senderStatus;
+      }
+    });
+  }
 }

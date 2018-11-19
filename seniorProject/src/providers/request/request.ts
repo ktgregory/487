@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { EventInfoProvider } from '../event-info/event-info';
+import { TimeDateCalculationsProvider } from '../time-date-calculations/time-date-calculations';
 
 @Injectable()
 export class RequestProvider {
 
   constructor(private afs: AngularFirestore, 
-    private eventInfo: EventInfoProvider) {}
+    private timeInfo: TimeDateCalculationsProvider) {}
 
 
   async createNewRequest(userID:string, postID:string)
@@ -173,7 +173,7 @@ export class RequestProvider {
     if(request.length!=0)
     {
       request.expired = false;
-      let daysUntil = this.eventInfo.calculateDaysUntil(request);
+      let daysUntil = this.timeInfo.calculateDaysUntil(request);
       if(daysUntil<-1)
       {
         request.expired = true;

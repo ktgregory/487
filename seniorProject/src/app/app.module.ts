@@ -21,6 +21,7 @@ import { ChangeemailPage } from '../pages/changeemail/changeemail';
 import { ModifyeventlistPage } from '../pages/modifyeventlist/modifyeventlist';
 import { AdmineventformPage } from '../pages/admineventform/admineventform';
 import { ChatroomPage } from '../pages/chatroom/chatroom';
+import { DeleteAccountPage } from '../pages/delete-account/delete-account';
 
 import {ResetPasswordPage} from '../pages/resetpassword/resetpassword';
 import {SettingsPage} from '../pages/settings/settings';
@@ -44,6 +45,9 @@ import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
 import { ChatProvider } from '../providers/chat/chat';
 import { FoundationProvider } from '../providers/foundation/foundation';
+import { TimeDateCalculationsProvider } from '../providers/time-date-calculations/time-date-calculations';
+import { IonicImageLoader } from 'ionic-image-loader';
+
 //import { UploadImageProvider } from '../providers/upload-image/upload-image';
 
 @NgModule({
@@ -68,6 +72,7 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     ModifyeventlistPage,
     RequestModalPage,
     ChatroomPage,
+    DeleteAccountPage,
     AdmineventformPage
   ],
   imports: [
@@ -80,8 +85,8 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     AngularFireStorageModule,
     HttpModule,
     HttpClientModule,
-    SelectSearchableModule
-    //ImagePicker
+    SelectSearchableModule,
+    IonicImageLoader.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -105,6 +110,7 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     ModifyeventlistPage,
     RequestModalPage,
     ChatroomPage,
+    DeleteAccountPage,
     AdmineventformPage
   ],
   providers: [
@@ -117,6 +123,7 @@ import { FoundationProvider } from '../providers/foundation/foundation';
     RequestProvider,
     ChatProvider,
     FoundationProvider,
+    TimeDateCalculationsProvider,
     // UploadImageProvider
   ]
 })
