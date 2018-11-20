@@ -35,8 +35,15 @@
           </button>
           <p>********</p>
       </ion-item>
-      <button ion-button outline (click) ="goToDeleteAccount()">
+      <ion-row justify-content-center margin-top>
+        <button *ngIf="adminUser" ion-button outline (click) ="createNewAdmin()">
+            Create New Admin
+          </button>
+        </ion-row>
+      <ion-row justify-content-center>
+      <button ion-button clear (click) ="goToDeleteAccount()">
           Delete my account
         </button>
+      </ion-row>
     </ion-list>
 </ion-content>

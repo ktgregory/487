@@ -43,7 +43,7 @@
       <ion-label>
         Description
       </ion-label>
-      <ion-textarea formControlName="description" type="text" name="description">
+      <ion-textarea maxlength="200" formControlName="description" type="text" name="description">
       </ion-textarea>
     </ion-item>
         <ion-card *ngIf="eventPic!=''"> <img src="{{eventPic}}"></ion-card>

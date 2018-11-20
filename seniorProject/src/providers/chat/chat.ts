@@ -93,7 +93,6 @@ export class ChatProvider {
       {
         count = doc.data().unreadByLesserCount;
         count++;
-        console.log("lesser count= " + count);
         this.afs.collection('chats').doc(threadID).update(
           {
             date: currentTime,
@@ -106,10 +105,8 @@ export class ChatProvider {
     else
     {
       let count;
-      console.log("here 3");
       this.afs.collection('chats').doc(threadID).get().subscribe(doc=>
       {
-        console.log("here 4");
         count = doc.data().unreadByGreaterCount;
         count++;
         this.afs.collection('chats').doc(threadID).update(

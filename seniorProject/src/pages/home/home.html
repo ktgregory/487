@@ -22,7 +22,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
- <ion-slides slider="data.slider" #imageSlides>
+ <ion-slides slider="data.slider" #imageSlides (ionSlideDrag)="slideChanged()">
    <ng-container *ngFor = "let post of posts">
     <ion-slide *ngIf="post.notExpired">
     <ion-card>
@@ -34,11 +34,21 @@
           <p>{{post.event}}</p>
           <p>{{post.dateString}}</p>
         </ion-item>
-        <div>
+        <div *ngIf="!showDescription">
         <img [lazyLoad]="post.image" [scrollObservable]="imageSlides.ionSlideDrag">
+       
        <ion-item>
-         <p>{{post.description}}</p>
-        </ion-item>
+         <p>{{post.descriptionPreview}}</p>
+         <button item-end ion-button clear small style="font:grey" (click)="toggleDescription()" *ngIf="post.longDescription">
+          See more...
+        </button>
+      </ion-item> 
+      </div>
+      <div *ngIf="showDescription" style="padding:25% 5%">
+        {{post.description}}
+        <ion-row justify-content-center>
+          <button ion-button clear small (click)="toggleDescription()">Hide</button>
+        </ion-row>
       </div>
         <ion-row>
           <ion-col>

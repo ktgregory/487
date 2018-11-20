@@ -75,8 +75,6 @@ export class DeleteAccountPage {
             alert.present();
         });
       });
-
-      this.navCtrl.pop(); 
   }
 
   loginUser(){

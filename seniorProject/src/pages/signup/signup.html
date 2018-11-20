@@ -1,7 +1,10 @@
 <ion-header>
   <ion-navbar color="primary">
-    <ion-title>
+    <ion-title *ngIf="!creatingAdmin">
       Create an Account
+    </ion-title>
+    <ion-title *ngIf="creatingAdmin">
+      Create a New Admin Account
     </ion-title>
   </ion-navbar>
 </ion-header>

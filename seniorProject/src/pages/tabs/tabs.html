@@ -1,29 +1,25 @@
 <ion-tabs text-center>
 
   <ion-tab [root]="tab1Root" 
-  tabIcon="home" 
-  (ionSelect)="homeSelected()">
+  tabIcon="home">
   </ion-tab>
 
   <ion-tab [root]="tab2Root" 
   tabIcon="chatbubbles" 
   [tabBadge] = "newMessagesCount>0 ? newMessagesCount : null"  
-  tabBadgeStyle="danger" 
-  (ionSelect)="messagesSelected()">
+  tabBadgeStyle="danger">
   </ion-tab>
 
   <ion-tab [root]="tab3Root" 
   tabIcon="heart-outline"  
   [tabBadge] = "newRequestCount>0 ? newRequestCount : null"  
-  tabBadgeStyle="danger" 
-  (ionSelect)="requestCenterSelected()">
+  tabBadgeStyle="danger">
   </ion-tab>
 
   <ion-tab [root]="tab4Root" 
   tabIcon="contact" 
   [tabBadge] = "newApprovedPostCount>0 ? newApprovedPostCount : null"  
-  tabBadgeStyle="danger" 
-  (ionSelect)="profileSelected()">
+  tabBadgeStyle="danger">
   </ion-tab>
 
 </ion-tabs>

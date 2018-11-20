@@ -5,14 +5,14 @@ import { NavController,
 import { AuthProvider } from '../../providers/auth/auth';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { RequestProvider } from '../../providers/request/request';
-import { RequestModalPage } from '../../pages/request-modal/request-modal';
-import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
+import { RequestModalPage } from '../request-modal/request-modal';
+
 
 @Component({
-  selector: 'page-notifications',
-  templateUrl: 'notifications.html'
+  selector: 'page-request-center',
+  templateUrl: 'request-center.html'
 })
-export class NotificationsPage {
+export class RequestCenterPage {
 
   userID;
   receivedRequests=[];
@@ -23,7 +23,7 @@ export class NotificationsPage {
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private afs: AngularFirestore, private reqService: RequestProvider,
     public alertCtrl: AlertController, public modalCtrl: ModalController,
-    public NgZone:NgZone, private timeInfo: TimeDateCalculationsProvider) {}
+    public NgZone:NgZone) {}
 
    
   async ngOnInit()
@@ -38,14 +38,6 @@ export class NotificationsPage {
       await this.reqService.deleteClearedRequests();
       await this.sentRequestListener();
       await this.receivedRequestListener();
-  }
-
-  ionViewWillEnter()
-  {
-    // this.receivedRequests = [];//await this.reqService.getReceivedRequests(this.userID);
-    // this.sentRequests = []; //await this.reqService.getSentRequests(this.userID);
-    // this.pendingPosts = []; //await this.eventInfo.getPendingPosts(this.userID); 
-    // this.ngOnInit();
   }
 
   respondToRequest(requestID:string, userID: string) { 
@@ -239,7 +231,9 @@ export class NotificationsPage {
       {
         request.status = updatedRequest.status;
         request.senderStatus = updatedRequest.senderStatus;
-        request.viewed=updatedRequest.viewed;
+        request.viewed = updatedRequest.viewed;
+        if (request.status == "accepted")
+          this.removeRequest(request);
       }
     });
   }
@@ -255,5 +249,16 @@ export class NotificationsPage {
         request.viewedBySender = updatedRequest.viewedBySender;
       }
     });
+  }
+
+  removeRequest(requestToRemove)
+  {
+    for(let i=0; i < this.receivedRequests.length; i++)
+    {
+      if(this.receivedRequests[i].requestID == requestToRemove.requestID)
+      {
+        this.receivedRequests.splice(i,1);
+      }
+    }
   }
 }

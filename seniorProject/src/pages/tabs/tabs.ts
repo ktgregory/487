@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { NotificationsPage } from '../notifications/notifications';
 import { MessagesPage } from '../messages/messages';
 import { ProfilePage } from '../profile/profile';
 import { HomePage } from '../home/home';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { RequestCenterPage } from '../request-center/request-center';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -15,7 +14,7 @@ export class TabsPage {
   // Sets each tab's root to the corresponding pag.
   tab1Root = HomePage;
   tab2Root = MessagesPage;
-  tab3Root = NotificationsPage;
+  tab3Root = RequestCenterPage;
   tab4Root = ProfilePage;
 
   userID;
@@ -39,34 +38,6 @@ export class TabsPage {
     this.newMessageListener();
     this.newRequestListener();
     this.newApprovedPostListener();
-  }
-
-  homeSelected()
-  {
-    this.onMessagesTab = false;
-    this.onRequestsTab = false;
-    this.onProfileTab = false;
-  }
-
-  messagesSelected()
-  {
-    this.onMessagesTab = true;
-    this.onRequestsTab = false;
-    this.onProfileTab = false;
-  }
-
-  requestCenterSelected()
-  {
-    this.onMessagesTab = false;
-    this.onRequestsTab = true;
-    this.onProfileTab = false;
-  }
-
-  profileSelected()
-  {
-    this.onMessagesTab = false;
-    this.onRequestsTab = false;
-    this.onProfileTab = true;
   }
 
   
@@ -135,9 +106,28 @@ export class TabsPage {
 
   async newApprovedPostListener()
   {
-
-    
-    
+    let postQuery = await this.afs.firestore.collection(`posts`)
+    .where("uid","==",this.userID);    
+    await postQuery.onSnapshot((querySnapshot) => { 
+       querySnapshot.docChanges().forEach(async (change) => {
+  
+        if(change.type === "added")
+        {
+          if(change.doc.data().status=="approved" && change.doc.data().approvalViewed==false)
+          {
+            this.newApprovedPostCount++;
+          }
+        }
+        if (change.type === "modified")
+        {
+          let post = change.doc.data();
+          if(post.approvalViewed==true)
+            this.newApprovedPostCount--;
+          else
+            this.newApprovedPostCount++;
+        }
+      })
+    });
   }
 
 

@@ -11,7 +11,6 @@ import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
-import { AdminPage } from '../admin/admin';
 import { FoundationProvider } from '../../providers/foundation/foundation';
 
 @Component({

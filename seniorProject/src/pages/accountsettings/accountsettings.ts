@@ -5,6 +5,8 @@ import { AngularFirestore} from 'angularfire2/firestore';
 import { ChangepasswordPage } from '../changepassword/changepassword';
 import { ChangeemailPage } from '../changeemail/changeemail';
 import { DeleteAccountPage } from '../delete-account/delete-account';
+import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { SignUpPage } from '../signup/signup';
 
 
 @IonicPage()
@@ -20,9 +22,11 @@ export class AccountsettingsPage {
   school;
   birthday;
   phonenumber;
+  adminUser=false;
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private authData: AuthProvider, private afs: AngularFirestore,
-    public alertCtrl: AlertController, public modalCtrl: ModalController) {
+    public alertCtrl: AlertController, public modalCtrl: ModalController,
+    private userInfo: UserinfoProvider) {
   }
 
 
@@ -31,7 +35,9 @@ export class AccountsettingsPage {
     
       // Gets user's ID to use when making query. 
       this.userID = await this.authData.getUserID();
-      
+      let userType = await this.userInfo.getUserType(this.userID);
+      if(userType=="admin")
+        this.adminUser=true;
       // Makes a query and updates the page variables.
       let userQuery = await this.afs.firestore.collection(`users`)
       .where("uid","==",this.userID);    
@@ -55,7 +61,7 @@ export class AccountsettingsPage {
     // tab, this pops back to the Profile page, so that when you
     // return to the Profile tab, the Account Settings page will 
     // no longer be showing.
-      this.navCtrl.popToRoot();
+      // this.navCtrl.popToRoot();
   }
   
   changeSchool()
@@ -151,7 +157,6 @@ export class AccountsettingsPage {
       const re = /^-?(0|[1-9]\d*)$/.test(
         phonenumber
       );
-      console.log(re);
       return re;
   }
 
@@ -227,4 +232,8 @@ export class AccountsettingsPage {
     myModal.present();
   }
   
+  createNewAdmin()
+  {
+    this.navCtrl.push(SignUpPage,{'creatingAdmin':true});
+  }
 }

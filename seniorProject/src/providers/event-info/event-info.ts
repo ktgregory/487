@@ -1,7 +1,6 @@
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { TimeDateCalculationsProvider } from '../time-date-calculations/time-date-calculations';
-import { InternalFormsSharedModule } from '@angular/forms/src/directives';
 
 
 

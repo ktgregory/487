@@ -29,11 +29,14 @@ export class SettingsPage {
     //this.userID = await this.authData.getUserID();
     let userQuery = await this.afs.firestore.collection(`users`)
     .where("uid","==",this.userID);    
-    await userQuery.get().then((querySnapshot) => { 
-       querySnapshot.forEach((doc) => {
-        this.name = doc.data().name;
-        this.bio = doc.data().bio;
-      })
+    await userQuery.onSnapshot((querySnapshot)=>
+    {
+      querySnapshot.docChanges().forEach(async (change)=>
+      {
+        this.name = change.doc.data().name;
+        this.bio = change.doc.data().bio;
+        this.profilePic = change.doc.data().profileimage;
+      });
    });
   }
 
@@ -64,7 +67,6 @@ export class SettingsPage {
   goToTabs() {
     this.navCtrl.push(TabsPage);
   }
-
 
 
   editName()
@@ -135,6 +137,7 @@ export class SettingsPage {
       });
     prompt.present();
   }
+
 
 
 }

@@ -41,9 +41,10 @@ export class ProfilePage implements OnInit {
       // Queries for the current user's profile information
       // and all of their posts. 
       this.userID = await this.authData.getUserID();
+      
       let userQuery = await this.afs.firestore.collection(`users`)
       .where("uid","==",this.userID);    
-      await userQuery.get().then((querySnapshot) => {  
+      await userQuery.onSnapshot((querySnapshot) => {  
          querySnapshot.docChanges().forEach(async (change) => {
           this.name = change.doc.data().name;
           this.email = change.doc.data().email;
@@ -78,6 +79,8 @@ export class ProfilePage implements OnInit {
   {
     this.newlyApproved.forEach(post=>
       {
+        this.afs.firestore.collection('posts').doc(post.postID)
+        .update({approvalViewed:true});
         let notification = this.alertCtrl.create({
           title: 'Post Status:',
           message: "Your post about " + post.event + " has been approved!",
@@ -226,7 +229,6 @@ export class ProfilePage implements OnInit {
           post = updatedPost;
           if (post.status=="approved" && post.approvalViewed==false)
           {
-            console.log('here');
             this.newlyApproved.push(post);
           }
         }

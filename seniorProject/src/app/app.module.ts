@@ -8,7 +8,7 @@ import { MyApp } from './app.component';
 import { MessagesPage } from '../pages/messages/messages';
 import { ProfilePage } from '../pages/profile/profile';
 import { HomePage } from '../pages/home/home';
-import { NotificationsPage } from '../pages/notifications/notifications';
+import { RequestCenterPage } from '../pages/request-center/request-center';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
@@ -60,7 +60,7 @@ import { AutosizeDirective} from '../directives/autosize/autosize';
     MyApp,
     ProfilePage,
     MessagesPage,
-    NotificationsPage,
+    RequestCenterPage,
     HomePage,
     LoginPage,
     SignUpPage,
@@ -98,7 +98,7 @@ import { AutosizeDirective} from '../directives/autosize/autosize';
     MyApp,
     ProfilePage,
     MessagesPage,
-    NotificationsPage,
+    RequestCenterPage,
     HomePage,
     LoginPage,
     SignUpPage,

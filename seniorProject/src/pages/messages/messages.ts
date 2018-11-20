@@ -6,8 +6,7 @@ import { ChatroomPage } from '../chatroom/chatroom';
 import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
-import { unwrapResolvedMetadata, IfStmt } from '@angular/compiler';
-import { isRightSide } from 'ionic-angular/umd/util/util';
+
 
 @Component({
   selector: 'page-messages',
@@ -237,6 +236,16 @@ export class MessagesPage {
               this.removeChat(change.doc.data());
               if(change.doc.data().deletedByGreater)
               {
+
+                await this.afs.firestore.collection('chats').doc(change.doc.data().threadID)
+                .collection('messages').get().then((snapshot)=>
+                {
+                  snapshot.forEach((doc)=>
+                  {
+                    this.afs.collection('chats').doc(change.doc.data().threadID)
+                    .collection('messages').doc(doc.data().messageID).delete();
+                  });
+                });
                 this.afs.collection('chats').doc(change.doc.data().threadID).delete();
               }
             }

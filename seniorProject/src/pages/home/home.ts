@@ -25,6 +25,7 @@ export class HomePage {
   admin = false;
   interface = "reg";
   pullToRefresh:boolean;
+  showDescription=false;
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,
     private timeInfo: TimeDateCalculationsProvider, private reqService: RequestProvider,
@@ -68,8 +69,19 @@ export class HomePage {
         post = await this.timeInfo.eventTimeCalculations(change.doc.data());
         post.profileimage = await this.userInfo.getUserImageByID(post.uid);
         post.username = await this.userInfo.getUserNameByID(post.uid);
+        if(post.description.length>30)
+        {
+          post.descriptionPreview = post.description.substring(0,20) + "...";
+          post.longDescription=true;
+        }
+        else
+        {
+          post.descriptionPreview = post.description;
+          post.longDescription = false;
+        }
         this.posts.push(post);
         this.posts.sort(this.compareDates);
+        this.listenForUserImageNameUpdates(post);
       }
 
       // If a post is removed, the eventTimeCalculations must be re-called
@@ -80,6 +92,30 @@ export class HomePage {
     })
    });   
  }
+
+ async listenForUserImageNameUpdates(updatedPost)
+ {
+    let userQuery = await this.afs.firestore.collection(`users`)
+    .where("uid","==",updatedPost.uid);
+    await userQuery.onSnapshot((querySnapshot) => { 
+      querySnapshot.docChanges().forEach(async (change) => {
+       
+       if (change.type==="modified")
+       {
+          let userInfo = await change.doc.data();
+         this.posts.forEach(post=>
+          {
+            if (post.postID==updatedPost.postID)
+            {
+              post.username= userInfo.name;
+              post.profileimage= userInfo.profileimage;
+            }
+          })
+       }
+     })  
+  });
+ }
+
 
  // Used to remove a post from the posts array. 
  removePost(removedPost) { 
@@ -177,6 +213,19 @@ export class HomePage {
     // down menu at the top of the page.
     if (this.interface=="admin")
       this.app.getRootNav().setRoot(AdminPage);
+  }
+
+  toggleDescription()
+  {
+    if(this.showDescription==true)
+      this.showDescription=false;
+    else
+      this.showDescription=true;
+  }
+  
+  slideChanged()
+  {
+    this.showDescription=false;
   }
    
 }

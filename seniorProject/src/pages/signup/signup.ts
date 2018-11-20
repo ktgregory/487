@@ -3,7 +3,8 @@ import {
   NavController,
   LoadingController,
   Loading,
-  AlertController } from 'ionic-angular';
+  AlertController, 
+  NavParams} from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthProvider } from '../../providers/auth/auth';
 import { TabsPage } from '../tabs/tabs';
@@ -23,13 +24,17 @@ export class SignUpPage {
   previewRef;
   file;
   previewID;
+  creatingAdmin=false;
 
   constructor(public nav: NavController, public authData: AuthProvider,
     public formBuilder: FormBuilder, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, private afs: AngularFirestore,
-    private storage: AngularFireStorage) {
+    private storage: AngularFireStorage, public navParams:NavParams) {
 
-
+    if(this.navParams.get('creatingAdmin'))
+    {
+      this.creatingAdmin=this.navParams.get('creatingAdmin');
+    }
     // Sets signupForm variable equal to html inputs and applies validators. 
     this.signupForm = formBuilder.group({
       email: ['', Validators.compose([Validators.required, EmailValidator.isValid])],
@@ -150,7 +155,11 @@ async startUpload() {
       this.presentErrorMessage("You must fill in every field!");
       return;
     }
-
+    let type;
+    if(this.creatingAdmin)
+      type="admin";
+    else
+      type="reg";
       this.authData.signupUser(this.signupForm.value.email, this.signupForm.value.password)
       .then(() => {
         this.userID = this.authData.getUserID();
@@ -161,7 +170,7 @@ async startUpload() {
           school: this.signupForm.value.school,
           email: this.signupForm.value.email,
           phoneNumber: this.signupForm.value.phoneNumber,
-          type: "reg"
+          type: type
           }).then(()=>
           {
             this.startUpload();
