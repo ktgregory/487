@@ -177,7 +177,7 @@ export class HomePage {
       }
       ]
     });
-    confirm.present()
+    confirm.present();
   }
 
   confirmRequest()

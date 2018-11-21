@@ -60,8 +60,8 @@ export class RequestCenterPage {
     let pendingMessage = this.alertCtrl.create({
       title: 'Request Status Info:',
       message: 'This request is still pending.' 
-      + 'Once it\'s accepted, you will be notified!'
-      + 'Or, you can clear the request now.',
+      + ' Once it\'s accepted, you will be notified!'
+      + ' Or, you can clear the request now.',
       buttons: [
         {
           text: 'Ok!'
@@ -171,11 +171,12 @@ export class RequestCenterPage {
     let requestQuery = await this.afs.firestore.collection(`requests`)
     .where("senderID","==",this.userID).where("senderStatus","==","uncleared"); 
       await requestQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(change => {
-              
+      snapshot.docChanges().forEach(async(change) => {
+        let request;
         // If a new request is sent, it is added to the sentRequests array.
         if (change.type === "added") {
-          this.sentRequests.push(this.reqService.checkExpiredRequests(change.doc.data()));
+          request = await this.getReceiverInfo(this.reqService.checkExpiredRequests(change.doc.data()));
+          this.sentRequests.push(request);
           if (this.noSent==true) this.noSent=false;
         }
         // If a request is deleted, it is removed from the sentRequests array.
@@ -200,11 +201,13 @@ export class RequestCenterPage {
     // and listens for new additions. 
     let requestQuery = await this.afs.firestore.collection(`requests`)
     .where("receiverID","==",this.userID).where("status","==","pending"); 
-    await requestQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(change => {
+    await requestQuery.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach(async(change) => {
+        let request;
         if (change.type === "added") {
           // If a new request is received, it is added to the receivedRequests array.
-          this.receivedRequests.push(this.reqService.checkExpiredRequests(change.doc.data()));
+          request = await this.getSenderInfo(this.reqService.checkExpiredRequests(change.doc.data()));
+          this.receivedRequests.push(request);
           if (this.noReceived==true) this.noReceived=false;
         }
         if (change.type === "removed") {
@@ -260,5 +263,32 @@ export class RequestCenterPage {
         this.receivedRequests.splice(i,1);
       }
     }
+  }
+
+  async getSenderInfo(request)
+  {
+    // gets the sender's image!
+    let ref = this.afs.firestore.collection('users').where('uid','==',request.senderID);
+    await ref.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        request.image= await change.doc.data().profileimage;
+        request.senderName= await change.doc.data().name;
+      });
+    });
+    return request;
+  }
+
+  async getReceiverInfo(request)
+  {
+    // gets the receiver's image!
+    let ref = this.afs.firestore.collection('users').where('uid','==',request.receiverID);
+    await ref.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        request.image = await change.doc.data().profileimage;
+        request.receiverName= await change.doc.data().name;
+      });
+    });
+    return request;
+    
   }
 }

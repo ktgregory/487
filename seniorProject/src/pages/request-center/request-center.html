@@ -15,7 +15,11 @@
     <ion-card *ngFor="let request of receivedRequests">
       <ion-item>
         <p item-start *ngIf="!request.viewed" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
-        <p>{{request.senderName}} ~ {{request.eventName}}</p>
+        <ion-avatar item-start>
+            <img src={{request.image}}>
+        </ion-avatar>
+        <h2>{{request.senderName}}</h2>
+        <p>{{request.eventName}}</p>
         <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID, request.senderID)"> 
           respond 
         </button> 
@@ -29,17 +33,19 @@
     <ion-label>Sent</ion-label>
       <ion-card *ngFor="let request of sentRequests">
         <ion-item>
-            <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
-          <p>{{request.receiverName}} ~ {{request.eventName}} </p>
-          <ng-container *ngIf="!request.expired">
-          <button *ngIf='request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
+          <ion-avatar item-start>
+             <img src={{request.image}}>
+          </ion-avatar>
+          <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
+          <h2>{{request.receiverName}}</h2>
+          <p> {{request.eventName}} </p>
+          <button *ngIf='!request.expired && request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
             pending
           </button>
-          <button  *ngIf='request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">
+          <button  *ngIf='!request.expired && request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">
             accepted
           </button>
-        </ng-container>
-        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)"> \
+        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)">
           expired 
         </button>
         </ion-item>

@@ -90,7 +90,7 @@ export class UploadPage {
     const path = `previews/${this.userID}`;
     this.previewRef = this.storage.ref(path);
     this.previewRef.put(file).then(async any=>
-    { // present Loading Symbol !!!
+    { 
         this.previewRef.getDownloadURL().subscribe(result=>
           {
             this.loading.dismiss();
@@ -123,7 +123,7 @@ export class UploadPage {
         }
       ]
     });
-    pendingMessage.present()
+    pendingMessage.present();
   }
 
   presentErrorMessage(errorMessage:string)

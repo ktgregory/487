@@ -152,9 +152,13 @@ export class RequestProvider {
     // those requests from the database. 
     requests.forEach(async request=>
     {
-      if((request.senderStatus=="cleared") && (request.status=="cleared"))
+      if((request.senderStatus=="cleared") && (request.status=="cleared") && (request.expired))
       {
        await this.afs.collection('requests').doc(request.requestID).delete(); 
+      }
+      else if ((request.senderStatus=="cleared") && (request.status=="accepted") && (request.expired))
+      {
+        await this.afs.collection('requests').doc(request.requestID).delete(); 
       }
     });
     let requests2 = requests.filter(function(value, index, arr)
@@ -219,4 +223,5 @@ export class RequestProvider {
     });
     return requestInfo;
   }
+
 }

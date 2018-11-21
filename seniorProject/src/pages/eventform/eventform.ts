@@ -183,6 +183,11 @@ value: any
 
 async submitEventForm()
 {
+  if(this.eventPic==null)
+  {
+    this.presentErrorMessage("You must attach a photo to your post!");
+    return;
+  }
   // If an event is selected from that list, get date from there.
   // Otherwise, get date from the form input.
   let date = this.eventForm.value.event.date;

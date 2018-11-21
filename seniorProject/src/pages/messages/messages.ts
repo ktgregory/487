@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { ChatProvider } from '../../providers/chat/chat';
 import { AuthProvider } from '../../providers/auth/auth';
 import { ChatroomPage } from '../chatroom/chatroom';
@@ -22,7 +22,7 @@ export class MessagesPage {
 
   constructor(public navCtrl: NavController, private chat: ChatProvider,
     private authData: AuthProvider, private userInfo: UserinfoProvider,
-    private afs: AngularFirestore,
+    private afs: AngularFirestore, public alertCtrl: AlertController,
     private timeInfo: TimeDateCalculationsProvider) {
   }
 
@@ -108,15 +108,45 @@ export class MessagesPage {
 
   deletedByThisUser(chat)
   {
+    let deleted;
     if(chat.lesserID==this.userID && chat.deletedByLesser==true)
+    {
       this.removeChat(chat);
-    if(chat.greaterID == this.userID && chat.deletedByGreater==true)
+      deleted= true;
+    }
+     else if(chat.greaterID == this.userID && chat.deletedByGreater==true)
+     {
       this.removeChat(chat);
+      deleted= true;
+     }
+      
     if(this.chats.length==0)
       this.noChats=true;
+    return deleted;
   }
 
   // Incomplete. 
+  async deleteSelectedChatsWarning()
+  {
+    let confirm = this.alertCtrl.create({
+      title: 'Delete chats?',
+      message: 
+      'This action cannot be undone, and you will no longer receive messages from any chat that you delete.',
+      buttons: [
+      {
+        text: 'Yes, delete.',
+        handler: () => {
+          this.deleteSelectedChats();
+        }
+      },
+      {
+        text: 'Nevermind.',
+      }
+      ]
+    });
+    confirm.present()
+  }
+
   async deleteSelectedChats()
   {
     this.chats.forEach(async chat=>
@@ -170,13 +200,15 @@ export class MessagesPage {
     .where("greaterID","==",userID);
     await chatQuery.onSnapshot((snapshot) => { 
       snapshot.docChanges().forEach(async change => {
-
+        let chat;
         if (change.type === "added") 
         {
-          this.chats.push(await this.getChatSender(change.doc.data(),false));
+          chat = await this.getChatSender(change.doc.data(),false)
+          this.chats.push(chat);
           if(this.noChats==true) this.noChats=false;
           this.chats.sort(this.chat.compareTimestampsChats);
-          this.deletedByThisUser(change.doc.data());
+          if(!(this.deletedByThisUser(change.doc.data())))
+            this.listenForUserUpdates(chat);
         }
 
         if (change.type === "removed") 
@@ -214,12 +246,15 @@ export class MessagesPage {
     await chatQuery.onSnapshot((snapshot) => { 
       snapshot.docChanges().forEach(async change => {
 
+        let chat;
         if (change.type === "added") 
         {
-          this.chats.push(await this.getChatSender(change.doc.data(),false));
+          chat = await this.getChatSender(change.doc.data(),false)
+          this.chats.push(chat);
           this.chats.sort(this.chat.compareTimestampsChats);
           if(this.noChats==true) this.noChats=false;
-          this.deletedByThisUser(change.doc.data());
+          if(!(this.deletedByThisUser(change.doc.data())))
+            this.listenForUserUpdates(chat);
         }
         if (change.type === "removed") 
         {
@@ -272,82 +307,17 @@ export class MessagesPage {
     });
   }
 
-  // async getChatUpdateByThreadID(threadID:string, date)
-  // {
-   
-  //  // Listener that checks each chat for new messages
-  //  // if a new message is received, update the relevant chat.
-  //  // (will need a similar function in notification center)
-  //   // Called every time a chat is add to the chats array.
-  //   // let messageQuery = await this.afs.firestore.collection('chats')
-  //   // .doc(threadID).collection('messages');
-
-  //   // await messageQuery.onSnapshot((snapshot) => { 
-  //   //   snapshot.docChanges().forEach(async change => {
-  //   //       await this.updateChat(threadID, change.doc.data());
-  //   //   });
-  //   // });
-  // }
-
-  // async updateChat(threadID:string, docData)
-  // {
-  //   this.chats.forEach(chat=>
-  //   {
-  //     if(chat.threadID == threadID)
-  //     {
-  //       chat.dateString = this.timeInfo.getTimeString(docData);
-  //       chat.messagePreview = docData.messageText.substring(0,9) + "...";
-  //       if(this.userID==chat.lesserID)
-  //         chat.unread=(chat.unreadByLesserCount>0);
-  //       else
-  //         chat.unread=(chat.unreadByGreaterCount>0);
-  //       }
-  //   });
-
-  //   this.chats.sort(this.chat.compareTimestampsChats);
-  //   // reload chats message preview and timestamp
-  // }
-
-  // async updateChatWithChatDoc(docData)
-  // {
-  //   this.chats.forEach(chat=>
-  //   {
-  //     if(chat.threadID == docData.threadID)
-  //     {
-  //       chat.dateString = this.timeInfo.getTimeString(docData);
-  //       chat.messagePreview = docData.messagePreview;
-  //       if(this.userID==chat.lesserID)
-  //         chat.unread=(chat.unreadByLesserCount>0);
-  //       else
-  //         chat.unread=(chat.unreadByGreaterCount>0);
-  //       this.chats.sort(this.chat.compareTimestampsChats);
-  //     }
-  //   });
-  //   // reload chats message preview and timestamp
-  // }
-
-  // async refreshChats(userID:string)
-  // {
-  //   let chatQuery = await this.afs.firestore.collection('chats')
-  //   .where("greaterID","==",userID);
-  //   await chatQuery.onSnapshot((snapshot) => { 
-  //     snapshot.docChanges().forEach(async change => {
-
-  //       this.updateChatWithChatDoc(change.doc.data());
-  //        // this.chats.push(await this.getChatSender(change.doc.data(),false));
-        
-  //     });
-  //   });
-
-
-  //   chatQuery = await this.afs.firestore.collection('chats')
-  //   .where("lesserID","==",userID);
-  //   await chatQuery.onSnapshot((snapshot) => { 
-  //     snapshot.docChanges().forEach(async change => {
-  //       this.updateChatWithChatDoc(change.doc.data());
-  //     });
-  //   });
-  // }
+ async listenForUserUpdates(chat)
+ {
+  let userQuery = await this.afs.firestore.collection('users')
+  .where("uid","==",chat.senderID);
+  await userQuery.onSnapshot((snapshot) => { 
+    snapshot.docChanges().forEach(async change => {
+      chat.senderName=change.doc.data().name;
+      chat.senderImage=change.doc.data().profileimage;
+    });
+  });
+ }
 
   removeChat(element)
   {
@@ -371,4 +341,5 @@ export class MessagesPage {
       }
     }
   }
+
 }
