@@ -9,11 +9,12 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding autosize>
+<ion-content>
+    <ion-card padding>
+    <ion-item *ngIf= 'noChats'>
+        <p padding>No messages.</p>
+       </ion-item>
     <ion-list>
-        <ion-card padding *ngIf= 'noChats'>
-            No messages.
-          </ion-card>
         <ion-item-sliding *ngFor= 'let chat of chats'>
         <ion-item (click)='goToChat(chat, chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage, chat.topic, chat.messagePreview)'>
             <p item-start *ngIf="chat.unread" style="font-size:3rem; margin-left:-1%; color:#654f6f">&#9900;</p>
@@ -40,7 +41,7 @@
         </ion-item-options>
       </ion-item-sliding>
       </ion-list>
-
+    </ion-card>
 </ion-content>
 
 <ion-footer>

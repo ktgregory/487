@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, App, ModalController, ToastController, Loading, LoadingController } from 'ionic-angular';
+import { NavController, App, 
+  ModalController, 
+  ToastController, 
+  Loading, 
+  LoadingController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import {EventFormPage} from '../eventform/eventform';
 import { AboutPage } from '../about/about';
@@ -26,6 +30,7 @@ export class HomePage {
   interface = "reg";
   showDescription=false;
   loading:Loading;
+  activeMenu: string;
 
   constructor(public navCtrl: NavController, public alerCtrl: AlertController,
     private authData: AuthProvider, private afs: AngularFirestore,

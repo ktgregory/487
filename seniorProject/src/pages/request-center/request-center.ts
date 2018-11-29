@@ -19,7 +19,7 @@ export class RequestCenterPage {
   sentRequests=[];
   noSent = false;
   noReceived = false;
-
+  requestList: string = "received";
   constructor(public navCtrl: NavController, private authData: AuthProvider,
     private afs: AngularFirestore, private reqService: RequestProvider,
     public alertCtrl: AlertController, public modalCtrl: ModalController,

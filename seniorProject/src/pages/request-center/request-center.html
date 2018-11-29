@@ -7,51 +7,64 @@
 </ion-header>
 
 <ion-content>
-  <div>
-    <ion-label>Received</ion-label>
-    <ion-card *ngIf="noReceived">
-      <p>No received requests!</p>   
-    </ion-card>
-    <ion-card *ngFor="let request of receivedRequests">
-      <ion-item>
-        <p item-start *ngIf="!request.viewed" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
-        <ion-avatar item-start>
-            <img src={{request.image}}>
-        </ion-avatar>
-        <h2>{{request.senderName}}</h2>
-        <p>{{request.eventName}}</p>
-        <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID, request.senderID)"> 
-          respond 
-        </button> 
-        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpiredReceiver(request.requestID)"> 
-          expired 
-        </button> 
+  <ion-card padding-bottom>
+    <div padding>
+        <ion-segment [(ngModel)]="requestList">
+          <ion-segment-button value="received">
+            Received
+          </ion-segment-button>
+          <ion-segment-button value="sent">
+            Sent
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+  <div [ngSwitch]="requestList">
+    <div *ngSwitchCase="'received'">
+      <ion-item *ngIf="noReceived">
+        <p padding>No received requests!</p>  
       </ion-item>
-    </ion-card>
-  </div>
-  <div>
-    <ion-label>Sent</ion-label>
-      <ion-card *ngFor="let request of sentRequests">
-        <ion-item>
-          <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
+      <ion-list>
+        <ion-item *ngFor="let request of receivedRequests">
+          <p item-start *ngIf="!request.viewed" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
           <ion-avatar item-start>
-            <img src={{request.image}}>
-         </ion-avatar>
-          <h2>{{request.receiverName}}</h2>
-          <p> {{request.eventName}} </p>
-          <button *ngIf='!request.expired && request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
-            pending
-          </button>
-          <button  *ngIf='!request.expired && request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">
-            accepted
-          </button>
-        <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)">
-          expired 
-        </button>
+              <img src={{request.image}}>
+          </ion-avatar>
+          <h2>{{request.senderName}}</h2>
+          <p>{{request.eventName}}</p>
+          <button  *ngIf="!request.expired" ion-button item-end (click)="respondToRequest(request.requestID, request.senderID)"> 
+            respond 
+          </button> 
+          <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpiredReceiver(request.requestID)"> 
+            expired 
+          </button> 
         </ion-item>
-      </ion-card>
-      <ion-card *ngIf="noSent">
-          <p>No sent requests!</p>   
-      </ion-card>
+      </ion-list>
+    </div>
+    <div *ngSwitchCase="'sent'">
+        <ion-list>
+          <ion-item  *ngFor="let request of sentRequests">
+            <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
+            <ion-avatar item-start>
+              <img src={{request.image}}>
+          </ion-avatar>
+            <h2>{{request.receiverName}}</h2>
+            <p> {{request.eventName}} </p>
+            <button *ngIf='!request.expired && request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">
+              pending
+            </button>
+            <button  *ngIf='!request.expired && request.status=="accepted"' ion-button outline item-end (click)="viewAccepted(request.requestID)">
+              accepted
+            </button>
+          <button *ngIf="request.expired" ion-button item-end (click)="requestHasExpired(request.requestID)">
+            expired 
+          </button>
+          </ion-item>
+        </ion-list>
+        <ion-item *ngIf="noSent">
+            <p padding>No sent requests!</p>    
+        </ion-item>
+    </div>
   </div>
+</ion-card>
 </ion-content>

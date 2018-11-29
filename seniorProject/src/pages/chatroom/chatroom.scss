@@ -24,9 +24,10 @@ page-chatroom {
 
       .speech-bubble-right {
         position: relative;
-        border-radius: 13px;
-        background-color:#9db8c8;
+        border-radius: 15px;
+        background-color:#4b97ed;
         color:white;
+        font-weight: 400;
     }
     
     .speech-bubble-right:after {
@@ -37,7 +38,7 @@ page-chatroom {
         width: 0;
         height: 0;
         border: 20px solid transparent;
-        border-left-color: #9db8c8;
+        border-left-color: #4b97ed;
         border-right: 0;
         border-bottom: 0;
         margin-top: -8px;
@@ -46,9 +47,10 @@ page-chatroom {
 
     .speech-bubble-left {
         position: relative;
-        background-color:#bec7d6;
+        background-color:#c9daed;
         border:1pt solid white;
-        border-radius: 13px;
+        border-radius: 15px;
+        font-weight: 400;
     }
     
     .speech-bubble-left:after {
@@ -59,7 +61,7 @@ page-chatroom {
         width: 0;
         height: 0;
         border: 20px solid transparent;
-        border-right-color:#bec7d6;
+        border-right-color:#c9daed;
         border-left: 0;
         border-bottom: 0;
         margin-top: -8px;

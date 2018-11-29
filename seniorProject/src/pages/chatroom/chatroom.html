@@ -10,7 +10,7 @@
     </ion-item>
 </ion-header>
 
-<ion-content padding class="chat-page">
+<ion-content padding class="chat-page" autosize>
 <ng-container *ngFor = "let message of messages">
   <div class="chat">
     <div margin>
@@ -38,4 +38,3 @@
       </ion-item>
   </form>
 </ion-footer>
-
