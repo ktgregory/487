@@ -57,8 +57,9 @@ export class DeleteAccountPage {
 
   async deleteAccount()
   {
+    // Deletes the current user's account. 
     this.authData.deleteAccount()
-    .then(any=>
+    .then(()=>
       {
         this.navCtrl.setRoot(LoginPage);
         this.loading.dismiss().then(() =>
@@ -78,9 +79,9 @@ export class DeleteAccountPage {
   }
 
   loginUser(){
-    // Logs the user in before changing their password. 
+    // Logs the user in before allowing them to delete
+    // their account.  
     if (!this.loginForm.valid){
-      console.log("Error");
       return;
     }
 

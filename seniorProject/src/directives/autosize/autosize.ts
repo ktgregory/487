@@ -24,3 +24,5 @@ export class AutosizeDirective implements OnInit {
     textArea.style.height = textArea.scrollHeight + "px";
   }
 }
+
+// SOURCE: https://competenepal.com/elastic-text-area-component-in-ionic-framework/

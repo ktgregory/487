@@ -2,6 +2,17 @@
 page-chatroom {
    
 
+      .toolbar-title-md
+      {
+          font-weight:400;
+          padding:0;
+          text-align:center;
+      }
+      .toolbar-title-md p
+      {
+          padding-top:2px;
+      }
+
       .message {
           margin:2px;
       }
@@ -55,6 +66,25 @@ page-chatroom {
         margin-left: -14px;
     }
 
-
     //SOURCE https://leaverou.github.io/bubbly/
+
+
+
+
+    .item-md.item-block .item-inner,
+    .item-md.item-input.input-has-focus .item-inner,
+    .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+    .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+    .list-md .item-input.input-has-focus:last-child,
+    .list-md .item-input.ng-valid.input-has-value:not(.input-has-focus):last-child,
+    .list-md .item-input.ng-invalid.ng-touched:not(.input-has-focus):last-child {
+        border-bottom: none;
+        box-shadow: none;
+    }
+    .list-md .item-input.input-has-focus:last-child .item-inner,
+    .list-md .item-input.ng-valid.input-has-value:not(.input-has-focus):last-child .item-inner,
+    .list-md .item-input.ng-invalid.ng-touched:not(.input-has-focus):last-child .item-inner {
+        box-shadow: none; 
+    }
+    // SOURCE: https://stackoverflow.com/questions/45182712/how-to-remove-bottom-line-from-the-ionic-2-components
 }

@@ -52,7 +52,7 @@ export class RequestProvider {
       if(testData!=null)
       {
         return Promise.reject('You have already sent a request' 
-        + 'about this event!');
+        + ' about this event!');
       }
       else
       {  
@@ -73,7 +73,7 @@ export class RequestProvider {
           contact:"",
           receiverName: postInfo.username,
           senderStatus: "uncleared",
-          date: new Date(year, month, day, 0,0,0, 0),
+          date: new Date(year, month, day, 0, 0, 0, 0),
           viewed:false,
           viewedBySender:false
         });
@@ -162,9 +162,7 @@ export class RequestProvider {
       }
     });
     let requests2 = requests.filter(function(value, index, arr)
-    {
-      // Needs to be modified to accommodate requests that 
-      // have been accepted and cleared. 
+    { 
       return (!((value.senderStatus=="cleared")&&(value.status=="cleared"))); 
     });
     return requests2;
@@ -196,16 +194,16 @@ export class RequestProvider {
   {
     // Gets requests that a user has sent that have 
     // not been cleared. 
-    let requests=[];
+    let request;
     let requestQuery = await this.afs.firestore.collection(`requests`)
     .where("senderID","==",userID)
     .where("senderStatus","==","uncleared");    
     await requestQuery.get().then((querySnapshot) => { 
        querySnapshot.forEach(async (doc) => {
-          requests.push(await this.checkExpiredRequests(doc.data()));
+          request = await this.checkExpiredRequests(doc.data());
         });
       }); 
-    return requests;
+    return request;
   }
 
 

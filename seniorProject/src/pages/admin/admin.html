@@ -23,9 +23,9 @@
 
 <ion-content padding>
     <ion-list>
-        <ion-card *ngIf="noPending">
+        <ion-card *ngIf="pendingEvents.length==0">
             <ion-row justify-content-center padding>
-              <p>No pending requests!</p>
+              <p>No pending posts!</p>
             </ion-row>
           </ion-card>
       <ion-card *ngFor="let event of pendingEvents">

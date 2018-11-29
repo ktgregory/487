@@ -1,4 +1,4 @@
-// INCOMPLETE
+// For future use!
 
 import { Injectable } from '@angular/core';
 import { ToastController } from 'ionic-angular';

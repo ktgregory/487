@@ -3,7 +3,7 @@ import { NavController, AlertController } from 'ionic-angular';
 import { ChatProvider } from '../../providers/chat/chat';
 import { AuthProvider } from '../../providers/auth/auth';
 import { ChatroomPage } from '../chatroom/chatroom';
-import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { UserProvider } from '../../providers/user/user';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
@@ -21,7 +21,7 @@ export class MessagesPage {
   display = false;
 
   constructor(public navCtrl: NavController, private chat: ChatProvider,
-    private authData: AuthProvider, private userInfo: UserinfoProvider,
+    private authData: AuthProvider, private userInfo: UserProvider,
     private afs: AngularFirestore, public alertCtrl: AlertController,
     private timeInfo: TimeDateCalculationsProvider) {
   }
@@ -62,7 +62,7 @@ export class MessagesPage {
 
 
   goToChat(chat, threadID:string, senderID:string, userID:string, 
-    senderName:string, senderImage:string, eventName:string, topic:string)
+    senderName:string, senderImage:string, eventName:string, messagePreview:string)
   {
     // When marking threads to delete, this prevents 
     // the user from unintentionally navigating to the
@@ -78,17 +78,17 @@ export class MessagesPage {
         'senderName': senderName,
         'senderImage': senderImage,
         'eventName': eventName,
-        'topic':topic
+        'preview': messagePreview
        });
        chat.unread=false;
-       if(this.userID<senderID)
-        this.afs.collection('chats').doc(threadID).update({unreadByLesserCount:0});
-       else
+       if(chat.greaterID == this.userID)
         this.afs.collection('chats').doc(threadID).update({unreadByGreaterCount:0});
+       else
+        this.afs.collection('chats').doc(threadID).update({unreadByLesserCount:0});
     }
   }
 
-  // Incomplete. 
+
   displayThread(chat)
   {
     if ((chat.greaterID == this.userID) && (chat.deletedByGreater==false)) 
@@ -125,7 +125,7 @@ export class MessagesPage {
     return deleted;
   }
 
-  // Incomplete. 
+
   async deleteSelectedChatsWarning()
   {
     let confirm = this.alertCtrl.create({
@@ -149,6 +149,7 @@ export class MessagesPage {
 
   async deleteSelectedChats()
   {
+    // Updates in the database if a user has marked a chat to delete.
     this.chats.forEach(async chat=>
     {
         if(chat.delete == true)
@@ -161,6 +162,15 @@ export class MessagesPage {
     });
 
     this.markThreads = false;
+  }
+
+  deleteChat(chat)
+  {
+    // Deletes an individual chat with the swipe right deletion method.
+    if(this.userID == chat.greaterID)
+      this.afs.collection('chats').doc(chat.threadID).update({deletedByGreater:true});
+    else
+      this.afs.collection('chats').doc(chat.threadID).update({deletedByLesser:true});  
   }
 
   setToDelete(chat)
@@ -309,6 +319,8 @@ export class MessagesPage {
 
  async listenForUserUpdates(chat)
  {
+   // Updates the user's name or profile image if they change their information
+   // after the page is first loaded. 
   let userQuery = await this.afs.firestore.collection('users')
   .where("uid","==",chat.senderID);
   await userQuery.onSnapshot((snapshot) => { 
@@ -321,6 +333,7 @@ export class MessagesPage {
 
   removeChat(element)
   {
+    // Used to remove a chat if the user deletes it. 
     for(let i=0; i < this.chats.length; i++)
     {
       if (this.chats[i].threadID==element.threadID)
@@ -332,6 +345,8 @@ export class MessagesPage {
 
   async updateChatInfo(updatedChat)
   {
+    // Updates the chat information based on updates 
+    // in the database. 
     for(let i=0; i<this.chats.length; i++)
     {
       if(this.chats[i].threadID==updatedChat.threadID)

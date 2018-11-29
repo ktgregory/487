@@ -1,39 +1,57 @@
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { TimeDateCalculationsProvider } from '../time-date-calculations/time-date-calculations';
+import { AngularFireStorage } from 'angularfire2/storage';
 
 
 
 @Injectable()
-export class EventInfoProvider {
+export class EventProvider {
   
-  constructor(private afs: AngularFirestore, private timeInfo: TimeDateCalculationsProvider) {}
+  constructor(private afs: AngularFirestore, private timeInfo: TimeDateCalculationsProvider,
+    private storage: AngularFireStorage) {}
 
 
   //https://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
   
 
-  async getPendingEvents()
+  async getPendingEvents(posts)
   {
     // Retrieves pending events from the database and adds 
     // dateString, notExpired, and timeUntil attributes to 
     // each event. Used for Admin interface. 
-    let posts=[];
     let postQuery = await this.afs.firestore.collection(`posts`)
     .where("status","==","pending");
-    await postQuery.get().then((querySnapshot) => { 
-        querySnapshot.forEach((doc) => {
-          posts.push(this.timeInfo.eventTimeCalculations(doc.data()));
+    await postQuery.onSnapshot((querySnapshot) => { 
+      querySnapshot.docChanges().forEach(async (change) => {
+        if(change.type==="added")
+          posts.push(this.timeInfo.eventTimeCalculations(change.doc.data()));
+        if(change.type==="modified" && (change.doc.data().status=="pending"))
+          posts = this.removePost(posts, change.doc.data());
+        if(change.type==="removed")
+        {
+          posts = this.removePost(posts, change.doc.data());
+        }
       })
     });
-    return posts;
+      
   }
   
- 
+  removePost(posts, approvePost) { 
+    
+    for (let i=0; i<posts.length; i++)
+    {
+      if (posts[i].postID==approvePost.postID)
+      {
+        posts.splice(i,1);
+      }
+    }
+  }
 
   async deletePost(postID:string)
   {
-    // Removes a post from the database by its ID. 
+    // Removes a post from the database by its ID as well as its corresponding image.
+    await this.storage.ref(`postPhotos/${postID}`).delete();
     await this.afs.firestore.collection("posts").doc(postID).delete();
   }
 

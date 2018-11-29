@@ -4,6 +4,7 @@ page-home {
         object-fit: contain;
     }
 
+
     .select {
         line-height: 1.2;
         width: 100% !important;
@@ -27,6 +28,7 @@ page-home {
         border-bottom: none;
         box-shadow: none;
     }
+
     .list-md .item-input.input-has-focus:last-child .item-inner,
     .list-md .item-input.ng-valid.input-has-value:not(.input-has-focus):last-child .item-inner,
     .list-md .item-input.ng-invalid.ng-touched:not(.input-has-focus):last-child .item-inner {
@@ -34,3 +36,10 @@ page-home {
     }
     // SOURCE: https://stackoverflow.com/questions/45182712/how-to-remove-bottom-line-from-the-ionic-2-components
 }
+
+.aboveFooter {
+    .toast-wrapper {
+        transform: translateY(70px) !important;
+    }
+}
+

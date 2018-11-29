@@ -33,10 +33,10 @@
     <ion-label>Sent</ion-label>
       <ion-card *ngFor="let request of sentRequests">
         <ion-item>
-          <ion-avatar item-start>
-             <img src={{request.image}}>
-          </ion-avatar>
           <p item-start *ngIf="(!request.viewedBySender) && (request.status=='accepted')" style="margin-left:-1%; color:#654f6f"><strong>NEW</strong></p>
+          <ion-avatar item-start>
+            <img src={{request.image}}>
+         </ion-avatar>
           <h2>{{request.receiverName}}</h2>
           <p> {{request.eventName}} </p>
           <button *ngIf='!request.expired && request.status=="pending"' ion-button outline item-end (click)="pendingAlert(request.requestID)">

@@ -5,6 +5,24 @@
 </ion-header>
 
 <ion-content padding>
+    <ion-row justify-content-center>
+    <ion-card style="max-width:85%">
+       <img src="{{profilePic}}">
+      </ion-card>
+    </ion-row>
+    <ion-row  justify-content-center no-padding>
+      <button small ion-button onclick="document.getElementById('file').click();">
+              Select a photo <br>
+        <ion-icon name="images"></ion-icon>
+      </button>
+    </ion-row>
+    <ion-row justify-content-center no-padding>
+      <button small ion-button (click) = "startUpload()" outline>
+        Save photo
+      </button>
+    </ion-row>
+  <input style="display:none" id="file" class="file-input" type="file" (change)="setUpload($event.target.files)">
+  
   <ion-list>   
       <ion-item>
         <h3>
@@ -31,7 +49,4 @@
       </p>
     </ion-item>
   </ion-list>
-  <button ion-button outline (click) ="goToUploadPage()">
-    Upload a new profile photo
-  </button>
 </ion-content>

@@ -15,7 +15,6 @@ import { SignUpPage } from '../pages/signup/signup';
 import { AdminPage } from '../pages/admin/admin';
 import { AboutPage } from '../pages/about/about';
 import { AccountsettingsPage } from '../pages/accountsettings/accountsettings';
-import { UploadPage } from '../pages/uploadprofilepic/uploadprofilepic';
 import { ChangepasswordPage } from '../pages/changepassword/changepassword';
 import { ChangeemailPage } from '../pages/changeemail/changeemail';
 import { ModifyeventlistPage } from '../pages/modifyeventlist/modifyeventlist';
@@ -37,23 +36,16 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireDatabaseModule} from 'angularfire2/database';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environment/environment';
-import { UserinfoProvider } from '../providers/userinfo/userinfo';
+import { UserProvider } from '../providers/user/user';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { SelectSearchableModule } from 'ionic-select-searchable';
-import { EventInfoProvider } from '../providers/event-info/event-info';
+import { EventProvider } from '../providers/event/event';
 import { RequestProvider } from '../providers/request/request';
 import { RequestModalPage } from '../pages/request-modal/request-modal';
 import { ChatProvider } from '../providers/chat/chat';
 import { FoundationProvider } from '../providers/foundation/foundation';
 import { TimeDateCalculationsProvider } from '../providers/time-date-calculations/time-date-calculations';
-import { NgModuleRef } from '@angular/core'
-import { BrowserTransferStateModule } from '@angular/platform-browser';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
-import { AutosizeDirective} from '../directives/autosize/autosize';
-
-
-
-//import { UploadImageProvider } from '../providers/upload-image/upload-image';
 
 @NgModule({
   declarations: [
@@ -68,7 +60,6 @@ import { AutosizeDirective} from '../directives/autosize/autosize';
     EventFormPage,
     ResetPasswordPage,
     AdminPage,
-    UploadPage,
     AccountsettingsPage,
     AboutPage,
     TabsPage,
@@ -106,7 +97,6 @@ import { AutosizeDirective} from '../directives/autosize/autosize';
     EventFormPage,
     ResetPasswordPage,
     AdminPage,
-    UploadPage,
     AboutPage,
     AccountsettingsPage,
     TabsPage,
@@ -123,13 +113,12 @@ import { AutosizeDirective} from '../directives/autosize/autosize';
     SplashScreen,
     AuthProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UserinfoProvider,
-    EventInfoProvider,
+    UserProvider,
+    EventProvider,
     RequestProvider,
     ChatProvider,
     FoundationProvider,
-    TimeDateCalculationsProvider,
-    // UploadImageProvider
+    TimeDateCalculationsProvider
   ]
 })
 export class AppModule {}

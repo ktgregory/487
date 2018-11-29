@@ -22,7 +22,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
- <ion-slides slider="data.slider" #imageSlides (ionSlideDrag)="slideChanged()">
+ <ion-slides slider="data.slider" #imageSlides (ionSlideDrag)="slideDragged()">
    <ng-container *ngFor = "let post of posts">
     <ion-slide *ngIf="post.notExpired">
     <ion-card>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicPage, ViewController, NavParams, AlertController } from 'ionic-angular';
 import { RequestProvider } from '../../providers/request/request';
-import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { UserProvider } from '../../providers/user/user';
 import { ChatProvider } from '../../providers/chat/chat';
 
 
@@ -25,7 +25,7 @@ export class RequestModalPage implements OnInit {
   
   constructor(
     public viewCtrl: ViewController, params: NavParams, 
-    private reqService: RequestProvider, private userService: UserinfoProvider,
+    private reqService: RequestProvider, private userService: UserProvider,
     public alertCtrl: AlertController, private chat: ChatProvider
   ) {
     // Gets navigation parameters and updates corresponding variables. 

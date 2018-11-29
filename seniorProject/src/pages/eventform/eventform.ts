@@ -3,13 +3,14 @@ import { NavController,
   ModalController, 
   ViewController, 
   LoadingController,
-  Loading} from 'ionic-angular';
+  Loading,
+  ToastController} from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
-import { FormBuilder, FormGroup} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { SelectSearchableComponent } from 'ionic-select-searchable';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { EventProvider } from '../../providers/event/event';
 import { AngularFireStorage } from 'angularfire2/storage';
 
 
@@ -34,17 +35,19 @@ export class EventFormPage {
     showEventInfo=false;
     public eventForm: FormGroup;
     loading: Loading;
+    eventSelected=false;
 
 constructor(public navCtrl: NavController, public alertCtrl: AlertController,
       public formBuilder: FormBuilder, private authData: AuthProvider, 
       private afs: AngularFirestore,public modalCtrl: ModalController,
-      private eventInfo: EventInfoProvider, public viewCtrl: ViewController,
-      public loadingCtrl: LoadingController, private storage: AngularFireStorage) { 
+      private eventInfo: EventProvider, public viewCtrl: ViewController,
+      public loadingCtrl: LoadingController, private storage: AngularFireStorage,
+      public toastCtrl: ToastController) { 
 
       // Sets eventForm variable to the corresponding html inputs.
       this.eventForm = formBuilder.group({
         event: [''],
-        description:[''],
+        description:['', Validators.required],
         name:[''],
         date:['']
       });
@@ -112,9 +115,6 @@ async ngOnInit()
   });
 }
 
-ionViewWillLeave()
-{
-}
 
 confirmSubmission()
 {
@@ -133,20 +133,17 @@ confirmSubmission()
     }
     ]
   });
-  confirm.present()
+  confirm.present();
 }
 
 submitEvent()
 {
   // Displays after an event post has been successfully
   // submitted. 
-  let confirm = this.alertCtrl.create({
-    title: 'Submission succeeded!',
-    buttons: [
-    {
-      text: 'Okay.'
-    }
-    ]
+  let confirm = this.toastCtrl.create({
+      message: 'Your post was successfully submitted!',
+      duration: 2500,
+      position: 'bottom'
   });
   confirm.present();
   // Closes the modal as the alert is being displayed. 
@@ -159,6 +156,7 @@ portChange(event: {
 component: SelectSearchableComponent,
 value: any 
 }) {
+  this.eventSelected=true;
   if(event.value.name=="Other")
   {
     // If "Other" is selected, show the two additional inputs.
@@ -183,11 +181,37 @@ value: any
 
 async submitEventForm()
 {
+  if(!this.eventSelected)
+  {
+    this.presentErrorMessage("You must select an event!");
+    return;
+  }
+
+  if(this.eventForm.value.name=="" && this.eventForm.value.event.name=="Other")
+  {
+    this.presentErrorMessage("You must provide a name for the event!");
+    return;
+  }
+
+  if(!(this.eventForm.value.date) && this.eventForm.value.event.name=="Other")
+  {
+    this.presentErrorMessage("You must provide a date for the event!");
+    return;
+  }
+
+  if (!this.eventForm.valid)
+  {
+    this.presentErrorMessage("Please provide a description for your post!");
+    return;
+  }
+
   if(this.eventPic==null)
   {
     this.presentErrorMessage("You must attach a photo to your post!");
     return;
   }
+
+
   // If an event is selected from that list, get date from there.
   // Otherwise, get date from the form input.
   let date = this.eventForm.value.event.date;
@@ -259,12 +283,12 @@ async submitEventForm()
 }
 
 
-async setUpload(event: FileList) 
-{
-  this.deletePreview;
-  this.file = event.item(0);
-  this.uploadPreview();
-}
+// async setUpload(event: FileList) 
+// {
+//   // Gets the file the user has selected and c
+//   this.file = event.item(0);
+//   this.uploadPreview();
+// }
 
 
 presentErrorMessage(errorMessage:string)
@@ -282,22 +306,30 @@ presentErrorMessage(errorMessage:string)
   pendingMessage.present()
 }
 
-uploadPreview()
+uploadPreview(event: FileList)
 {
-  const file = this.file;
+  // Gets the file (photo) selected by the user. 
+  this.file = event.item(0);
 
-  if (file.type.split('/')[0] !== 'image') { 
+  if (this.file.type.split('/')[0] !== 'image') { 
     this.presentErrorMessage("You have selected an unsupported file type!");
     return;
   }
+
+  // Presents loading symbol.
   this.loading = this.loadingCtrl.create({
     dismissOnPageChange: true,
   });
   this.loading.present();
 
+  // Sets path of the photo upload. 
   const path = `postPhotos/${this.postID}`;
+  
+  // Stores the reference to the upload in case 
+  // the user decides not to post and the photo
+  // needs to be deleted. 
   this.previewRef = this.storage.ref(path);
-  this.previewRef.put(file).then(async ()=>
+  this.previewRef.put(this.file).then(async ()=>
   { 
     this.previewRef.getDownloadURL().subscribe(result=>
     {
@@ -309,6 +341,7 @@ uploadPreview()
 
 deletePreview()
 {
+  // Deletes the preview image from the database. 
   if (this.file!=null)
     this.previewRef.delete(this.file);
 }

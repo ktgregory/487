@@ -1,5 +1,3 @@
-// INCOMPLETE.
-
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 
@@ -42,9 +40,14 @@ export class ChatProvider {
           unreadByLesserCount: 1,
           unreadByGreaterCount: 1,
           messagePreview: "New chat!",
-          date: new Date() // last update is the current time. 
+          date: new Date()  // date here is the current time. 
                             // Will be updated as new messges
                             // are sent. 
+                            // The field is named "date" instead
+                            // of something more descriptive
+                            // because it is more general to be 
+                            // compatible with methods in the 
+                            // time-date-calculations provider. 
       }
     );
     return; 
@@ -69,8 +72,8 @@ export class ChatProvider {
     eventName:string)
   {
     // Creates a new message in the database under the corresponding
-    // chat (thread) document, and updates the lastUpdate attribute of
-    // the chat. 
+    // chat (thread) document, and updates the date (last update) 
+    // attribute of the chat. 
     let threadID = this.makeThreadID(senderID, receiverID, eventName);
     let messageID = this.afs.createId();
     let currentTime = new Date();
@@ -84,20 +87,25 @@ export class ChatProvider {
         messageID: messageID
       }
     );
-    if(text.length > 23)
-      text = text.substring(0,20) + "...";
+    // Shortens the text for the preview if the message is longer 
+    // than 30 characters. 
+    if(text.length > 30)
+      text = text.substring(0,27) + "...";
+
+    // Updates the chat's preview and unread count based on
+    // whether the sender has the greater or lesser user ID. 
     if(receiverID<senderID)
     {
       let count;
-      this.afs.collection('chats').doc(threadID).get().subscribe(doc=>
+      this.afs.collection('chats').doc(threadID).get().subscribe(async doc=>
       {
-        count = doc.data().unreadByLesserCount;
+        count = await doc.data().unreadByLesserCount;
         count++;
         this.afs.collection('chats').doc(threadID).update(
           {
             date: currentTime,
             messagePreview: text,
-            unreadByLesserCount:count
+            unreadByLesserCount: count
           }
         );
       });
@@ -105,15 +113,15 @@ export class ChatProvider {
     else
     {
       let count;
-      this.afs.collection('chats').doc(threadID).get().subscribe(doc=>
+      this.afs.collection('chats').doc(threadID).get().subscribe(async doc=>
       {
-        count = doc.data().unreadByGreaterCount;
+        count = await doc.data().unreadByGreaterCount;
         count++;
         this.afs.collection('chats').doc(threadID).update(
           {
             date: currentTime,
             messagePreview: text,
-            unreadByGreaterCount:count
+            unreadByGreaterCount: count
           }
         );
       });
@@ -155,18 +163,6 @@ export class ChatProvider {
     return messages.sort(this.compareTimestamps);
   }
 
-  // async getMessageUpdatesByThreadID(threadID:string)
-  // {
-  //   let messages = [];
-  //   let messageQuery = await this.afs.firestore.collection('chats')
-  //   .doc(threadID).collection('messages');
-  //   await messageQuery.onSnapshot((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         messages.push(doc.data());
-  //     });
-  //   });
-  //   return await messages;
-  // }
 }
 
 //SOURCE: https://firebase.google.com/docs/firestore/data-model#subcollections

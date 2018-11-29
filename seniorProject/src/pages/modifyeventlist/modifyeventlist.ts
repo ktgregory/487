@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { EventProvider } from '../../providers/event/event';
 import { AdmineventformPage } from '../admineventform/admineventform';
 
 @IonicPage()
@@ -13,7 +13,7 @@ export class ModifyeventlistPage {
   events = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, 
-    public viewCtrl: ViewController, private eventInfo:EventInfoProvider, 
+    public viewCtrl: ViewController, private eventInfo:EventProvider, 
     public alertCtrl: AlertController) {
   }
 

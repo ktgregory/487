@@ -10,7 +10,6 @@ import { EmailValidator } from '../../validators/email';
 import { SignUpPage } from '../signup/signup';
 import { ResetPasswordPage } from '../resetpassword/resetpassword';
 import { TabsPage } from '../tabs/tabs';
-import { UserinfoProvider } from '../../providers/userinfo/userinfo';
 import { FoundationProvider } from '../../providers/foundation/foundation';
 
 @Component({
@@ -25,8 +24,7 @@ export class LoginPage {
   email;
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     public formBuilder: FormBuilder, public alertCtrl: AlertController,
-    public loadingCtrl: LoadingController, private userService: UserinfoProvider, 
-    private foundation: FoundationProvider) {
+    public loadingCtrl: LoadingController, private foundation: FoundationProvider) {
 
       // Sets loginForm variable equal to corresponding HTML inputs.
       this.loginForm = formBuilder.group({
@@ -57,7 +55,7 @@ export class LoginPage {
     // SOURCE: https://javebratt.com/ionic-firebase-tutorial-auth/
 
     if (!this.loginForm.valid){
-      console.log(this.loginForm.value);
+     
     } else {
       this.authData.loginUser(this.loginForm.value.email, this.loginForm.value.password)
       .then( authData => {
@@ -93,20 +91,4 @@ export class LoginPage {
     this.navCtrl.push(SignUpPage);
   }
 
-  // async navigateBasedOnUserType()
-  // {
-  //   // Determines whether the user needs to be navigated
-  //   // to the Admin page or Home page. 
-  //   let id = await this.authData.getUserID();
-  //   let userInfo = await this.userService.getUserInfo(id);
-  //   let type = userInfo[0].type;
-  //   if(type=="admin")
-  //   {
-  //     this.navCtrl.setRoot(AdminPage);
-  //   }
-  //   else
-  //   {
-  //     this.navCtrl.setRoot(TabsPage);
-  //   }
-  // }
 }

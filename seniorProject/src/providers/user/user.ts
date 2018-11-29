@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore} from 'angularfire2/firestore';
 import 'rxjs/add/observable/of';
 import { AngularFireStorage } from 'angularfire2/storage';
-import { of } from 'rxjs';
 
 
 @Injectable()
-export class UserinfoProvider {
+export class UserProvider {
 
   defaultURL = "https://firebasestorage.googleapis.com/v0/b/seniorproject-27d62.appspot.com/o/previews%2FdefaultPhoto.png?alt=media&token=58701963-8475-4902-852b-77acc7affd31";
 
@@ -73,10 +72,13 @@ export class UserinfoProvider {
 
   async deleteUser(userID)
   {
+    // Deletes a user and their profile image from 
+    // the database (as long as their profile image
+    // is the not set as the default). 
     let userImage = await this.getUserImageByID(userID);
     if(userImage!=this.defaultURL)
     {
-      this.storage.ref(await this.getUserImageByID(userID)).delete();
+      this.storage.ref(`profilePhotos/${userID}`).delete();
     }
     await this.afs.firestore.collection('users').doc(userID).delete();
   }

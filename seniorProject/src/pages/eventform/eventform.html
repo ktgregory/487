@@ -1,5 +1,5 @@
 <ion-content padding>
-<input style="display:none" id="file" class="file-input" type="file" (change)="setUpload($event.target.files)">
+<input style="display:none" id="file" class="file-input" type="file" (change)="uploadPreview($event.target.files)">
   <form (ngSubmit)="confirmSubmission()" [formGroup]="eventForm">
    <ion-item>
     <ion-label>

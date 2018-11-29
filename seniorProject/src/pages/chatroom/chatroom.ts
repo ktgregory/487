@@ -19,8 +19,17 @@ export class ChatroomPage {
   senderName;
   profileImage;
   eventName;
+  topic;
   noMessages = false;
   public messageForm: FormGroup;
+  newChat:boolean;
+
+  // This variable keeps track of whether or not the user
+  // is viewing the page, so that the app can keep track 
+  // of whether or not new messages are received while the 
+  // user is on the page or in the background. If this page
+  // is not in view, the messages are unread. Otherwise,
+  // they are marked read. 
   inView:boolean;
 
   @ViewChild(Content) content:Content;
@@ -37,6 +46,7 @@ export class ChatroomPage {
       this.senderName = this.navParams.get('senderName');
       this.profileImage = this.navParams.get('senderImage');
       this.eventName = this.navParams.get('eventName');
+      this.newChat = (this.navParams.get('preview')=="New chat!");
       this.messageForm = formBuilder.group({
         messageContent: ['']
       });
@@ -59,16 +69,21 @@ export class ChatroomPage {
 
   ionViewWillEnter()
   {
+    // Updates the inView variable to true when the user
+    // navigates to the page. 
     this.inView=true;
-
   }
 
   ionViewDidEnter(){
+    // When the page has been entered, scrolls to the bottom 
+    // (i.e. to the most recent messages).
     if(this.content._scroll) this.content.scrollToBottom(300);
   }
 
   ionViewWillLeave()
   {
+    // Updates the inView variable to false when the user
+    // navigates away from the page. 
     this.inView=false;
   }
 
@@ -79,21 +94,29 @@ export class ChatroomPage {
     .doc(this.threadID).collection('messages');
     await messageQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(change => {
-        this.messages.push(this.formatNewMessage(change.doc.data()));
-        if(this.content._scroll) this.content.scrollToBottom(300);
-        if(this.inView)
+        if(change.type=="added")
         {
-          if(this.userID<this.otherUserID)
+          this.messages.push(this.formatNewMessage(change.doc.data()));
+        
+          // Scrolls to the bottom of the page if a new message is received.
+          if(this.content._scroll) this.content.scrollToBottom(300);
+          if(this.inView)
           {
-            this.afs.collection('chats').doc(this.threadID).update({unreadByLesserCount: 0});
+            // Depending on if the user is the greater or lesser ID, 
+            // the unread count is set to 0. 
+            if(this.userID<this.otherUserID)
+            {
+              this.afs.collection('chats').doc(this.threadID)
+              .update({unreadByLesserCount: 0});
+            }
+            else
+            {
+              this.afs.collection('chats').doc(this.threadID)
+              .update({unreadByGreaterCount: 0});
+            }
+              
+            if(this.noMessages==true) this.noMessages = false;
           }
-            
-          else
-          {
-            this.afs.collection('chats').doc(this.threadID).update({unreadByGreaterCount: 0});
-          }
-            
-          if(this.noMessages==true) this.noMessages = false;
         }
       });
     });
@@ -110,11 +133,11 @@ export class ChatroomPage {
   }
 
 
+  formatNewMessage(message)
+  {
   // Formats each message based on if it was sent or received
   // and adds a timestring attribute, so the time the message
   // was sent can be displayed to the user. 
-  formatNewMessage(message)
-  {
     if(message.senderID == this.userID) 
       message.position="speech-bubble-right";
     else 
@@ -135,10 +158,10 @@ export class ChatroomPage {
     });
   }
 
-  // Pops the Chatroom page from the navigation stack, 
-  // returning the user to the Messages page.
   goBack()
   {
+  // Pops the Chatroom page from the navigation stack, 
+  // returning the user to the Messages page.
     this.navCtrl.pop();
   }
 

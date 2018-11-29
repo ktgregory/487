@@ -26,10 +26,9 @@ export class AdmineventformPage {
 
     async ngOnInit()
     {
-      this.minDate = new Date().toISOString();
       // The minimum date that appears as an option is
       // the current date. 
-     
+      this.minDate = new Date().toISOString();
     }
 
 

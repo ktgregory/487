@@ -11,29 +11,29 @@ import { RequestCenterPage } from '../request-center/request-center';
 })
 export class TabsPage {
 
-  // Sets each tab's root to the corresponding pag.
+  // Sets each tab's root to the corresponding page.
   tab1Root = HomePage;
   tab2Root = MessagesPage;
   tab3Root = RequestCenterPage;
   tab4Root = ProfilePage;
 
+
   userID;
-
-  newRequestCount=0;
-  newApprovedPostCount=0;
-  newMessagesCount=0;
-
-  onMessagesTab = false;
-  onRequestsTab = false;
-  onProfileTab = false;
-
   chats=[];
+
+  // Counters for the tab badges (numbers)
+  newRequestCount;
+  newApprovedPostCount;
+  newMessagesCount;
 
   constructor(private afs: AngularFirestore, private auth: AuthProvider) {}
 
 
   async ngOnInit()
   {
+    this.newRequestCount=0;
+    this.newApprovedPostCount=0;
+    this.newMessagesCount=0;
     this.userID = await this.auth.getUserID();
     this.newMessageListener();
     this.newRequestListener();
@@ -43,6 +43,9 @@ export class TabsPage {
   
   async newRequestListener()
   {
+    // Queries for all of the requests a user has sent and received.
+    // Listens for newly received requests and newly accepted requests
+    // and increments the counters accordingly. 
     let requestQuery = await this.afs.firestore.collection('requests')
     .where('receiverID','==',this.userID);
     await requestQuery.onSnapshot((snapshot)=>
@@ -63,10 +66,6 @@ export class TabsPage {
           {
             this.newRequestCount--;
           }
-        }
-        if (change.type === "removed")
-        {
-
         }
       });
     });
@@ -95,10 +94,6 @@ export class TabsPage {
           {
             this.newRequestCount--;
           }
-        }
-        if (change.type === "removed")
-        {
-
         }
       });
     });
@@ -130,12 +125,10 @@ export class TabsPage {
     });
   }
 
-
-
-  async newMessageListener()
-  {
-    // Queries chats, which must be done twice
-    // because the user's ID may be either the "lesser"
+async newMessageListener()
+{
+    // Queries chats (and listens for changes), which must be 
+    // done twice because the user's ID may be either the "lesser"
     // or the "greater" ID. It may be possible to combine
     // these queries.
     let chatQuery = await this.afs.firestore.collection('chats')
@@ -143,118 +136,243 @@ export class TabsPage {
     await chatQuery.onSnapshot((snapshot) => { 
       snapshot.docChanges().forEach(async change => {
 
-        let chat = change.doc.data();
+        let chat = await change.doc.data();
         if (change.type === "added") 
         {
-          if ((chat.greaterID == this.userID) && (chat.deletedByGreater==false))
+          if (chat.deletedByGreater==false)
           {
             this.chats.push(chat);
-            this.newMessagesCount+= chat.unreadByGreaterCount;
-          } 
-            
-          if ((chat.lesserID == this.userID) && (chat.deletedByLesser==false))
-          {
-            this.chats.push(chat);
-            this.newMessagesCount+= chat.unreadByLesserCount;
+            this.updateMessagesCount();
           } 
         }
 
-
-        if (change.type === "modified")
+        else if (change.type === "modified")
         {
-          if ((chat.greaterID == this.userID) && (chat.deletedByGreater==false))
+          if (chat.deletedByGreater==false)
           {
-            this.changeCountGreater(chat);
+            this.updateChat(chat);
           } 
-            
-          if ((chat.lesserID == this.userID) && (chat.deletedByLesser==false))
+          else if (chat.deletedByGreater == true)
           {
-            this.changeCountLesser(chat);
-          } 
+            this.deleteChat(chat);
+          }
         }
       });
     });
 
-    chatQuery = await this.afs.firestore.collection('chats')
+    let chatQuery2 = await this.afs.firestore.collection('chats')
     .where("lesserID","==",this.userID);
-    await chatQuery.onSnapshot((snapshot) => { 
+    await chatQuery2.onSnapshot((snapshot) => { 
       snapshot.docChanges().forEach(async change => {
-
-        let chat = change.doc.data();
+        
+        let chat = await change.doc.data();
         if (change.type === "added") 
         {
-          if ((chat.greaterID == this.userID) && (chat.deletedByGreater==false))
-          {
-            this.chats.push(chat);
-            this.newMessagesCount+= chat.unreadByGreaterCount;
-          } 
             
-          if ((chat.lesserID == this.userID) && (chat.deletedByLesser==false))
+          if (chat.deletedByLesser==false)
           {
             this.chats.push(chat);
-            this.newMessagesCount+= chat.unreadByLesserCount;
+            this.updateMessagesCount();
           } 
         }
 
-
-        if (change.type === "modified")
+        else if (change.type === "modified")
         {
-          if ((chat.greaterID == this.userID) && (chat.deletedByGreater==false))
+           if (chat.deletedByLesser==false)
           {
-            this.changeCountGreater(chat);
+            this.updateChat(chat);
           } 
-            
-          if ((chat.lesserID == this.userID) && (chat.deletedByLesser==false))
+          else if (chat.deletedByLesser == true)
           {
-            this.changeCountLesser(chat);
-          } 
+            this.deleteChat(chat);
+          }
+          
         }
       });
     });
   }
 
-  removeChat(element)
+  updateChat(updatedChat)
   {
-    for(let i=0; i < this.chats.length; i++)
+    for(let i =0; i<this.chats.length; i++)
     {
-      if (this.chats[i].threadID==element.threadID)
+      if (this.chats[i].threadID == updatedChat.threadID)
       {
-        this.chats.splice(i,1);
+        this.chats[i]=updatedChat;
+        this.updateMessagesCount();
       }
     }
   }
 
-  changeCountGreater(updatedChat)
+  deleteChat(deletedChat)
   {
-    this.chats.forEach(chat=>
-    {
-      if(chat.threadID==updatedChat.threadID)
+    for(let i =0; i<this.chats.length; i++)
       {
-        let current = chat.unreadByGreaterCount;
-        let newCount = updatedChat.unreadByGreaterCount;
-        if (current<newCount)
-          this.newMessagesCount+=(newCount-current);
-        else
-          this.newMessagesCount-=current;
-        chat.unreadByGreaterCount = newCount;
+        if (this.chats[i].threadID == deletedChat.threadID)
+        {
+          this.chats.splice(i,1);
+          this.updateMessagesCount();
+        }
       }
-    });
   }
 
-  changeCountLesser(updatedChat)
+  updateMessagesCount()
   {
+    let tempNewCount=0;
     this.chats.forEach(chat=>
-    {
-      if(chat.threadID==updatedChat.threadID)
       {
-        let current = chat.unreadByLesserCount;
-        let newCount = updatedChat.unreadByLesserCount;
-        if (current<newCount)
-          this.newMessagesCount+=(newCount-current);
+        console.log(tempNewCount);
+        if(this.userID == chat.lesserID)
+          tempNewCount+= chat.unreadByLesserCount;
         else
-          this.newMessagesCount-=current;
-        chat.unreadByLesserCount = newCount;
-      }
-    });
+          tempNewCount+= chat.unreadByGreaterCount;
+      })
+    this.newMessagesCount = tempNewCount;
   }
+
+
+
+//   async newMessageListener()
+//   {
+//     // Queries chats (and listens for changes), which must be 
+//     // done twice because the user's ID may be either the "lesser"
+//     // or the "greater" ID. It may be possible to combine
+//     // these queries.
+//     let chatQuery = await this.afs.firestore.collection('chats')
+//     .where("greaterID","==",this.userID);
+//     await chatQuery.onSnapshot((snapshot) => { 
+//       snapshot.docChanges().forEach(async change => {
+
+//         let chat = await change.doc.data();
+//         if (change.type === "added") 
+//         {
+//           if (chat.deletedByGreater==false)
+//           {
+//             this.chats.push(chat);
+//             this.newMessagesCount+= chat.unreadByGreaterCount;
+//           } 
+//         }
+
+//         if (change.type === "modified")
+//         {
+//           if ((chat.deletedByGreater==false))
+//           {
+//             this.changeCountGreater(chat);
+//           } 
+            
+//           else if((chat.deletedByGreater==true))
+//           {
+//             this.removeChatGreater(chat);
+//           }
+//         }
+//       });
+//     });
+
+//     let chatQuery2 = await this.afs.firestore.collection('chats')
+//     .where("lesserID","==",this.userID);
+//     await chatQuery.onSnapshot((snapshot) => { 
+//       snapshot.docChanges().forEach(async change => {
+        
+//         let chat = await change.doc.data();
+//         if (change.type === "added") 
+//         {
+            
+//           if (chat.deletedByLesser==false)
+//           {
+//             this.chats.push(chat);
+//             this.newMessagesCount+= chat.unreadByLesserCount;
+//           } 
+//         }
+
+//         if (change.type === "modified")
+//         {
+//           if (chat.deletedByLesser==false)
+//           {
+//             this.changeCountLesser(chat);
+//           } 
+        
+//           if(chat.deletedByLesser==true)
+//           {
+//             this.removeChatLesser(chat);
+//           }
+//         }
+//       });
+//     });
+//   }
+
+//   removeChatLesser(element)
+//   {
+//     // Removes a chat from the array if it is deleted.
+//     // This is needed here because the user should not be notified
+//     // if they receive a message from a chat they have deleted.
+//     for(let i=0; i < this.chats.length; i++)
+//     {
+//       if (this.chats[i].threadID==element.threadID)
+//       {
+//         this.chats.splice(i,1);
+//         if(element.deletedByLesser==true)
+//         {
+//           this.newMessagesCount-= element.unreadByLesserCount;
+//         }
+//       }
+//     }
+//   }
+
+
+//   removeChatGreater(element)
+//   {
+//     // Removes a chat from the array if it is deleted.
+//     // This is needed here because the user should not be notified
+//     // if they receive a message from a chat they have deleted.
+//     for(let i=0; i < this.chats.length; i++)
+//     {
+//       if (this.chats[i].threadID==element.threadID)
+//       {
+//         this.chats.splice(i,1);
+//         if(element.deletedByGreater==true)
+//         {
+//           this.newMessagesCount-= element.unreadByGreaterCount;
+//         }
+//       }
+//     }
+//   }
+
+//   changeCountGreater(updatedChat)
+//   {
+//     // Modifies the count on unread messages in chats
+//     // where the current user has the "greater" ID. 
+//     this.chats.forEach(chat=>
+//     {
+//       if(chat.threadID==updatedChat.threadID)
+//       {
+//         let current = chat.unreadByGreaterCount;
+//         let newCount = updatedChat.unreadByGreaterCount;
+//         if (current<newCount)
+//           this.newMessagesCount+=(newCount-current);
+//         else
+//           this.newMessagesCount-=current;
+//         chat = updatedChat;
+//       }
+//     });
+//   }
+
+//   changeCountLesser(updatedChat)
+//   {
+//     // Modifies the count on unread messages in chats
+//     // where the current user has the "lesser" ID.
+//     this.chats.forEach(chat=>
+//     {
+//       if(chat.threadID==updatedChat.threadID)
+//       {
+//         let current = chat.unreadByLesserCount;
+//         let newCount = updatedChat.unreadByLesserCount;
+//         if (current<newCount)
+//           this.newMessagesCount+=(newCount-current);
+//         else
+//           this.newMessagesCount-=current;
+//         chat = updatedChat;
+//       }
+//     });
+//   }
+// }
 }

@@ -5,7 +5,7 @@ import { AlertController } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
 import { AngularFirestore} from 'angularfire2/firestore';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { EventProvider } from '../../providers/event/event';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
@@ -30,7 +30,7 @@ export class ProfilePage implements OnInit {
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController, 
-    private eventInfo: EventInfoProvider, private afs: AngularFirestore,
+    private eventInfo: EventProvider, private afs: AngularFirestore,
     private storage: AngularFireStorage, private timeInfo: TimeDateCalculationsProvider
     )  { }
   
@@ -77,6 +77,7 @@ export class ProfilePage implements OnInit {
 
   ionViewDidEnter()
   {
+    // Creates an alert for if any newly approved posts. 
     this.newlyApproved.forEach(post=>
       {
         this.afs.firestore.collection('posts').doc(post.postID)
@@ -119,18 +120,17 @@ export class ProfilePage implements OnInit {
   
   confirmDeletePost(postID:string) 
   {
-    //If trash can button is clicked, 
+    // If trash can button is clicked, 
     // the user is asked to confirm before the post is deleted.
     let confirm = this.alertCtrl.create({
       title: 'Delete event post?',
-      message: 'Do you want to delete your post about' 
-        + 'this event? This cannot be undone.',
+      message: 'Do you want to delete your post about ' 
+        + ' this event? This cannot be undone.',
       buttons: [
         {
           text: 'Yes.',
           handler: () => {
             this.eventInfo.deletePost(postID);
-            this.storage.ref('postPhotos/'+postID).delete();
           }
         },
         {
@@ -141,8 +141,8 @@ export class ProfilePage implements OnInit {
     confirm.present();
   }
 
-  statusInfo(status) {
-
+  statusInfo(status) 
+  {
     let message;
     if(status=="approved")
     {
@@ -222,6 +222,8 @@ export class ProfilePage implements OnInit {
 
   checkForNewApproved(updatedPost)
   {
+    // Checks to see if any pending posts have 
+    // become approved.
     this.posts.forEach(post=>
     {
         if(updatedPost.postID == post.postID)

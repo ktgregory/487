@@ -53,7 +53,13 @@ export class SignUpPage {
   ionViewWillEnter()
   {
     // Sets default profile photo.
-    this.profilePic = "https://firebasestorage.googleapis.com/v0/b/seniorproject-27d62.appspot.com/o/previews%2FdefaultPhoto.png?alt=media&token=58701963-8475-4902-852b-77acc7affd31";
+    this.profilePic = 
+    "https://firebasestorage.googleapis.com/v0/b/seniorproject-27d62.appspot.com"
+    + "/o/previews%2FdefaultPhoto.png?alt=media&token=58701963-8475-4902-852b-77acc7affd31";
+
+    // Sets the previewID so if they select multiple photos to preview,
+    // each preview will be overwritten. 
+    this.previewID = this.afs.createId();
 
   }
 
@@ -74,31 +80,37 @@ export class SignUpPage {
         }
       ]
     });
-    pendingMessage.present()
+    pendingMessage.present();
   }
   
 
 async setUpload(event: FileList) 
 {
+  // Called when the user selects a file. 
+  // Sets file variable to the file they selected
+  // and uploads a preview of their image. 
   this.file = event.item(0);
   this.uploadPreview();
 }
 
-async startUpload() {
-  // The File object
-  const file = this.file;
-  if (file == null)
+async startUpload()
+{
+  if (this.file == null)
   {
+    // If they didn't select a profile photo,
+    // their photo is set to the default image. 
     this.afs.collection('users').doc(this.userID).update(
-      {
-        profileimage: this.profilePic
-      });
+    {
+      profileimage: this.profilePic
+    });
   }
   else
   {
+    // Uploads their profile photo under their ID if they
+    // complete the signing up process. 
     const path = `profilePhotos/${this.userID}`;
     let storageref = this.storage.ref(path);
-    storageref.put(file).then(async ()=>
+    storageref.put(this.file).then(async ()=>
     {
       storageref.getDownloadURL().subscribe(result=>
         {
@@ -113,6 +125,8 @@ async startUpload() {
 
   uploadPreview()
   {
+    // Uploads a preview of their selected image
+    // to the database.
     const file = this.file;
     if (file.type.split('/')[0] !== 'image') { 
       this.presentErrorMessage("You have selected an unsupported file type!");
@@ -122,7 +136,6 @@ async startUpload() {
       dismissOnPageChange: true,
     });
     this.loading.present();
-    this.previewID = this.afs.createId();
     const path = `previews/${this.previewID}`;
     this.previewRef = this.storage.ref(path);
     this.previewRef.put(file).then(async ()=>
@@ -131,16 +144,19 @@ async startUpload() {
           {
             this.loading.dismiss();
             this.profilePic = result;
-          });
+          })
       }).catch(error=>
         {
           this.presentErrorMessage(error);
           this.loading.dismiss();
-        });
+      });
   }
 
   deletePreview()
   {
+    // Removes the preview from the database.
+    // Called when the user leaves the sign up page,
+    // whether they created an account or not. 
     if(this.file!=null)
       this.previewRef.delete(this.file);
   }

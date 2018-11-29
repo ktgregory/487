@@ -39,9 +39,13 @@ $colors: (
   light: rgba(205, 237, 246, 1),
   primary:#654f6f,
   secondary:#648fa8,
-  white:white
+  white:white,
+  main:grey
 );
 
+$toast-ios-background:color($colors,primary);
+$toast-md-background:color($colors, primary);
+$toast-wp-background:color($colors, primary);
 
 $font-size-small: 8px!default;
 /* Coolors Exported Palette - coolors.co/042a2b-5eb1bf-cdedf6-ef7b45-d84727 */
@@ -49,8 +53,6 @@ $font-size-small: 8px!default;
 // App iOS Variables
 // --------------------------------------------------
 // iOS only Sass variables can go here
-
-
 
 
 // App Material Design Variables

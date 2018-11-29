@@ -1,4 +1,11 @@
 
 page-settings {
 
+    
+    .toast-container 
+    { 
+        border-radius: 0.65rem !important; 
+        background: color($colors, "primary") 
+    } 
+
 }

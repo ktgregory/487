@@ -48,7 +48,7 @@ export class RequestCenterPage {
       'userID': this.userID
     });
         myModal.onDidDismiss(() => {
-        //this.ngOnInit();
+          this.ngOnInit(); // Refreshes the page. 
     });
     myModal.present();
     this.afs.firestore.collection('requests').doc(requestID).update({viewed:true});
@@ -89,6 +89,7 @@ export class RequestCenterPage {
           text: 'Yes, clear it please.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
+            this.ngOnInit();
           }
         },
         {
@@ -103,8 +104,8 @@ export class RequestCenterPage {
   async viewAccepted(requestID:string)
   {
     // Displayed when a request has been accepted. 
-    let request2= await this.reqService.getRequestInfo(requestID);
-    let request = request2[0];
+    let request;
+    request = await this.reqService.getRequestInfo(requestID);
     let name = request.receiverName;
     let topic = request.eventName;
     let pendingMessage = this.alertCtrl.create({
@@ -169,15 +170,19 @@ export class RequestCenterPage {
     // Queries for requests sent by the current user
     // and listens for new additions. 
     let requestQuery = await this.afs.firestore.collection(`requests`)
-    .where("senderID","==",this.userID).where("senderStatus","==","uncleared"); 
+    .where("senderID","==",this.userID); 
       await requestQuery.onSnapshot((snapshot) => { 
-      snapshot.docChanges().forEach(async(change) => {
+      snapshot.docChanges().forEach(async(change) => { 
         let request;
         // If a new request is sent, it is added to the sentRequests array.
         if (change.type === "added") {
-          request = await this.getReceiverInfo(this.reqService.checkExpiredRequests(change.doc.data()));
-          this.sentRequests.push(request);
-          if (this.noSent==true) this.noSent=false;
+          if((change.doc.data().senderStatus=="uncleared") || 
+          (change.doc.data().senderStatus=="cleared" && change.doc.data().status=="accepted" && change.doc.data().viewedBySender==false))
+          {
+            request = await this.getReceiverInfo(this.reqService.checkExpiredRequests(change.doc.data()));
+            this.sentRequests.push(request);
+            if (this.noSent==true) this.noSent=false;
+          }
         }
         // If a request is deleted, it is removed from the sentRequests array.
         if (change.type === "removed") {
@@ -188,9 +193,15 @@ export class RequestCenterPage {
         
         if (change.type === "modified")
         {
-          this.updateRequestInfoSent(this.reqService.checkExpiredRequests(change.doc.data()));
+          if (change.doc.data().senderStatus=="cleared" && change.doc.data().status=="accepted" && change.doc.data().viewedBySender==false)
+          {
+            this.checkForSentRequest(await change.doc.data());
+          }
+          else
+          {
+            this.updateRequestInfoSent(this.reqService.checkExpiredRequests(change.doc.data()));
+          }
         }
-
       });  
     });
   }
@@ -228,6 +239,8 @@ export class RequestCenterPage {
 
   updateRequestInfoReceived(updatedRequest)
   {
+    // Updates the request's information should there
+    // be any changes in the database. 
     this.receivedRequests.forEach(request=>
     {
       if(request.requestID == updatedRequest.requestID)
@@ -243,6 +256,8 @@ export class RequestCenterPage {
 
   updateRequestInfoSent(updatedRequest)
   {
+    // Updates the request's information should there
+    // be any changes in the database. 
     this.sentRequests.forEach(request=>
     {
       if(request.requestID == updatedRequest.requestID)
@@ -256,6 +271,7 @@ export class RequestCenterPage {
 
   removeRequest(requestToRemove)
   {
+    // Removes a request from the received request array. 
     for(let i=0; i < this.receivedRequests.length; i++)
     {
       if(this.receivedRequests[i].requestID == requestToRemove.requestID)
@@ -267,7 +283,7 @@ export class RequestCenterPage {
 
   async getSenderInfo(request)
   {
-    // gets the sender's image!
+    // Gets the sender's profile image.
     let ref = this.afs.firestore.collection('users').where('uid','==',request.senderID);
     await ref.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
@@ -280,7 +296,7 @@ export class RequestCenterPage {
 
   async getReceiverInfo(request)
   {
-    // gets the receiver's image!
+    // Gets the receiver's profile image.
     let ref = this.afs.firestore.collection('users').where('uid','==',request.receiverID);
     await ref.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
@@ -289,6 +305,24 @@ export class RequestCenterPage {
       });
     });
     return request;
-    
+  }
+
+  async checkForSentRequest(request2)
+  {
+    let found=false;
+    this.sentRequests.forEach(request=>
+      {
+        if(request.requestID == request2.requestID)
+        {
+          found=true;
+        }
+      });
+
+    if(found==false)
+    {
+      request2 = await this.getReceiverInfo(this.reqService.checkExpiredRequests(request2));
+      this.sentRequests.push(request2);
+      this.noSent=false;
+    }
   }
 }

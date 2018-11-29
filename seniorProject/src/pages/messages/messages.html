@@ -14,8 +14,8 @@
         <ion-card padding *ngIf= 'noChats'>
             No messages.
           </ion-card>
-        
-        <ion-item *ngFor= 'let chat of chats' (click)='goToChat(chat, chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage, chat.topic)'>
+        <ion-item-sliding *ngFor= 'let chat of chats'>
+        <ion-item (click)='goToChat(chat, chat.threadID,chat.senderID, userID, chat.senderName, chat.senderImage, chat.topic, chat.messagePreview)'>
             <p item-start *ngIf="chat.unread" style="font-size:3rem; margin-left:-1%; color:#654f6f">&#9900;</p>
           <ion-avatar item-start>
             <img src={{chat.senderImage}}>
@@ -35,6 +35,10 @@
           <button *ngIf="markThreads && !chat.delete" (click)="setToDelete(chat)" item-end clear ion-button icon-only><ion-icon name="radio-button-off"></ion-icon></button>
           <button *ngIf="chat.delete && markThreads" (click)="resetDelete(chat)" ion-button clear item-end icon-only><ion-icon name="radio-button-on"></ion-icon></button>
         </ion-item>
+        <ion-item-options side="right">
+          <button ion-button icon-only (click)="deleteChat(chat)"><ion-icon name="trash"></ion-icon></button>
+        </ion-item-options>
+      </ion-item-sliding>
       </ion-list>
 
 </ion-content>

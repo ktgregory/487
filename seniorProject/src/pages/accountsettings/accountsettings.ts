@@ -5,7 +5,7 @@ import { AngularFirestore} from 'angularfire2/firestore';
 import { ChangepasswordPage } from '../changepassword/changepassword';
 import { ChangeemailPage } from '../changeemail/changeemail';
 import { DeleteAccountPage } from '../delete-account/delete-account';
-import { UserinfoProvider } from '../../providers/userinfo/userinfo';
+import { UserProvider } from '../../providers/user/user';
 import { SignUpPage } from '../signup/signup';
 
 
@@ -26,7 +26,7 @@ export class AccountsettingsPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private authData: AuthProvider, private afs: AngularFirestore,
     public alertCtrl: AlertController, public modalCtrl: ModalController,
-    private userInfo: UserinfoProvider) {
+    private userInfo: UserProvider) {
   }
 
 
@@ -55,31 +55,19 @@ export class AccountsettingsPage {
      
   }
 
-  ionViewWillLeave()
-  {
-    // If you are on the Account Settings page and select another
-    // tab, this pops back to the Profile page, so that when you
-    // return to the Profile tab, the Account Settings page will 
-    // no longer be showing.
-      // this.navCtrl.popToRoot();
-  }
-  
   changeSchool()
   {
     const prompt = this.alertCtrl.create({
-      message: "Enter your school:",
+      message: "Edit your school:",
       inputs: [
         {
           name: 'school',
-          placeholder: 'School'
+          value: this.school
         }
       ],
       buttons: [
         {
-          text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
+          text: 'Cancel'
         },
         {
           text: 'Update',
@@ -113,11 +101,11 @@ export class AccountsettingsPage {
   changePhoneNumber()
   {
     const prompt = this.alertCtrl.create({
-      message: "Enter your phone number:",
+      message: "Edit your phone number:",
       inputs: [
         {
           name: 'phone',
-          placeholder: 'Phone Number'
+          value: this.phonenumber
         }
       ],
       buttons: [
@@ -234,6 +222,7 @@ export class AccountsettingsPage {
   
   createNewAdmin()
   {
+    // Navigates to the admin version of the Sign-up Page.
     this.navCtrl.push(SignUpPage,{'creatingAdmin':true});
   }
 }

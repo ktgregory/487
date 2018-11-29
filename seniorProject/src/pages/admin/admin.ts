@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, ModalController, App } from 'ionic-angular';
+import { NavController, AlertController, ModalController, App, Loading, LoadingController } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { AccountsettingsPage} from '../accountsettings/accountsettings';
-import { EventInfoProvider } from '../../providers/event-info/event-info';
+import { EventProvider } from '../../providers/event/event';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { ModifyeventlistPage } from '../modifyeventlist/modifyeventlist';
 import { TabsPage } from '../tabs/tabs';
@@ -17,25 +17,24 @@ export class AdminPage {
   // Variable that is toggled with the drop-down menu at the top 
   // of the page (for switching to the regular user interface)
   interface="admin";
+  loading:Loading;
 
   constructor(public navCtrl: NavController, private authData: AuthProvider,
-    private eventService: EventInfoProvider, private afs: AngularFirestore,
+    private eventService: EventProvider, private afs: AngularFirestore,
     public alertCtrl: AlertController, public modalCtrl: ModalController,
-    public app: App) { }
+    public app: App, public loadingCtrl: LoadingController) { }
 
-    noPending = false;
-    pendingEvents = [];
-
+    pendingEvents;
     async ngOnInit()
     {
+      this.pendingEvents = [];
       // Populates the page with pending events.
-      this.pendingEvents = await this.eventService.getPendingEvents();
-      if(this.pendingEvents.length==0)
-        this.noPending=true;
+      await this.eventService.getPendingEvents(this.pendingEvents);
+
     }
 
- 
     goToAccountSettings() {
+      // Navigates to Account Settings page.
       this.navCtrl.push(AccountsettingsPage);
     }
 
@@ -49,7 +48,7 @@ export class AdminPage {
         .then(any=>
         {
           // Reloads the page.
-          this.ngOnInit();
+         // this.ngOnInit();
         });
     }
 
@@ -68,7 +67,7 @@ export class AdminPage {
               status:"approved"
               });
             // Reloads the page.
-            this.ngOnInit();
+           // this.ngOnInit();
           }
         },
         {
@@ -84,7 +83,7 @@ export class AdminPage {
   {
     // Deletes post from the database and reloads page. 
     this.afs.doc(`posts/${postID}`).delete();
-    this.ngOnInit();
+   // this.ngOnInit();
   }
 
   async modifyEvents()
@@ -103,6 +102,7 @@ export class AdminPage {
     this.authData.logoutUser();
     window.location.reload();
   }
+
 
   switchToRegularInterface()
   {
