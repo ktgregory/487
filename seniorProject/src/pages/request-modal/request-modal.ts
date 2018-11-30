@@ -73,8 +73,8 @@ export class RequestModalPage implements OnInit {
         {
           text: 'Yes, clear it please.',
           handler: () => {
-            this.reqService.clearRequestReceiver(this.requestID);
-            this.dismiss();
+            this.reqService.clearRequestReceiver(this.requestID).then(()=>this.dismiss());
+
           }
         }
       ]
@@ -102,8 +102,7 @@ export class RequestModalPage implements OnInit {
             .startThread(this.userID, this.otherUserID, this.eventName)
             .then(any=>
             {
-                this.reqService.acceptRequest(this.requestID);
-                this.announceAcceptance();
+                this.reqService.acceptRequest(this.requestID).then(()=>this.announceAcceptance());
             });
           }
         }

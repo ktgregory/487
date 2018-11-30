@@ -26,6 +26,8 @@ export class SettingsPage {
   previewRef;
   loading:Loading;
 
+
+
   constructor(public navCtrl: NavController, public authData: AuthProvider,
     private afs: AngularFirestore, public alertCtrl: AlertController,
     public navParams: NavParams, public modalCtrl: ModalController,
@@ -136,14 +138,24 @@ export class SettingsPage {
  // UPLOADING PHOTO METHODS:
 
 
- async setUpload(event: FileList) 
+ async setUpload(event) 
  {
    // Sets the file variable to the file the user has selected, and
    // calls the uploadPreview function. 
    // Called when a user selects a file. 
    this.file = event.item(0);
-   this.uploadPreview();
- }
+
+   if(event.item(0)){
+    let reader = new FileReader();
+
+      reader.onload = (event:any) => {
+        this.profilePic = event.target.result;
+      }
+      reader.readAsDataURL(event.item(0));
+    }
+ 
+  }
+  
 
  async startUpload() 
  {
@@ -217,8 +229,8 @@ export class SettingsPage {
  deletePreview()
  {
    // Deletes the profile photo preview from the database. 
-   if (this.file!=null)
-     this.previewRef.delete(this.file);
+  //  if (this.file!=null)
+  //    this.previewRef.delete(this.file);
  }
 
  goToSettings()
@@ -258,6 +270,4 @@ export class SettingsPage {
 
 
 //SOURCE: https://angularfirebase.com/lessons/firebase-storage-with-angularfire-dropzone-file-uploader/
-
-
-
+//SOURCE: https://stackoverflow.com/questions/45799326/how-to-preview-image-before-upload-in-ionic-3

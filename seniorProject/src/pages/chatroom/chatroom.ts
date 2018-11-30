@@ -65,6 +65,7 @@ export class ChatroomPage {
         this.formatNewMessages(await this.chat.getMessagesByThreadID(this.threadID));
     
     if( this.messages.length == 0) this.noMessages=true;
+    this.inView=true;
   }
 
   ionViewWillEnter()
@@ -72,12 +73,16 @@ export class ChatroomPage {
     // Updates the inView variable to true when the user
     // navigates to the page. 
     this.inView=true;
+    console.log(this.inView);
   }
 
   ionViewDidEnter(){
     // When the page has been entered, scrolls to the bottom 
     // (i.e. to the most recent messages).
+    
     if(this.content._scroll) this.content.scrollToBottom(300);
+    this.inView=true;
+
   }
 
   ionViewWillLeave()
@@ -85,6 +90,7 @@ export class ChatroomPage {
     // Updates the inView variable to false when the user
     // navigates away from the page. 
     this.inView=false;
+    console.log(this.inView);
   }
 
   // Listens for new messages.
@@ -94,8 +100,6 @@ export class ChatroomPage {
     .doc(this.threadID).collection('messages');
     await messageQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(change => {
-        if(change.type=="added")
-        {
           this.messages.push(this.formatNewMessage(change.doc.data()));
         
           // Scrolls to the bottom of the page if a new message is received.
@@ -117,9 +121,28 @@ export class ChatroomPage {
               
             if(this.noMessages==true) this.noMessages = false;
           }
-        }
       });
     });
+
+    let chatQuery = await this.afs.firestore.collection('chats')
+      .where("threadID","==",this.threadID);
+    await chatQuery.onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type==="modified" && this.inView)
+          {
+            if(this.userID<this.otherUserID)
+            {
+              this.afs.collection('chats').doc(this.threadID)
+              .update({unreadByLesserCount: 0});
+            }
+            else
+            {
+              this.afs.collection('chats').doc(this.threadID)
+              .update({unreadByGreaterCount: 0});
+            }
+          }
+        })
+      });
   }
 
   // For formatting the previously existing messages

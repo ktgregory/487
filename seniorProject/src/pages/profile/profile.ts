@@ -6,7 +6,6 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { AccountsettingsPage } from '../accountsettings/accountsettings';
 import { AngularFirestore} from 'angularfire2/firestore';
 import { EventProvider } from '../../providers/event/event';
-import { AngularFireStorage } from 'angularfire2/storage';
 import { TimeDateCalculationsProvider } from '../../providers/time-date-calculations/time-date-calculations';
 
 @Component({
@@ -31,7 +30,7 @@ export class ProfilePage implements OnInit {
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, 
     public authData: AuthProvider, public loadingCtrl: LoadingController, 
     private eventInfo: EventProvider, private afs: AngularFirestore,
-    private storage: AngularFireStorage, private timeInfo: TimeDateCalculationsProvider
+    private timeInfo: TimeDateCalculationsProvider
     )  { }
   
    

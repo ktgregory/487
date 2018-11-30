@@ -47,9 +47,7 @@ export class RequestCenterPage {
       'otherUserID': userID,
       'userID': this.userID
     });
-        myModal.onDidDismiss(() => {
-          this.ngOnInit(); // Refreshes the page. 
-    });
+
     myModal.present();
     this.afs.firestore.collection('requests').doc(requestID).update({viewed:true});
   }
@@ -89,7 +87,6 @@ export class RequestCenterPage {
           text: 'Yes, clear it please.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
-            this.ngOnInit();
           }
         },
         {
@@ -117,7 +114,6 @@ export class RequestCenterPage {
           text: 'Clear this request.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
-            this.ngOnInit();
           }
         }
       ]
@@ -137,7 +133,6 @@ export class RequestCenterPage {
           text: 'Clear this request.',
           handler: () => {
             this.reqService.clearRequestSender(requestID);
-            this.ngOnInit();
           }
         }
       ]
@@ -157,7 +152,6 @@ export class RequestCenterPage {
           text: 'Clear this request.',
           handler: () => {
             this.reqService.clearRequestReceiver(requestID);
-            this.ngOnInit();
           }
         }
       ]
@@ -186,8 +180,7 @@ export class RequestCenterPage {
         }
         // If a request is deleted, it is removed from the sentRequests array.
         if (change.type === "removed") {
-         this.sentRequests = this.sentRequests.filter(
-           item => item !== (this.reqService.checkExpiredRequests(change.doc.data())));
+          this.removeRequestSent(request);
           if (this.sentRequests.length==0) this.noSent = true;
         }
         
@@ -211,11 +204,11 @@ export class RequestCenterPage {
     // Queries for requests received by the current user
     // and listens for new additions. 
     let requestQuery = await this.afs.firestore.collection(`requests`)
-    .where("receiverID","==",this.userID).where("status","==","pending"); 
+    .where("receiverID","==",this.userID)
     await requestQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async(change) => {
         let request;
-        if (change.type === "added") {
+        if (change.type === "added" && change.doc.data().status=="pending") {
           // If a new request is received, it is added to the receivedRequests array.
           request = await this.getSenderInfo(this.reqService.checkExpiredRequests(change.doc.data()));
           this.receivedRequests.push(request);
@@ -223,8 +216,7 @@ export class RequestCenterPage {
         }
         if (change.type === "removed") {
           // If a request is deleted, it is removed from the receivedRequests array.
-         this.receivedRequests = this.receivedRequests.filter(
-           item => item !== (this.reqService.checkExpiredRequests(change.doc.data())));
+         this.removeRequest(change.doc.data());
           if (this.receivedRequests.length==0) this.noReceived = true;
         }
         if (change.type === "modified")
@@ -248,7 +240,7 @@ export class RequestCenterPage {
         request.status = updatedRequest.status;
         request.senderStatus = updatedRequest.senderStatus;
         request.viewed = updatedRequest.viewed;
-        if (request.status == "accepted")
+        if (updatedRequest.status === "accepted" || updatedRequest.status === "cleared")
           this.removeRequest(request);
       }
     });
@@ -265,6 +257,10 @@ export class RequestCenterPage {
         request.status = updatedRequest.status;
         request.senderStatus = updatedRequest.senderStatus;
         request.viewedBySender = updatedRequest.viewedBySender;
+        if (updatedRequest.senderStatus === "cleared")
+        {
+          this.removeRequestSent(request);
+        }
       }
     });
   }
@@ -279,6 +275,23 @@ export class RequestCenterPage {
         this.receivedRequests.splice(i,1);
       }
     }
+    if (this.receivedRequests.length==0)
+      this.noReceived=true;
+  }
+
+  removeRequestSent(requestToRemove)
+  {
+    // Removes a request from the received request array. 
+    for(let i=0; i < this.sentRequests.length; i++)
+    {
+      if(this.sentRequests[i].requestID == requestToRemove.requestID)
+      {
+        this.sentRequests.splice(i,1);
+      }
+    }
+
+    if (this.sentRequests.length==0)
+      this.noSent=true;
   }
 
   async getSenderInfo(request)

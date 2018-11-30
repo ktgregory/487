@@ -90,7 +90,16 @@ async setUpload(event: FileList)
   // Sets file variable to the file they selected
   // and uploads a preview of their image. 
   this.file = event.item(0);
-  this.uploadPreview();
+
+  if(event.item(0)){
+   let reader = new FileReader();
+
+     reader.onload = (event:any) => {
+       this.profilePic = event.target.result;
+     }
+     reader.readAsDataURL(event.item(0));
+   }
+
 }
 
 async startUpload()
@@ -157,8 +166,8 @@ async startUpload()
     // Removes the preview from the database.
     // Called when the user leaves the sign up page,
     // whether they created an account or not. 
-    if(this.file!=null)
-      this.previewRef.delete(this.file);
+    // if(this.file!=null)
+    //   this.previewRef.delete(this.file);
   }
 
   /**

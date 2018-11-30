@@ -221,13 +221,14 @@ async newMessageListener()
     let tempNewCount=0;
     this.chats.forEach(chat=>
       {
-        console.log(tempNewCount);
         if(this.userID == chat.lesserID)
           tempNewCount+= chat.unreadByLesserCount;
         else
           tempNewCount+= chat.unreadByGreaterCount;
       })
     this.newMessagesCount = tempNewCount;
+
+    console.log(this.newMessagesCount);
   }
 
 

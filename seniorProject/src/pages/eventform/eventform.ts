@@ -143,7 +143,9 @@ submitEvent()
   let confirm = this.toastCtrl.create({
       message: 'Your post was successfully submitted!',
       duration: 2500,
-      position: 'bottom'
+      position: 'bottom',
+      showCloseButton:true,
+      closeButtonText:'x'
   });
   confirm.present();
   // Closes the modal as the alert is being displayed. 

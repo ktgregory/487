@@ -15,3 +15,5 @@ export const environment = {
   The environment variable links the application to the
   Firebase database. 
 */ 
+
+

@@ -19,7 +19,7 @@ export class MessagesPage {
   noChats = false;
   markThreads = false;
   display = false;
-
+  userQueries=[];
   constructor(public navCtrl: NavController, private chat: ChatProvider,
     private authData: AuthProvider, private userInfo: UserProvider,
     private afs: AngularFirestore, public alertCtrl: AlertController,
@@ -251,9 +251,9 @@ export class MessagesPage {
     });
 
 
-    chatQuery = await this.afs.firestore.collection('chats')
+    let chatQuery2 = await this.afs.firestore.collection('chats')
     .where("lesserID","==",userID);
-    await chatQuery.onSnapshot((snapshot) => { 
+    await chatQuery2.onSnapshot((snapshot) => { 
       snapshot.docChanges().forEach(async change => {
 
         let chat;
@@ -321,14 +321,13 @@ export class MessagesPage {
  {
    // Updates the user's name or profile image if they change their information
    // after the page is first loaded. 
-  let userQuery = await this.afs.firestore.collection('users')
-  .where("uid","==",chat.senderID);
-  await userQuery.onSnapshot((snapshot) => { 
+  this.userQueries.push(await this.afs.firestore.collection('users')
+  .where("uid","==",chat.senderID).onSnapshot((snapshot) => { 
     snapshot.docChanges().forEach(async change => {
       chat.senderName=change.doc.data().name;
       chat.senderImage=change.doc.data().profileimage;
     });
-  });
+  }));
  }
 
   removeChat(element)
