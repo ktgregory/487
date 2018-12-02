@@ -54,11 +54,11 @@ export class SettingsPage {
    });
   }
 
-  ionViewWillLeave()
-  {
-    // Deletes the preview any time a user leaves this page. 
-    this.deletePreview;
-  }
+  // ionViewWillLeave()
+  // {
+  //   // Deletes the preview any time a user leaves this page. 
+  //   this.deletePreview;
+  // }
   
   goToTabs() {
     this.navCtrl.push(TabsPage);
@@ -226,12 +226,12 @@ export class SettingsPage {
      });
  }
 
- deletePreview()
- {
-   // Deletes the profile photo preview from the database. 
-  //  if (this.file!=null)
-  //    this.previewRef.delete(this.file);
- }
+//  deletePreview()
+//  {
+//    // Deletes the profile photo preview from the database. 
+//   //  if (this.file!=null)
+//   //    this.previewRef.delete(this.file);
+//  }
 
  goToSettings()
  {
